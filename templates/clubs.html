@@ -1,0 +1,25 @@
+{% extends 'Base.html' %}
+{% load static %}
+
+{% block style %}
+<title>SU - Clubs & Societies</title>
+{% endblock %}
+
+{% block content %}
+<div>
+    <p class="pageTitle">CLUBS & SOCIETIES</p>
+</div>
+<div class="grid">
+    {% for club in clubs %}
+    <div>
+        <a href="{% url 'club_detail' club.id %}">
+            <img class="eventCover" style="border: {{ club.color }} 3px solid;" src="{{ club.logo.url }}" alt="Club Cover">
+            <p class="text">{{ club.name }}</p>
+            <p class="aboutText">{{ club.date }}</p>
+        </a>
+    </div>
+    {% empty %}
+    <p class="text">No clubs available.</p>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,185 @@
+.navBar {
+    height: 70px; 
+    position: relative; 
+    background: #1F355E;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.navText {
+    color: white; 
+    font-size: 18px; 
+    font-family: Inter; 
+    font-weight: 400;
+}
+
+.content {
+    padding: 30px 175px;
+}
+
+.footer {
+    display: flex;
+    height: 100px;
+    background: #1F355E;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+}
+
+.logo {
+    width: 85px;
+    height: 40px;
+}
+
+.logoText {
+    color: white; 
+    font-size: 20px; 
+    font-family: Inter; 
+    font-weight: 700;
+    word-wrap: break-word
+}
+
+a {
+    text-decoration: none;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #1F355E;
+    min-width: 90px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-align: left;
+    display: block;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.tabIcon {
+    width: 20px;
+}
+
+.pageTitle {
+    color: black; 
+    font-size: 40px; 
+    font-family: Inter; 
+    font-weight: 800;
+}
+
+.text {
+    color: black; 
+    font-size: 18px; 
+    font-family: Inter; 
+    font-weight: 400;
+}
+
+.subtitle {
+    color: black; 
+    font-size: 30px; 
+    font-family: Inter; 
+    font-weight: 600;
+}
+
+.aboutText {
+    color: #949494; 
+    font-size: 14px; 
+    font-family: Inter; 
+    font-weight: 400;
+}
+
+.grid {
+    display: grid;
+    grid-gap: 25px;
+    justify-items: center;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+.studentGrid {
+    display: grid;
+    grid-gap: 25px;
+    justify-items: center;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+.eventCover {
+    width: 300px; 
+    height: 300px
+}
+
+.newsCover {
+    width: 300px; 
+    height: 225px;
+}
+
+.readMoreText {
+    text-align: center; 
+    color: #1F355E; 
+    font-size: 14px; 
+    font-family: Inter; 
+    font-weight: 600;
+    margin: 0px;
+}
+
+.readMoreBox {
+    display: flex;
+    height: 34px;
+    position: relative;
+    border-radius: 10px;
+    border: 2px #1F355E solid;
+    align-items: center;
+    justify-content: center;
+}
+
+.tagBox {
+    display: flex;
+    height: 25px; 
+    background: #414648; 
+    border-radius: 10px;
+    align-items: center;
+    justify-content: center;
+}
+
+.tagText {
+    text-align: center; 
+    color: white; 
+    font-size: 14px; 
+    font-family: Inter; 
+    font-weight: 300;
+}
+
+.articleCover {
+    width: 225px; 
+    height: 225px;
+}
+
+.articleDescriptionText {
+    color: black; 
+    font-size: 16px; 
+    font-family: Inter; 
+    font-weight: 400;
+}
+
+.studentPFP {
+    width: 200px; 
+    height: 200px;
+    object-fit: cover;
+}
+
+.hpsubtitle {
+    color: black; 
+    font-size: 40px; 
+    font-family: Inter; 
+    font-weight: 800;
+    margin: 0px;
+}

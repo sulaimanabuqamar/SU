@@ -1,0 +1,3 @@
+- Add a text field to news and events
+- For the news model, make it so the groups selected are field is optional, so if its not selected then nothing happens, but if something is selected then the only selected group should view those news, and a another dropdown for the equivilant grade options under the student model
+- varsity event many to many
