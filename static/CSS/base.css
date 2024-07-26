@@ -183,3 +183,75 @@ a {
     font-weight: 800;
     margin: 0px;
 }
+.popupBG {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index:4;
+}
+#accountPopupWindow {
+    position: fixed;
+    top: calc( 50% - 175px );
+    left: calc( 50% - 200px );
+    width: 400px;
+    height: 350px;
+    border-radius: 30px;
+    z-index:5;
+    background-color: white;
+}
+.btn {
+    border: 1px solid #1F355E;
+    width: 320px;
+    height: 40px;
+    border-radius: 10px;
+    background-color: white;
+    margin: 10px;
+    color: #1F355E;
+    font-family: 'Inter';
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition-duration: 0.2s;
+}
+.btn.primary {
+    background-color: #1F355E;
+    color: white;
+}
+.btn:hover {
+    transform: translateY(-2px);
+}
+.btn:active {
+    transform: translateY(0px);
+}
+
+.centerer {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    height: 50%;
+}
+.textfield {
+    border: 1px solid #1F355E;
+    width: 306px;
+    height: 36px;
+    border-radius: 10px;
+    background-color: white;
+    margin: 10px;
+    color: #1F355E;
+    font-family: 'Inter';
+    font-size: 14px;
+    font-weight: 500;
+    padding-left: 10px;
+}
+.subtext {
+    font-family: Inter; 
+    font-weight: 400;
+    text-align: center;
+    font-size: 14px;
+    color: #949494;
+    margin-top: 10px;
+}
