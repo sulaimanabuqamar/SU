@@ -1,0 +1,28 @@
+{% extends 'Base.html' %}
+{% load static %}
+
+{% block style %}
+<title>SU - Events</title>
+{% endblock %}
+
+{% block content %}
+<div>
+    <p class="pageTitle">EVENTS</p>
+</div>
+<div class="grid">
+    {% for event in events %}
+    <div>
+        <a href="{% url 'event_detail' event.id %}">
+            <img class="eventCover" src="{{ event.cover.url }}" alt="Event Cover">
+            <p class="text">{{ event.title }}</p>
+            <p class="aboutText">{{ event.date }}</p>
+            <div class="tagBox" style="background: {{ event.author.color }};">
+                <p class="tagText">{{ event.author.name }}</p>
+            </div>
+        </a>
+    </div>
+    {% empty %}
+    <p class="text">No events available.</p>
+    {% endfor %}
+</div>
+{% endblock %}

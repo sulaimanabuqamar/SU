@@ -1,0 +1,84 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" class="tabIcon" href="{% static '../media/images/tab-icon.png' %}" type="image/png">
+    <link rel="stylesheet" href="{% static 'CSS/base.css' %}">
+    {% block  style%}{% endblock %}
+</head>
+<body style="margin: 0px;">
+    <div class="popupBG" hidden onclick="if(event.srcElement == this) {this.hidden = true; document.getElementById('clubvarsityloginpopup').style.display = 'none'; document.getElementById('accounttypepopup').style.display = 'flex';}" onkeyup="if(event.key == 'Escape') {this.hidden = true; document.getElementById('clubvarsityloginpopup').style.display = 'none'; document.getElementById('accounttypepopup').style.display = 'flex';}">
+        <div id="accountPopupWindow">
+            <p class="subtitle" style="text-align: center; margin-bottom: 15px;">Welcome Back</p>
+            <p class="subtext">Sign in to access the student union</p>
+            <div class="centerer" id="accounttypepopup">
+                <button class="btn primary">Student or Faculty</button>
+                <button class="btn" onclick="document.getElementById('clubvarsityloginpopup').style.display = 'flex'; this.parentElement.style.display = 'none';">Club or Varsity</button>
+            </div>
+            <div class="centerer" id="clubvarsityloginpopup" style="height: 65%; display: none;">
+                <form method="post" style="display: flex; flex-direction: column;">
+                                <input type="hidden" name="csrfmiddlewaretoken" value="UoP53nvFOulJaaiA67W8DrnzybxCenJhkrtTV6DeKUfRemDdxt5bXjd3EwViT2yi">
+                                <input class="textfield" placeholder="Email">
+                                <input class="textfield" placeholder="Password">
+                                <input type="submit" class="btn primary" value="Sign In">
+                                <p class="subtext">Having Issues Signing In? <a href="mailto:sulaiman.abuqamar@amb.sch.ae" style="color: #1f355e; "> Contact Us</a></p>
+                            </form>
+            </div>
+            
+        </div>
+    </div>
+    <div class="navBar">
+        <div>
+            <a style="display: flex; align-items: center;" href="{% url 'home' %}">
+                <p class="logoText">STUDENTS' UNION</p>
+                <img class="logo" src="{% static '../media/images/su-white-logo.png' %}" alt="SU Logo">
+            </a>
+        </div>
+        <div style="display: flex; align-items: center; gap: 30px;">
+            <div class="dropdown">
+                <div class="dropbtn navText">What's On</div>
+                <div class="dropdown-content">
+                    <a href="{% url 'events' %}">
+                        <p class="navText" style="margin: 0px;">Events</p>
+                    </a>
+                    <a href="{% url 'news' %}">
+                        <p class="navText" style="margin: 0px;">News</p>
+                    </a>
+                </div>
+            </div>
+            <a href="{% url 'clubs' %}">
+                <p class="navText">Clubs & Societies</p>
+            </a>
+            <a href="{% url 'varsity' %}">
+                <p class="navText">Varsity Teams</p>
+            </a>
+            <!-- Popup of signin -->
+            <p class="navText" style="cursor: pointer;" onclick="document.getElementsByClassName('popupBG')[0].hidden = false;">Sign In</p>
+
+        </div>
+    </div>
+    <div class="content">
+        {% block content %}{% endblock %}
+    </div>
+    <div class="footer">
+        <p class="logoText">STUDENTS' UNION</p>
+        <img class="logo" src="{% static '../media/images/su-white-logo.png' %}" alt="SU Logo">
+    </div>
+</body>
+</html>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var dropdown = document.querySelector('.dropbtn');
+        dropdown.onclick = function(event) {
+            var dropdownContent = this.nextElementSibling;
+            if (dropdownContent.style.display === "block") {
+                dropdownContent.style.display = "none";
+            } else {
+                dropdownContent.style.display = "block";
+            }
+        }
+    });
+</script>

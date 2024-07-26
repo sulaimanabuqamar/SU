@@ -1,0 +1,25 @@
+{% extends 'Base.html' %}
+{% load static %}
+
+{% block style %}
+<title>{{ news.title }} - News Details</title> 
+{% endblock %}
+
+{% block content %}
+<div style="display: flex; gap: 100px">
+    <div style="display: flex; justify-content: space-between; flex-direction: column;">
+        <p class="pageTitle" style="margin: 0px;">{{ news.title }}</p>
+        <br>
+        <div class="articleDescriptionText">
+            <p>{{ news.text|linebreaks }}</p>
+        </div>
+    </div>
+    <div>
+        <img src="{{ news.cover.url }}" alt="{{ news.title }} Cover" class="articleCover">
+        <div class="tagBox" style="background: {{ news.author.color }};"> 
+            <p class="tagText">{{ news.author.name }}</p>
+        </div>
+        <p class="aboutText">{{ news.published_date }}</p> 
+    </div>
+</div>
+{% endblock %}

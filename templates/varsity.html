@@ -1,0 +1,24 @@
+{% extends 'Base.html' %}
+{% load static %}
+
+{% block style %}
+<title>SU - Varsity Teams</title>
+{% endblock %}
+
+{% block content %}
+<div>
+    <p class="pageTitle">Varsity Teams</p>
+</div>
+<div class="grid">
+    {% for varsity in varsities %}
+    <div>
+        <a href="{% url 'varsity_detail' varsity.id %}">
+            <img class="eventCover" style="border: {{ varsity.color }} 3px solid;" src="{{ varsity.logo.url }}" alt="{{ varsity.name }}">
+            <p class="text">{{ varsity.name }}</p>
+        </a>
+    </div>
+    {% empty %}
+    <p class="text">No varsity teams available.</p>
+    {% endfor %}
+</div>
+{% endblock %}

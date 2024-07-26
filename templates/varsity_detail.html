@@ -1,0 +1,26 @@
+{% extends 'Base.html' %}
+{% load static %}
+
+{% block style %}
+<title>{{ varsity.name }} - Details</title>
+{% endblock %}
+
+{% block content %}
+<div>
+    <p class="pageTitle">{{ varsity.name }}</p>
+    <p class="articleDescriptionText">{{ varsity.about }}</p>
+    <p class="subtitle">Players</p>
+    <div class="studentGrid">
+        {% for player in players %}
+        <div>
+            <a href="{% url 'student_detail' player.id %}">
+                <img src="{{ player.profile_picture.url }}" class="studentPFP" alt="{{ player.name }}">
+                <p class="text">{{ player.name }}</p>
+            </a>
+        </div>
+        {% empty %}
+        <p class="text">No players available.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
