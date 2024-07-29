@@ -36,7 +36,15 @@ class User(AbstractBaseUser):
     is_admin = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
+<<<<<<< HEAD
 
+=======
+    associated_student = models.ForeignKey("Student",null=True, on_delete=models.CASCADE)
+    associated_faculty = models.ForeignKey("Faculty",null=True, on_delete=models.CASCADE)
+    associated_club = models.ForeignKey("Club",null=True, on_delete=models.CASCADE)
+    associated_varsity = models.ForeignKey("Varsity",null=True, on_delete=models.CASCADE)
+    
+>>>>>>> origin/master
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['name']
 
