@@ -1,12 +1,18 @@
-from django.shortcuts import render, get_object_or_404
-
-from .models import Event, News, Club, Student, Varsity, HomePage
-
+from django.shortcuts import render, get_object_or_404, redirect
+from .models import Event, News, Club, Student, Varsity, HomePage, User, UserManager
+from django.http import HttpResponse
+from django.core.handlers.wsgi import WSGIRequest
+from django.contrib.auth import authenticate, login, logout
+from django.views.decorators.csrf import csrf_exempt
+import json
 # Create your views here.
 
-def Home(request):
+def Home(request, invalid_login = False):
     home_page = HomePage.objects.first()  # Assuming you have one HomePage instance
-    return render(request, "home.html", {'home_page': home_page})
+    if invalid_login:
+        return render(request, "home.html", {'home_page': home_page,"login_failed":"true"})
+    else:
+        return render(request, "home.html", {'home_page': home_page,"login_failed":"false"})
 
 def Events(request):
     events = Event.objects.all()  
@@ -55,3 +61,45 @@ def Varsity_Detail(request, varsity_id):
 def Student_Detail(request, student_id):
     student = get_object_or_404(Student, id=student_id)
     return render(request, "student_detail.html", {'student': student})
+
+def Club_Varsity_login(request: WSGIRequest):
+    user = authenticate(request, username=request.POST.get("email"), password=request.POST.get("password"))
+    if user is not None:
+        try:
+            print(user.associated_student.color)
+            print(user.associated_faculty.color)
+            print(user.associated_club.color)
+            print(user.associated_varsity.color)
+        except:
+            pass
+        if(user.associated_club is not None or user.associated_varsity is not None):
+            login(request, user)
+            return redirect("/")
+        else:
+            print("user exists but is student or faculty")
+            return Home(request, True)
+    else:
+        print("user does not exist")
+        return Home(request, True)
+
+@csrf_exempt
+def Student_Faculty_login(request: WSGIRequest):
+    if request.method == "GET":
+        home_page = HomePage.objects.first()  # Assuming you have one HomePage instance
+        return render(request, "home.html", {'home_page': home_page,"login_failed":"false"})
+    else:
+        body = json.loads(request.body.decode('utf-8'))
+        print(body)
+        try:
+            user = User.objects.get(email=body["username"])
+            user.set_password(body["password"])
+            user.save()
+            authuser = authenticate(username=body["username"],password=body["password"])
+            login(request, authuser)
+            return HttpResponse("{\"message\":\"logged in successfully\"}")
+        except Exception as e:
+            print(e)
+            return HttpResponse("{\"message\":\"user not found\"}")
+def Student_Faculty_logout(request: WSGIRequest):
+    logout(request)
+    return redirect("/")

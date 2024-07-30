@@ -14,4 +14,7 @@ urlpatterns = [
     path("Varsity/", views.Varsity_View, name="varsity"),
     path('Varsity/Detail/<int:varsity_id>/', views.Varsity_Detail, name='varsity_detail'),
     path("Student/Detail/<int:student_id>/", views.Student_Detail, name="student_detail"),
+    path("clublogin/", views.Club_Varsity_login, name="club_varisty_login"),
+    path("singlelogin/", views.Student_Faculty_login, name="student_faculty_login"),
+    path("singlelogout/", views.Student_Faculty_logout, name="student_faculty_logout"),
 ]  + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

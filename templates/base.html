@@ -6,6 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" class="tabIcon" href="{% static '../media/images/tab-icon.png' %}" type="image/png">
     <link rel="stylesheet" href="{% static 'CSS/base.css' %}">
+    {% comment %} <script src="https://alcdn.msauth.net/browser/2.18.0/js/msal-browser.min.js"></script> {% endcomment %}
+     <!-- msal.min.js can be used in the place of msal.js; included msal.js to make debug easy -->
+  <script src="https://alcdn.msauth.net/browser/2.30.0/js/msal-browser.js"
+  integrity="sha384-o4ufwq3oKqc7IoCcR08YtZXmgOljhTggRwxP2CLbSqeXGtitAxwYaUln/05nJjit"
+  crossorigin="anonymous"></script>
     {% block  style%}{% endblock %}
 </head>
 <body style="margin: 0px;">
@@ -14,14 +19,15 @@
             <p class="subtitle" style="text-align: center; margin-bottom: 15px;">Welcome Back</p>
             <p class="subtext">Sign in to access the student union</p>
             <div class="centerer" id="accounttypepopup">
-                <button class="btn primary">Student or Faculty</button>
+                <button class="btn primary" onclick="signIn()">Student or Faculty</button>
                 <button class="btn" onclick="document.getElementById('clubvarsityloginpopup').style.display = 'flex'; this.parentElement.style.display = 'none';">Club or Varsity</button>
             </div>
             <div class="centerer" id="clubvarsityloginpopup" style="height: 65%; display: none;">
-                <form method="post">
+                <form method="post" action="/clublogin/" class="centerer" style="height: unset;">
                     {% csrf_token %}
-                    <input class="textfield" placeholder="Email">
-                    <input class="textfield" placeholder="Password">
+                    <p class="subtext" id="wrongcred" hidden style="color: red">Incorrect Username or Password</p>
+                    <input class="textfield" name="email" placeholder="Email">
+                    <input class="textfield" type="password" name="password" placeholder="Password">
                     <input type="submit" class="btn primary" value="Sign In">
                     <p class="subtext">Having Issues Signing In? <a href="mailto:sulaiman.abuqamar@amb.sch.ae">Contact Us</a></p>
                 </form>
@@ -82,3 +88,18 @@
         }
     });
 </script>
+<script>
+    var loginfailed = {{ login_failed }};
+    if(loginfailed) {
+        document.getElementsByClassName("popupBG")[0].hidden = false;
+        document.getElementById('clubvarsityloginpopup').style.display = 'flex';
+        document.getElementById('wrongcred').hidden = false;
+        document.getElementById('accounttypepopup').style.display = 'none';
+    }
+    
+</script>
+<script src="{% static "js/authConfig.js" %}"></script>
+<script src="{% static "js/graphConfig.js" %}"></script>
+{% comment %} <script src="{% static "js/authPopup.js" %}"></script> {% endcomment %}
+<script src="{% static "js/authRedirect.js" %}"></script>
+<script src="{% static "js/graph.js" %}"></script>

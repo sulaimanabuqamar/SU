@@ -1,7 +1,7 @@
 
 from django.db import models
 from django.utils import timezone
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 
 # Custom user model manager for Students and Faculty
 class UserManager(BaseUserManager):
@@ -29,26 +29,22 @@ class UserManager(BaseUserManager):
         return user
 
 # Custom user model
-class User(AbstractBaseUser):
+class User(AbstractBaseUser, PermissionsMixin):
     name = models.CharField(max_length=255)
     email = models.EmailField(verbose_name="email", max_length=60, unique=True)
-    password = models.CharField(max_length=255)
     is_admin = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
-<<<<<<< HEAD
-
-=======
-    associated_student = models.ForeignKey("Student",null=True, on_delete=models.CASCADE)
-    associated_faculty = models.ForeignKey("Faculty",null=True, on_delete=models.CASCADE)
-    associated_club = models.ForeignKey("Club",null=True, on_delete=models.CASCADE)
-    associated_varsity = models.ForeignKey("Varsity",null=True, on_delete=models.CASCADE)
-    
->>>>>>> origin/master
+    associated_student = models.ForeignKey("Student",null=True, blank=True, on_delete=models.CASCADE)
+    associated_faculty = models.ForeignKey("Faculty",null=True, blank=True, on_delete=models.CASCADE)
+    associated_club = models.ForeignKey("Club",null=True, blank=True, on_delete=models.CASCADE)
+    associated_varsity = models.ForeignKey("Varsity",null=True, blank=True, on_delete=models.CASCADE)
+    objects = UserManager()
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['name']
 
-class Student(User):
+class Student(models.Model):
+    student_db_id = models.CharField(max_length=20, primary_key=True,help_text="Student ID")
     YEAR_CHOICES = [
         ('FR', 'Freshman'),
         ('SO', 'Sophomore'),
@@ -72,8 +68,8 @@ class Student(User):
     varsities = models.ManyToManyField('Varsity', related_name='students', blank=True)
     profile_picture = models.ImageField(upload_to='profiles/', null=True, blank=True, default='default-pfp.png/')
 
-class Faculty(User):
-    pass
+class Faculty(models.Model):
+    faculty_db_id = models.ForeignKey("User", primary_key=True, on_delete=models.CASCADE)
 
 class Club(models.Model):
     name = models.CharField(max_length=255)

@@ -71,7 +71,7 @@ TEMPLATES = [
         },
     },
 ]
-
+AUTH_USER_MODEL = "mainapp.User"
 WSGI_APPLICATION = "studentsunion.wsgi.application"
 
 

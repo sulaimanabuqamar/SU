@@ -13,6 +13,7 @@ class UserAdmin(BaseUserAdmin):
         (None, {'fields': ('email', 'password')}),
         ('Personal Info', {'fields': ('name',)}),
         ('Permissions', {'fields': ('is_admin', 'is_staff', 'is_active')}),
+        ('Account Type', {'fields': ('associated_student', 'associated_faculty', 'associated_club', 'associated_varsity')}),
     )
     add_fieldsets = (
         (None, {
@@ -25,13 +26,14 @@ class UserAdmin(BaseUserAdmin):
     filter_horizontal = ()
 
 class StudentAdmin(admin.ModelAdmin):
-    list_display = ('email', 'name', 'year_level', 'section')
+    list_display = ('student_db_id', 'year_level', 'section')
     list_filter = ('year_level', 'section')
     fieldsets = (
-        (None, {'fields': ('email', 'name', 'password', 'year_level', 'section', 'profile_picture')}),
+        (None, {'fields': ('student_db_id',)}),
+        (None, {'fields': ('year_level', 'section', 'profile_picture')}),
         ('Memberships', {'fields': ('clubs', 'varsities')}),
     )
-    search_fields = ('email', 'name')
+    search_fields = ('year_level', 'section')
     filter_horizontal = ('clubs', 'varsities')
 
 class ClubAdmin(admin.ModelAdmin):
