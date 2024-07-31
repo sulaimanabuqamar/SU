@@ -63,16 +63,19 @@ class EventAdmin(admin.ModelAdmin):
     search_fields = ('summary',)
 
 class NewsAdmin(admin.ModelAdmin):
-    list_display = ('author',  'title', 'text', 'summary', 'highlight', 'group', 'grade')
+    list_display = ('author',  'title', 'text', 'summary', 'highlight', 'group', 'grade', 'published_date')
     list_filter = ('highlight', 'group', 'grade')
     search_fields = ('summary',)
     fieldsets = (
-        (None, {'fields': ('author', 'cover', 'title', 'text', 'summary', 'highlight')}),
+        (None, {'fields': ('author', 'cover', 'title', 'text', 'summary', 'highlight', 'published_date')}),
         ('Visibility', {'fields': ('group', 'grade')}),
     )
+    
+class HomepageAdmin(admin.ModelAdmin):
+    fields = ['event_highlight_1', 'event_highlight_2', 'event_highlight_3', 'news_highlight_1', 'news_highlight_2', 'news_highlight_3', 'officer_highlight_1', 'officer_highlight_2', 'officer_highlight_3', 'officer_highlight_4']
 
 # Register your models here
-admin.site.register(HomePage)
+admin.site.register(HomePage, HomepageAdmin)
 admin.site.register(User, UserAdmin)
 admin.site.register(Student, StudentAdmin)
 admin.site.register(Club, ClubAdmin)

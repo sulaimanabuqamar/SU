@@ -123,7 +123,7 @@ class News(models.Model):
     cover = models.ImageField(upload_to='news_covers/')
     title =  models.CharField(max_length=100)
     text = models.TextField()
-    published_date = models.DateField(default=timezone.now)
+    published_date = models.DateTimeField(null=True, blank=True)
     summary = models.CharField(max_length=150)
     group = models.CharField(max_length=3, choices=GROUP_CHOICES, blank=True, null=True)
     grade = models.CharField(max_length=1, choices=GRADE_CHOICES, blank=True, null=True)
