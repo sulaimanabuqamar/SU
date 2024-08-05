@@ -61,7 +61,11 @@
                 <p class="navText">Varsity Teams</p>
             </a>
             <!-- Popup of signin -->
-            <p class="navText" style="cursor: pointer;" onclick="document.getElementsByClassName('popupBG')[0].hidden = false;">Sign In</p>
+            {% if user.is_authenticated %}
+                <p class="navText" style="cursor: pointer;" onclick="signOut()">Sign Out</p>
+            {% else %}
+                <p class="navText" style="cursor: pointer;" onclick="document.getElementsByClassName('popupBG')[0].hidden = false;">Sign In</p>
+            {% endif %}
 
         </div>
     </div>
