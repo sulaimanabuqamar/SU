@@ -17,6 +17,7 @@
 {% endblock %}
 
 {% block content %}
+<div class="centerer hirr">
 <p style="color: black; font-size: 90px; font-family: Inter; font-weight: 800; margin: 0px;">WELCOME TO AMBSU</p>
 <div style="width: 100%;display: flex;justify-content: space-around;">
     <a href="{% url 'event_detail' home_page.event_highlight_1.id %}">
@@ -70,5 +71,5 @@
         <p class="text">{{ home_page.officer_highlight_4.name }}</p>
     </a>
 </div> {% endcomment %}
-
+</div>
 {% endblock %}

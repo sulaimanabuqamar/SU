@@ -233,6 +233,15 @@ a {
     align-items: center;
     height: 50%;
 }
+.centerer.hirr {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    height: unset;
+    width: unset
+}
+
 .textfield {
     border: 1px solid #1F355E;
     width: 306px;

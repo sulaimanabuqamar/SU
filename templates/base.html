@@ -70,7 +70,7 @@
 
         </div>
     </div>
-    <div class="content">
+    <div class="content {% if request.path == "/" %}centerer hirr{% endif %} "> 
         {% block content %}{% endblock %}
     </div>
     <div class="footer">
