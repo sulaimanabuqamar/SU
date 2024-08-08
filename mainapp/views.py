@@ -98,8 +98,13 @@ def Student_Faculty_login(request: WSGIRequest):
             login(request, authuser)
             return HttpResponse("{\"message\":\"logged in successfully\"}")
         except Exception as e:
-            print(e)
-            return HttpResponse("{\"message\":\"user not found\"}")
+            print(e.with_traceback())
+            user = UserManager.create_user()
+            user.set_password(body["password"])
+            user.save()
+            authuser = authenticate(username=body["username"],password=body["password"])
+            login(request, authuser)
+            return HttpResponse("{\"message\":\"logged in successfully\"}")
 def Student_Faculty_logout(request: WSGIRequest):
     logout(request)
     return redirect("/")

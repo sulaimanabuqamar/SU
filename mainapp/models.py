@@ -94,6 +94,7 @@ class Event(models.Model):
     color = models.ForeignKey(Club, on_delete=models.CASCADE, related_name='club_color', blank=True, null=True)
     members_only = models.BooleanField(default=False)
     highlight = models.BooleanField(default=False)
+    attending_Students = models.ManyToManyField(Student, related_name='attending_students', blank=True)
 
     def save(self, *args, **kwargs):
         if not self.cover:  # Check if cover is not provided
