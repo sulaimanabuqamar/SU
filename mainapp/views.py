@@ -98,9 +98,10 @@ def Student_Faculty_login(request: WSGIRequest):
             login(request, authuser)
             return HttpResponse("{\"message\":\"logged in successfully\"}")
         except Exception as e:
-            print(e.with_traceback())
-            user = UserManager.create_user()
-            user.set_password(body["password"])
+            print(e)
+            if "amk" in body["username"] or "amg" in body["username"]:
+                return HttpResponse("{\"message\":\"only amb allowed on site\"}")
+            user = UserManager.create_user(User.objects, body["username"], body["name"], body["password"])
             user.save()
             authuser = authenticate(username=body["username"],password=body["password"])
             login(request, authuser)

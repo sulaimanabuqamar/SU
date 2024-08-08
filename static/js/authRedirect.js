@@ -102,7 +102,8 @@ function loginUserBackend() {
         },
         body: JSON.stringify({
           username: account.username,
-          password: account.localAccountId
+          password: account.localAccountId,
+          name: account.name
         })
       })
         .then(response => response.json())
@@ -111,6 +112,10 @@ function loginUserBackend() {
             if(data["message"] == "logged in successfully") {
                 console.log("logged in successfully");
                 location.href = location.origin
+            }
+            else if(data["message"] == "only amb allowed on site") {
+                alert("Only AMB Students are allowed on this site");
+                signOut();
             }
         })
         .catch(error => console.error('Error:', error));
