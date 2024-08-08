@@ -234,6 +234,7 @@ a {
     height: 50%;
 }
 .centerer.hirr {
+    gap: 30px;
     display: flex;
     justify-content: center;
     flex-direction: column;
