@@ -117,6 +117,14 @@ function loginUserBackend() {
                 alert("Only AMB Students are allowed on this site");
                 signOut();
             }
+            else if(data["message"] == "user created successfully complete student setup") {
+                showLoginPopup('finishsetupstudent', true);
+                document.getElementsByClassName('popupBG')[0].hidden = false;
+            }
+            else if(data["message"] == "faculty created successfully") {
+                location.href = location.origin
+            }
+            
         })
         .catch(error => console.error('Error:', error));
 }

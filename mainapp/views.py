@@ -1,10 +1,11 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Event, News, Club, Student, Varsity, HomePage, User, UserManager
+from .models import *
 from django.http import HttpResponse
 from django.core.handlers.wsgi import WSGIRequest
 from django.contrib.auth import authenticate, login, logout
 from django.views.decorators.csrf import csrf_exempt
 import json
+import random
 # Create your views here.
 
 def Home(request, invalid_login = False):
@@ -105,7 +106,27 @@ def Student_Faculty_login(request: WSGIRequest):
             user.save()
             authuser = authenticate(username=body["username"],password=body["password"])
             login(request, authuser)
-            return HttpResponse("{\"message\":\"logged in successfully\"}")
+            if "almawakeb" in body["username"]: 
+                string = ""
+                for i in range(10):
+                    string += random.choice("ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890")
+                fac = Faculty.objects.create(faculty_db_id=string)
+                fac.save()
+                user.associated_faculty = fac
+                user.save()
+                return HttpResponse("{\"message\":\"faculty created successfully\"}")
+            if "amb" in body["username"]: 
+                return HttpResponse("{\"message\":\"user created successfully complete student setup\"}")
 def Student_Faculty_logout(request: WSGIRequest):
     logout(request)
     return redirect("/")
+@csrf_exempt
+def Finish_Setup_Student(request: WSGIRequest):
+    if request.method == "POST":
+        student = Student.objects.create(student_db_id=request.POST.get("student_id"),year_level=request.POST.get("yearlevel"),section=request.POST.get("sectionletter"))
+        student.save()
+        request.user.associated_student = student
+        request.user.save()
+        return redirect("/")
+    else:
+        return HttpResponse("{\"message\":\"ONLY POST ALLOWED\"}")

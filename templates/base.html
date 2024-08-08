@@ -14,13 +14,35 @@
     {% block  style%}{% endblock %}
 </head>
 <body style="margin: 0px;">
-    <div class="popupBG" hidden onclick="if(event.srcElement == this) {this.hidden = true; document.getElementById('clubvarsityloginpopup').style.display = 'none'; document.getElementById('accounttypepopup').style.display = 'flex';}" onkeyup="if(event.key == 'Escape') {this.hidden = true; document.getElementById('clubvarsityloginpopup').style.display = 'none'; document.getElementById('accounttypepopup').style.display = 'flex';}">
+    <script>
+        var ids = ["accounttypepopup","clubvarsityloginpopup","finishsetupstudent"];
+        function showLoginPopup(id, notdismissable=false) {
+            if(notdismissable) {
+                document.getElementsByClassName("popupBG")[0].onclick = "";
+            }
+            else {
+                document.getElementsByClassName("popupBG")[0].onclick = "if(event.srcElement == this) {this.hidden = true; showLoginPopup('accounttypepopup');}";
+            }
+            for(var i = 0; i < ids.length; i++) {
+                console.log(ids[i]);
+                if(ids[i] == id) {
+                    console.warn(ids[i], "Passed");
+                    document.getElementById(id).style.display = 'flex';
+                }
+                else {
+                    console.log(ids[i], "Hidden");
+                    document.getElementById(ids[i]).style.display = 'none';
+                }
+            }
+        }
+    </script>
+    <div class="popupBG" hidden onclick="if(event.srcElement == this) {this.hidden = true; showLoginPopup('accounttypepopup');}">
         <div id="accountPopupWindow">
             <p class="subtitle" style="text-align: center; margin-bottom: 15px;">Welcome Back</p>
             <p class="subtext">Sign in to access the student union</p>
             <div class="centerer" id="accounttypepopup">
                 <button class="btn primary" onclick="signIn()">Student or Faculty</button>
-                <button class="btn" onclick="document.getElementById('clubvarsityloginpopup').style.display = 'flex'; this.parentElement.style.display = 'none';">Club or Varsity</button>
+                <button class="btn" onclick="showLoginPopup('clubvarsityloginpopup');">Club or Varsity</button>
                 <br>
             </div>
             <div class="centerer" id="clubvarsityloginpopup" style="height: 65%; display: none;">
@@ -33,7 +55,32 @@
                     <p class="subtext">Having Issues Signing In? <a href="mailto:sulaiman.abuqamar@amb.sch.ae">Contact Us</a></p>
                 </form>
             </div>
-            
+            <div class="centerer" id="finishsetupstudent" style="height: 65%; display: none;">
+                <form method="post" action="/finishSetup/Student/" class="centerer" style="height: unset;">
+                    {% csrf_token %}
+                    <input class="textfield" name="student_id" required placeholder="Student ID">
+                    <select class="textfield" name="yearlevel" required>
+                        <option value="none" disabled selected>Select Grade Level</option>
+                        <option value="FR">Freshman (Gr 9)</option>
+                        <option value="SO">Sophomore (Gr 10)</option>
+                        <option value="JR">Junior (Gr 11)</option>
+                        <option value="SR">Senior (Gr 12)</option>
+                    </select>
+                    <select class="textfield" name="sectionletter" required>
+                        <option value="none" disabled selected>Select Section</option>
+                        <option value="A">A</option>
+                        <option value="B">B</option>
+                        <option value="C">C</option>
+                        <option value="D">D</option>
+                        <option value="E">E</option>
+                        <option value="F">F</option>
+                        <option value="G">G</option>
+                        <option value="H">H</option>
+                        <option value="I">I</option>
+                    </select>
+                    <input type="submit" class="btn primary" value="Finish">
+                </form>
+            </div>
         </div>
     </div>
     <div class="navBar">
@@ -97,7 +144,7 @@
     var loginfailed = {{ login_failed }};
     if(loginfailed) {
         document.getElementsByClassName("popupBG")[0].hidden = false;
-        document.getElementById('clubvarsityloginpopup').style.display = 'flex';
+        showLoginPopup('clubvarsityloginpopup');
         document.getElementById('wrongcred').hidden = false;
         document.getElementById('accounttypepopup').style.display = 'none';
     }

@@ -69,7 +69,7 @@ class Student(models.Model):
     profile_picture = models.ImageField(upload_to='profiles/', null=True, blank=True, default='default-pfp.png/')
 
 class Faculty(models.Model):
-    faculty_db_id = models.ForeignKey("User", primary_key=True, on_delete=models.CASCADE)
+    faculty_db_id = models.CharField(max_length=20, primary_key=True,help_text="Faculty ID")
 
 class Club(models.Model):
     name = models.CharField(max_length=255)

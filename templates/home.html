@@ -51,25 +51,25 @@
     </a>
 </div>
 <div style="text-align: left; width: 100%;">
-    <p class="hpsubtitle">OFFICIERS OF THE SU</p>
+    <p class="hpsubtitle">OFFICERS OF THE SU</p>
 </div> 
-{% comment %} <div style="width: 100%;display: flex;justify-content: space-between;">
-    <a href="{% url 'student_detail' home_page.officer_highlight_1.id %}">
+<div style="width: 100%;display: flex;justify-content: space-between;">
+    <a href="/Student/Detail/{{home_page.officer_highlight_1.id}}">
         <img class="studentPFP" src="{{ home_page.officer_highlight_1.profile_picture.url }}" alt="Officer Highlight 1">
         <p class="text">{{ home_page.officer_highlight_1.name }}</p>
     </a>
-    <a href="{% url 'student_detail' home_page.officer_highlight_2.id %}">
+    <a href="/Student/Detail/{{home_page.officer_highlight_2.id}}">
         <img class="studentPFP" src="{{ home_page.officer_highlight_2.profile_picture.url }}" alt="Officer Highlight 1">
         <p class="text">{{ home_page.officer_highlight_2.name }}</p>
     </a>
-    <a href="{% url 'student_detail' home_page.officer_highlight_3.id %}">
+    <a href="/Student/Detail/{{home_page.officer_highlight_3.id}}">
         <img class="studentPFP" src="{{ home_page.officer_highlight_3.profile_picture.url }}" alt="Officer Highlight 1">
         <p class="text">{{ home_page.officer_highlight_3.name }}</p>
     </a>
-    <a href="{% url 'student_detail' home_page.officer_highlight_4.id %}">
+    <a href="/Student/Detail/{{home_page.officer_highlight_4.id}}">
         <img class="studentPFP" src="{{ home_page.officer_highlight_4.profile_picture.url }}" alt="Officer Highlight 1">
         <p class="text">{{ home_page.officer_highlight_4.name }}</p>
     </a>
-</div> {% endcomment %}
+</div>
 </div>
 {% endblock %}
