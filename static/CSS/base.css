@@ -197,7 +197,6 @@ a {
     top: calc( 50% - 175px );
     left: calc( 50% - 200px );
     width: 400px;
-    height: 270px;
     border-radius: 30px;
     z-index:5;
     background-color: white;
