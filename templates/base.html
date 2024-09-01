@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" class="tabIcon" href="{% static '../media/images/tab-icon.png' %}" type="image/png">
     <link rel="stylesheet" href="{% static 'CSS/base.css' %}">
+    <link rel="stylesheet" href="{% static 'CSS/fonts.css' %}">
     {% comment %} <script src="https://alcdn.msauth.net/browser/2.18.0/js/msal-browser.min.js"></script> {% endcomment %}
      <!-- msal.min.js can be used in the place of msal.js; included msal.js to make debug easy -->
   <script src="https://alcdn.msauth.net/browser/2.30.0/js/msal-browser.js"
@@ -37,7 +38,7 @@
         }
     </script>
     <div class="popupBG" hidden onclick="if(event.srcElement == this) {this.hidden = true; showLoginPopup('accounttypepopup');}">
-        <div id="accountPopupWindow">
+        <div id="accountPopupWindow" class="accountPopupWindow">
             <p class="subtitle" style="text-align: center; margin-bottom: 15px;">Welcome Back</p>
             <p class="subtext">Sign in to access the student union</p>
             <div class="centerer" id="accounttypepopup">
@@ -61,10 +62,10 @@
                     <input class="textfield" name="student_id" required placeholder="Student ID">
                     <select class="textfield" name="yearlevel" required>
                         <option value="none" disabled selected>Select Grade Level</option>
-                        <option value="FR">Freshman (Gr 9)</option>
-                        <option value="SO">Sophomore (Gr 10)</option>
-                        <option value="JR">Junior (Gr 11)</option>
-                        <option value="SR">Senior (Gr 12)</option>
+                        <option value="9">Freshman (Gr 9)</option>
+                        <option value="10">Sophomore (Gr 10)</option>
+                        <option value="11">Junior (Gr 11)</option>
+                        <option value="12">Senior (Gr 12)</option>
                     </select>
                     <select class="textfield" name="sectionletter" required>
                         <option value="none" disabled selected>Select Section</option>
@@ -77,6 +78,7 @@
                         <option value="G">G</option>
                         <option value="H">H</option>
                         <option value="I">I</option>
+                        <option value="J">J</option>
                     </select>
                     <input type="submit" class="btn primary" value="Finish">
                 </form>
@@ -110,7 +112,11 @@
             </a>
             <!-- Popup of signin -->
             {% if user.is_authenticated %}
-                <p class="navText" style="cursor: pointer;" onclick="signOut()">Sign Out</p>
+                {% if "profile" in url %}
+                <p class="navText" style="cursor: pointer;" onclick="signOut();">Sign Out</p>
+                {% else %}
+                <a href="/profile"><p class="navText" style="cursor: pointer;">Profile</p></a>
+                {% endif %}
             {% else %}
                 <p class="navText" style="cursor: pointer;" onclick="document.getElementsByClassName('popupBG')[0].hidden = false;">Sign In</p>
             {% endif %}

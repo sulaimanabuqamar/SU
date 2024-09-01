@@ -7,19 +7,55 @@
 
 {% block content %}
 <div>
-    <p class="pageTitle">{{ varsity.name }}</p>
-    <p class="articleDescriptionText">{{ varsity.about }}</p>
+    <div class="profileRow" style="align-items: start;">
+        <div>
+            <p class="pageTitle" style="margin-top: 0px;">{{ varsity.name }}</p>
+            <p class="articleDescriptionText">{{ varsity.about }}</p>
+        </div>
+        <div style="display: flex; flex-direction: column;">
+        <img src="{{ varsity.logo.url }}" style="border: {{ club.color }} 3px solid;" alt="{{ club.name }} Logo" class="articleCover">
+        {% for link in links %}
+            <a class="links" href="{{link.link }}" target="_blank">{{ link.name }}</a>
+        {% endfor %}
+        </div>
+    </div>
+    <p class="subtitle">Captains</p>
+    <div class="studentGrid">
+        {% for captain in captains %}
+        <div>
+            <a href="{% url 'student_detail' captain.id %}">
+                <img src="/media/{{ captain.associated_student.profile_picture }}" class="studentPFP" alt="{{ captain.name }}">
+                <p class="text">{{ captain.name }}</p>
+            </a>
+        </div>
+        {% empty %}
+        <p class="text">No captains available.</p>
+        {% endfor %}
+    </div>
     <p class="subtitle">Players</p>
     <div class="studentGrid">
         {% for player in players %}
         <div>
             <a href="{% url 'student_detail' player.id %}">
-                <img src="{{ player.profile_picture.url }}" class="studentPFP" alt="{{ player.name }}">
+                <img src="/media/{{ player.associated_student.profile_picture }}" class="studentPFP" alt="{{ player.name }}">
                 <p class="text">{{ player.name }}</p>
             </a>
         </div>
         {% empty %}
         <p class="text">No players available.</p>
+        {% endfor %}
+    </div>
+    <p class="subtitle">Coaches</p>
+    <div class="studentGrid">
+        {% for coach in coaches %}
+        <div>
+            <a href="{% url 'student_detail' coach.id %}">
+                <img src="/media/{{ coach.associated_faculty.profile_picture }}" class="studentPFP" alt="{{ coach.name }}">
+                <p class="text">{{ coach.name }}</p>
+            </a>
+        </div>
+        {% empty %}
+        <p class="text">No captains available.</p>
         {% endfor %}
     </div>
 </div>

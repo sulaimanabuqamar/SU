@@ -21,7 +21,8 @@ def Events(request):
 
 def Event_Detail(request, event_id):
     event = Event.objects.get(id=event_id)
-    return render(request, "event_detail.html", {'event': event})
+    links = event.links.all()
+    return render(request, "event_detail.html", {'event': event, 'links': links})
 
 def News_View(request):
     news = News.objects.all()
@@ -29,7 +30,8 @@ def News_View(request):
 
 def News_Detail(request, news_id):
     news = News.objects.get(id=news_id)
-    return render(request, "news_detail.html", {'news': news})
+    links = news.links.all()
+    return render(request, "news_detail.html", {'news': news, 'links': links})
 
 def Clubs(request):
     clubs = Club.objects.all() 
@@ -41,13 +43,17 @@ def Club_Detail(request, club_id):
     heads = club.heads.all()  
     leadership = club.leadership.all()  
     members = club.members.all()  
+    advisors = club.advisors.all()
+    links = club.links.all() 
 
     return render(request, "club_detail.html", {
         'club': club,
         'events': events,
         'heads': heads, 
         'leadership': leadership,
-        'members': members  
+        'members': members, 
+        'advisors': advisors,
+        'links': links
     })
 
 def Varsity_View(request):
@@ -56,8 +62,11 @@ def Varsity_View(request):
 
 def Varsity_Detail(request, varsity_id):
     varsity = get_object_or_404(Varsity, id=varsity_id) 
-    players = varsity.members.all()  
-    return render(request, "varsity_detail.html", {'varsity': varsity, 'players': players})
+    captains = varsity.captains.all()
+    players = varsity.players.all()  
+    coaches = varsity.coaches.all()
+    links = varsity.links.all()
+    return render(request, "varsity_detail.html", {'varsity': varsity, 'players': players, 'captains': captains, 'coaches': coaches, 'links':links}) 
 
 def Student_Detail(request, student_id):
     student = get_object_or_404(Student, id=student_id)
@@ -123,10 +132,36 @@ def Student_Faculty_logout(request: WSGIRequest):
 @csrf_exempt
 def Finish_Setup_Student(request: WSGIRequest):
     if request.method == "POST":
-        student = Student.objects.create(student_db_id=request.POST.get("student_id"),year_level=request.POST.get("yearlevel"),section=request.POST.get("sectionletter"))
+        student = Student.objects.create(student_db_id=request.POST.get("student_id"),year_level=int(request.POST.get("yearlevel")),section=request.POST.get("sectionletter"))
         student.save()
         request.user.associated_student = student
         request.user.save()
         return redirect("/")
     else:
         return HttpResponse("{\"message\":\"ONLY POST ALLOWED\"}")
+def UserProfile(request: WSGIRequest):
+    if request.user is None:
+        return redirect("/")
+    else:
+        userType = ""
+        memberCount = 0
+        clubSlashMembers = None
+        if request.user.associated_student is not None:
+            userType = "student"
+            clubSlashMembers = {"clubs":request.user.associated_student.clubs.all(),"varsities":request.user.associated_student.varsities.all()}
+        elif request.user.associated_faculty is not None:
+            userType = "faculty"
+        elif request.user.associated_club is not None:
+            userType = "club"
+            memberCount = request.user.associated_club.members.all().count()
+            clubSlashMembers = request.user.associated_club.members.all()
+        elif request.user.associated_varsity is not None:
+            userType = "varsity"
+            memberCount = request.user.associated_varsity.players.all().count()
+            clubSlashMembers = request.user.associated_varsity.players.all()
+        allUsers = []
+        for user in User.objects.all():
+            if user.associated_student is not None:
+                allUsers.append(user)
+        # allUsers = User.objects.all() 
+        return render(request, "profile.html", {'url':request.build_absolute_uri(), 'user': request.user, 'userType': userType, 'memberCount': memberCount,"clubSlashMembers": clubSlashMembers, 'allUsers': allUsers})

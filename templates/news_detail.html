@@ -19,7 +19,10 @@
         <div class="tagBox" style="background: {{ news.author.color }};"> 
             <p class="tagText">{{ news.author.name }}</p>
         </div>
-        <p class="aboutText">{{ news.published_date }}</p> 
+        <p class="aboutText">{{ news.published_date }}</p>
+        {% for link in links %}
+            <a class="links" href="{{link.link }}" target="_blank">{{ link.name }}</a>, 
+        {% endfor %}
     </div>
 </div>
 {% endblock %}

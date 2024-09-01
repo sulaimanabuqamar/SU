@@ -4,7 +4,7 @@ from django.contrib import admin
 
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from .models import User, Student, Club, Event, News, Varsity, HomePage
+from .models import *
 
 class UserAdmin(BaseUserAdmin):
     list_display = ('email', 'name', 'is_admin', 'is_staff')
@@ -35,26 +35,36 @@ class StudentAdmin(admin.ModelAdmin):
     )
     search_fields = ('year_level', 'section')
     filter_horizontal = ('clubs', 'varsities')
+class FacultyAdmin(admin.ModelAdmin):
+    list_display = ('faculty_db_id',)
+    list_filter = ('faculty_db_id',)
+    fieldsets = (
+        (None, {'fields': ('faculty_db_id',)}),
+    )
+    search_fields = ('faculty_db_id',)
 
 class ClubAdmin(admin.ModelAdmin):
     list_display = ('name', 'email')  # Display name and email in the list view
     search_fields = ('name', 'email')  # Allow searching by name and email
-    filter_horizontal = ('heads', 'leadership', 'members', 'events')  # Use a horizontal filter for many-to-many fields
+    filter_horizontal = ('heads', 'leadership', 'members', 'advisors', 'events')  # Use a horizontal filter for many-to-many fields
 
     fieldsets = (
-        (None, {'fields': ('name', 'email', 'password', 'about', 'logo', 'color')}),
-        ('Membership', {'fields': ('heads', 'leadership', 'members')}),
+        (None, {'fields': ('name', 'email', 'password', 'about', 'logo', 'color', 'links')}),
+        ('Membership', {'fields': ('heads', 'leadership', 'members', 'advisors')}),
         ('Events', {'fields': ('events',)}),
     )
 
 class VarsityAdmin(admin.ModelAdmin):
     list_display = ('name', 'email')  # Display name and email in the list view
     search_fields = ('name', 'email')  # Allow searching by name and email
-    filter_horizontal = ('members',)  # Use a horizontal filter for many-to-many fields
+    filter_horizontal = ('captains', 'players', 'coaches')  # Use a horizontal filter for many-to-many fields
 
     fieldsets = (
-        (None, {'fields': ('name', 'email', 'password', 'about', 'logo', 'color')}),
-        ('Players', {'fields': ('members',)}),
+        (None, {'fields': ('name', 'email', 'password', 'about', 'logo', 'color', 'links')}),
+        ('Captains', {'fields': ('captains',)}),
+        ('Players', {'fields': ('players',)}), 
+        ('Coaches', {'fields': ('coaches',)}),
+
     )
 
 class EventAdmin(admin.ModelAdmin):
@@ -67,18 +77,24 @@ class NewsAdmin(admin.ModelAdmin):
     list_filter = ('highlight', 'group', 'grade')
     search_fields = ('summary',)
     fieldsets = (
-        (None, {'fields': ('author', 'cover', 'title', 'text', 'summary', 'highlight', 'published_date')}),
+        (None, {'fields': ('author', 'cover', 'title', 'text', 'summary', 'highlight', 'published_date', 'links')}),
         ('Visibility', {'fields': ('group', 'grade')}),
     )
     
 class HomepageAdmin(admin.ModelAdmin):
     fields = ['event_highlight_1', 'event_highlight_2', 'event_highlight_3', 'news_highlight_1', 'news_highlight_2', 'news_highlight_3', 'officer_highlight_1', 'officer_highlight_2', 'officer_highlight_3', 'officer_highlight_4']
-
+class LinksAdmin(admin.ModelAdmin):
+    list_display = ('name',  'link')
+    list_filter = ('name', 'link')
+    search_fields = ('name','link')
+    
 # Register your models here
 admin.site.register(HomePage, HomepageAdmin)
 admin.site.register(User, UserAdmin)
 admin.site.register(Student, StudentAdmin)
+admin.site.register(Faculty, FacultyAdmin)
 admin.site.register(Club, ClubAdmin)
 admin.site.register(Varsity, VarsityAdmin)
 admin.site.register(Event, EventAdmin)
-admin.site.register(News, NewsAdmin)
+admin.site.register(Links, LinksAdmin) 
+admin.site.register(News, NewsAdmin) 

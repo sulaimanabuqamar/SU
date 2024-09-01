@@ -16,6 +16,9 @@
             </div>
             <div>
                 <img src="{{ club.logo.url }}" style="border: {{ club.color }} 3px solid;" alt="{{ club.name }} Logo" class="articleCover">
+                {% for link in links %}
+                    <a class="links" href="{{link.link }}" target="_blank">{{ link.name }}</a>
+                {% endfor %}
             </div>
         </div>
         <p class="subtitle">Heads</p>
@@ -52,6 +55,16 @@
             </div>
             {% empty %}
             <p class="text">No members available.</p>
+            {% endfor %}
+        </div>
+        <p class="subtitle">Advisors</p>
+        <div class="studentGrid">
+            {% for advisor in advisors %}
+            <div>
+                <p class="text">• {{ advisor.name }}</p>
+            </div>
+            {% empty %}
+            <p class="text">No advisors available.</p>
             {% endfor %}
         </div>
         <p class="subtitle">Events</p>

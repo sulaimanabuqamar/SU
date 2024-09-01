@@ -76,6 +76,12 @@ a {
     font-family: Inter; 
     font-weight: 800;
 }
+.pageSubtitle {
+    color: black; 
+    font-size: 30px; 
+    font-family: Inter; 
+    font-weight: 800;
+}
 
 .text {
     color: black; 
@@ -96,6 +102,11 @@ a {
     font-size: 14px; 
     font-family: Inter; 
     font-weight: 400;
+}
+.aboutText.sidebar {
+    max-width: 300px;
+    word-break: normal;
+    word-wrap: normal;
 }
 
 .grid {
@@ -192,7 +203,7 @@ a {
     background: rgba(0, 0, 0, 0.5);
     z-index:4;
 }
-#accountPopupWindow {
+.accountPopupWindow {
     position: fixed;
     top: calc( 50% - 175px );
     left: calc( 50% - 200px );
@@ -219,6 +230,14 @@ a {
     background-color: #1F355E;
     color: white;
 }
+.btn.empty {
+    border: none;
+    width: unset;
+    height: unset;
+    background-color: transparent;
+    margin: 0px;
+    padding: 0px;
+}
 .btn:hover {
     transform: translateY(-2px);
 }
@@ -232,6 +251,9 @@ a {
     flex-direction: column;
     align-items: center;
     height: 50%;
+}
+.centerer.huns {
+    height: unset;
 }
 .centerer.hirr {
     gap: 30px;
@@ -262,5 +284,14 @@ a {
     text-align: center;
     font-size: 14px;
     color: #949494;
+    margin-top: 10px;
+}
+.profileRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.links {
+    font-family: Inter;
     margin-top: 10px;
 }

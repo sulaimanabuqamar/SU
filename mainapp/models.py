@@ -1,9 +1,15 @@
 
+from typing import Iterable
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
-
+from django.core import exceptions
 # Custom user model manager for Students and Faculty
+
+class Links(models.Model):
+    name = models.CharField(max_length=10000, primary_key=True)
+    link = models.URLField()
+
 class UserManager(BaseUserManager):
     def create_user(self, email, name, password=None):
         if not email:
@@ -62,27 +68,48 @@ class Student(models.Model):
         ('H', 'H'),
         ('I', 'I'),
     ]
-    year_level = models.CharField(max_length=2, choices=YEAR_CHOICES)
+    year_level = models.IntegerField(blank=True, null=True)
     section = models.CharField(max_length=1, choices=SECTION_CHOICES)
     clubs = models.ManyToManyField('Club', related_name='students', blank=True)
     varsities = models.ManyToManyField('Varsity', related_name='students', blank=True)
     profile_picture = models.ImageField(upload_to='profiles/', null=True, blank=True, default='default-pfp.png/')
-
+    year_level_title = models.CharField(max_length=10, blank=True)
+    def save(self, *args, **kwargs):
+        # super().save(*args, **kwargs)
+        print(self.year_level)
+        # print(type(self.year_level))
+        if int(self.year_level) == 9:
+            self.year_level_title = "Freshman"
+        elif int(self.year_level) == 10:
+            self.year_level_title = "Sophomore"
+        elif int(self.year_level) == 11:
+            self.year_level_title = "Junior"
+        elif int(self.year_level) == 12:
+            self.year_level_title = "Senior"
+        else:
+            print("error not hs")
+            self.year_level_title = "Underage" 
+        print(self.year_level_title)
+        
+        return super().save(*args, **kwargs)
 class Faculty(models.Model):
     faculty_db_id = models.CharField(max_length=20, primary_key=True,help_text="Faculty ID")
+    profile_picture = models.ImageField(upload_to='profiles/', null=True, blank=True, default='default-pfp.png/')
 
 class Club(models.Model):
     name = models.CharField(max_length=255)
     email = models.EmailField(max_length=255)
     password = models.CharField(max_length=255)
-    heads = models.ManyToManyField(Student, related_name='head_clubs', blank=True)
-    leadership = models.ManyToManyField(Student, related_name='leadership_roles', blank=True)
-    members = models.ManyToManyField(Student, related_name='membership_clubs', blank=True)
+    heads = models.ManyToManyField(User, related_name='head_clubs', blank=True)
+    leadership = models.ManyToManyField(User, related_name='leadership_roles', blank=True)
+    members = models.ManyToManyField(User, related_name='membership_clubs', blank=True)
+    advisors = models.ManyToManyField(User, related_name='advisor_clubs', blank=True)
     events = models.ManyToManyField('Event', related_name='clubs', blank=True)
     about = models.TextField()
     logo = models.ImageField(upload_to='clubs_logos/')
     color = models.CharField(max_length=7)  # Hex color code
-
+    links = models.ManyToManyField(Links, related_name='club_links', blank=True)
+    
 class Event(models.Model):
     author = models.ForeignKey(Club, on_delete=models.CASCADE, related_name='authored_events')
     cover = models.ImageField(upload_to='event_covers/', blank=True, null=True)  # Remove default and allow blank/null
@@ -95,6 +122,7 @@ class Event(models.Model):
     members_only = models.BooleanField(default=False)
     highlight = models.BooleanField(default=False)
     attending_Students = models.ManyToManyField(Student, related_name='attending_students', blank=True)
+    links = models.ManyToManyField(Links, related_name='events_links', blank=True)
 
     def save(self, *args, **kwargs):
         if not self.cover:  # Check if cover is not provided
@@ -129,7 +157,7 @@ class News(models.Model):
     group = models.CharField(max_length=3, choices=GROUP_CHOICES, blank=True, null=True)
     grade = models.CharField(max_length=1, choices=GRADE_CHOICES, blank=True, null=True)
     highlight = models.BooleanField(default=False)
-
+    links = models.ManyToManyField(Links, related_name='news_links', blank=True)
     def __str__(self):
         return self.summary
 
@@ -137,11 +165,14 @@ class Varsity(models.Model):
     name = models.CharField(max_length=255)
     email = models.EmailField(max_length=255)
     password = models.CharField(max_length=255)
-    members = models.ManyToManyField(Student, related_name='varsity_memberships', blank=True)
+    players = models.ManyToManyField(User, related_name='varsity_players', blank=True)
+    captains = models.ManyToManyField(User, related_name='varsity_captains', blank=True)
+    coaches = models.ManyToManyField(User, related_name='varsity_coaches', blank=True)
     events = models.ForeignKey('Event', on_delete=models.CASCADE, blank=True, null=True)
     about = models.TextField()
     logo = models.ImageField(upload_to='varsities_logos/')
     color = models.CharField(max_length=7)  # Hex color code
+    links = models.ManyToManyField(Links, related_name='varsity_links', blank=True)
 
 class HomePage(models.Model):
     event_highlight_1 = models.ForeignKey(Event, related_name='home_event_highlight_1', on_delete=models.CASCADE)
@@ -155,18 +186,3 @@ class HomePage(models.Model):
     officer_highlight_3 = models.ForeignKey(Student, related_name='home_officer_highlight_3', on_delete=models.CASCADE, null=True)
     officer_highlight_4 = models.ForeignKey(Student, related_name='home_officer_highlight_4', on_delete=models.CASCADE, null=True)
     
-class Links():
-    owner = models.CharField()
-    name = models.CharField()
-    link = models.URLField()
-    
-class Socials():
-    NAME_CHOICES = [
-    ('Insta', 'Instagram'),
-    ('TT', 'TikTok'),
-    ('LI', 'LinkedIn'),
-    ]
-        
-    owner = models.CharField()
-    name = models.CharField(choices=NAME_CHOICES)
-    link = models.URLField()

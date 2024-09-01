@@ -24,6 +24,9 @@
         </div>
         <p class="aboutText">{{ event.date }}</p>
         <p class="aboutText">{{ event.location }}</p>
+        {% for link in links %}
+            <a class="links" href="{{link.link }}" target="_blank">{{ link.name }}</a>, 
+        {% endfor %}
     </div>
 </div>
 {% endblock %}
