@@ -1,0 +1,144 @@
+{% extends 'Base.html' %}
+{% load static %}
+{% load custom_tags %}
+
+{% block style %}
+<title>SU - Modify Event</title>
+{% endblock %}
+
+{% block content %}
+<div>
+    <p class="pageTitle">Modify Event</p>
+</div>
+<form method="post" class="profileRow" style="align-items: start;" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div style="display: flex; flex-direction: column;">
+    <p class="subtext" id="wrongcred" hidden style="color: red">Incorrect Username or Password</p>
+    <input class="textfield" required name="title" placeholder="Title" value="{{event.title}}">
+    <textarea class="textfield" required name="content" placeholder="Content" style="width: 600px; height: 200px; padding-top: 10px;">{{ event.text }}</textarea>
+    <input class="textfield" required name="summary" placeholder="Summary" style="width: 600px;" value="{{event.summary}}">
+    <input class="textfield" required name="date" type="date" placeholder="Date Of Event">
+    <input class="textfield" name="location" placeholder="Location Of Event (optional)" value="{{event.location}}">
+    <script>
+        var datestr = "{{event.date}}";
+        var date = new Date(datestr);
+        document.getElementsByName("date")[0].value = date.toISOString().split("T")[0];
+    </script>
+    <select class="textfield" name="gradefilter">
+        <option value="ngr" selected>All Year Levels</option>
+        <option value="12">Seniors (Gr 12) Only</option>
+        <option value="11">Juniors (Gr 11) Only</option>
+        <option value="10">Sophomores (Gr 10) Only</option>
+        <option value="9">Freshmen (Gr 9) Only</option>
+    </select>
+    <select class="textfield" name="sectionfilter" >
+        <option value="nosec" selected>All Sections</option>
+        <option value="A">A</option>
+        <option value="B">B</option>
+        <option value="C">C</option>
+        <option value="D">D</option>
+        <option value="E">E</option>
+        <option value="F">F</option>
+        <option value="G">G</option>
+        <option value="H">H</option>
+        <option value="I">I</option>
+        <option value="J">J</option>
+    </select>
+    <script>
+        document.getElementsByName("gradefilter")[0].value = "{{event.group}}";
+        document.getElementsByName("sectionfilter")[0].value = "{{event.grade}}";
+    </script>
+    <textarea class="textfield" name="links" placeholder="Links (One link per line, text to show first then link separated by space)" style="width: 600px; height: 100px;">{{links}}</textarea>
+<div id="attendeefield">
+    <p class="aboutText">Attending Members: </p>
+    <input class="textfield" placeholder="Search..." style="margin: 0px; width: 100%;" id="memberSearch">
+    <div class="container" id="memberGrid">
+        {% for member in allUsers %}
+        <div class="profileRow" style="border: black 3px solid; border-radius: 15px; padding: 10px; gap: 10px; margin-bottom: 10px;">
+            <div style="display: flex; flex-direction: row; align-items: center; gap: 10px;">
+            <img class="eventCover" style=" width: 50px; height: 50px; margin-right: 10px;" src="/media/{{ member.associated_student.profile_picture }}" alt="pfp">
+            <p class="text">{{ member.name }}</p>
+            <p class="aboutText">{{ member.associated_student.year_level }}{{ member.associated_student.section }}</p>
+            </div>
+            <input type="checkbox" class="btn empty" name="{{member.email}}" {% getUserAttending member.email event.id %}>
+        </div>
+        {% endfor %}
+    </div>
+    
+</div>
+<label style="font-family: Inter; margin-left: 10px;"><input name="highlight" type="checkbox" checked> Highlight</label>
+<label style="font-family: Inter; margin-left: 10px;"><input name="membersonly" type="checkbox" {{membersonly}}> Members Only</label>
+    <label style="font-family: Inter; margin-left: 10px;"><input name="emailstudent" type="checkbox" > Email Student</label>
+    <label style="font-family: Inter; margin-left: 10px;"><input name="emailhos" type="checkbox" onchange="if(this.checked){document.getElementById('hosemail').hidden = false;} else {document.getElementById('hosemail').hidden = true;}"> Email HoS</label>
+    <div id="hosemail" hidden>
+    <p class="aboutText" style="margin-left: 10px">Send Email About Event To: </p>
+    <div class="container">
+        {% for fauclty in faculties %}
+        {% if faculty.title_type == "hos" %}
+        <div class="profileRow" style="border: black 3px solid; border-radius: 15px; padding: 10px; gap: 10px; margin-bottom: 5px">
+            <p class="text">{{ faculty.name}}</p>
+            <input type="checkbox" class="btn empty" name="{{faculty.email}}" {% getUserAttending faculty.email event.id %}>
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+</div>
+    <input type="submit" class="btn primary" value="Save Event">
+    </div>
+    <div style="display: flex; flex-direction: column;">
+        <img class="eventCover" id="coverPreview" style="border: black 1px solid; border-radius: 10px; cursor: pointer;" src="{{event.cover.url}}" onclick="document.getElementsByName('coverPhoto')[0].click();">
+        <input type="file" hidden name="coverPhoto" accept="image/*" onchange="setPreviewImage(this.files[0])">
+        <script>
+            function uploadImageToServer(file) {
+                var formData = new FormData();
+                formData.append('file', file);
+                fetch('/uploadCover/Event', {
+                    method: 'POST',
+                    body: formData
+                    })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('coverPreview').src = data.url;
+                })
+                .catch(error => console.error('Error:', error));
+            }
+            function setPreviewImage(file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    console.log(document.getElementById('coverPreview'));
+                    document.getElementById('coverPreview').src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+
+    function searchMemberGrid(searchTerm) {
+        var grid = document.getElementById("memberGrid");
+        try{
+        for(var i = 0; i < grid.children.length; i++) {
+            var child = grid.children[i];
+            if(child.children[0].children[1].innerText.toLowerCase().includes(searchTerm.toLowerCase())) {
+                child.style.display = "flex";
+            }
+            else {
+                child.style.display = "none";
+            }
+        }
+    }
+    catch {}
+    }
+
+    setInterval(function() {
+        searchMemberGrid(document.getElementById("memberSearch").value);
+    }, 1);
+    {% comment %} setInterval(function() {
+        if(document.getElementById("memberSearch") == document.activeElement) {
+            document.getElementById("memberGrid").style.display = 'flex';
+        }
+        else {
+            document.getElementById("memberGrid").style.display = 'none';
+        }
+    },1); {% endcomment %}
+        </script>
+    </div>
+</form>
+{% endblock %}

@@ -31,10 +31,10 @@ class StudentAdmin(admin.ModelAdmin):
     fieldsets = (
         (None, {'fields': ('student_db_id',)}),
         (None, {'fields': ('year_level', 'section', 'profile_picture')}),
-        ('Memberships', {'fields': ('clubs', 'varsities')}),
+        # ('Memberships', {'fields': ('clubs', 'varsities')}),
     )
     search_fields = ('year_level', 'section')
-    filter_horizontal = ('clubs', 'varsities')
+    # filter_horizontal = ('clubs', 'varsities')
 class FacultyAdmin(admin.ModelAdmin):
     list_display = ('faculty_db_id',)
     list_filter = ('faculty_db_id',)
@@ -57,28 +57,28 @@ class ClubAdmin(admin.ModelAdmin):
 class VarsityAdmin(admin.ModelAdmin):
     list_display = ('name', 'email')  # Display name and email in the list view
     search_fields = ('name', 'email')  # Allow searching by name and email
-    filter_horizontal = ('captains', 'players', 'coaches')  # Use a horizontal filter for many-to-many fields
+    filter_horizontal = ('captains', 'members', 'coaches')  # Use a horizontal filter for many-to-many fields
 
     fieldsets = (
         (None, {'fields': ('name', 'email', 'password', 'about', 'logo', 'color', 'links')}),
         ('Captains', {'fields': ('captains',)}),
-        ('Players', {'fields': ('players',)}), 
+        ('Players', {'fields': ('members',)}), 
         ('Coaches', {'fields': ('coaches',)}),
 
     )
 
 class EventAdmin(admin.ModelAdmin):
-    list_display = ('author', 'title', 'text', 'summary', 'members_only', 'highlight')
+    list_display = ('author', 'title', 'text', 'summary', 'members_only', 'highlight', 'group', 'grade')
     list_filter = ('members_only', 'highlight')
     search_fields = ('summary',)
 
 class NewsAdmin(admin.ModelAdmin):
-    list_display = ('author',  'title', 'text', 'summary', 'highlight', 'group', 'grade', 'published_date')
+    list_display = ('author',  'title', 'summary','awaiting_approval', 'approved', 'group', 'grade', 'published_date')
     list_filter = ('highlight', 'group', 'grade')
     search_fields = ('summary',)
     fieldsets = (
         (None, {'fields': ('author', 'cover', 'title', 'text', 'summary', 'highlight', 'published_date', 'links')}),
-        ('Visibility', {'fields': ('group', 'grade')}),
+        ('Visibility', {'fields': ('group', 'grade','approved','awaiting_approval','denied_reason')}), 
     )
     
 class HomepageAdmin(admin.ModelAdmin):

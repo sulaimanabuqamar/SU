@@ -1,0 +1,26 @@
+{% load static %}
+<style>
+    body {
+        font-family: sans-serif;
+    }
+</style>
+<h1 style="font-family: sans-serif; text-align: center;" >{{ event.title }}</h1>
+<h3 style="font-family: sans-serif; text-align: center;" >{{ event.date }}</h3>
+<div style="display: flex; justify-content: center;">
+<table border=1 cellpadding=5   style="width: 100%">
+    <tr>
+        <th>Attended</th>
+        <th>Name</th>
+        <th>Grade</th>
+        <th>Section</th>
+    </tr>
+    {% for attendee in attendees %}
+    <tr>
+        <td></td>
+        <td>{{ attendee.name }}</td>
+        <td>{{ attendee.associated_student.year_level }}</td>
+        <td>{{ attendee.associated_student.section }}</td>
+    </tr>
+    {% endfor %}
+</table>
+</div>

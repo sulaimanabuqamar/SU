@@ -6,6 +6,13 @@
 {% endblock %}
 
 {% block content %}
+{% if news.awaiting_approval %}
+<div class="warning"><p style="font-family: Inter; font-size: 20px; color: unset;">⚠️ Post awaiting approval</p></div>
+{% else %}
+{% if not news.approved %}
+<div class="error"><p style="font-family: Inter; font-size: 20px; color: unset;">⚠️ Post Denied</p><p style="font-family: Inter; font-size: 15px; color: unset;">{{ news.denied_reason }}</p></div>
+{% endif %}
+{% endif %}
 <div style="display: flex; gap: 100px; justify-content: space-between;">
     <div style="display: flex; justify-content: space-between; flex-direction: column;">
         <p class="pageTitle" style="margin: 0px;">{{ news.title }}</p>
@@ -15,7 +22,9 @@
         </div>
     </div>
     <div>
+        <div class="centerer" style="height: unset; margin-bottom:10px;">
         <img src="{{ news.cover.url }}" alt="{{ news.title }} Cover" class="articleCover">
+        </div>
         <div class="tagBox" style="background: {{ news.author.color }};"> 
             <p class="tagText">{{ news.author.name }}</p>
         </div>
@@ -23,6 +32,9 @@
         {% for link in links %}
             <a class="links" href="{{link.link }}" target="_blank">{{ link.name }}</a>, 
         {% endfor %}
+        {% if news.author == user %}
+        <a href="/News/Modify/{{ news.pk }}" ><button class="btn">Edit Event</button></a>
+        {% endif %}
     </div>
 </div>
 {% endblock %}

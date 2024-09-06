@@ -6,11 +6,22 @@
 {% endblock %}
 
 {% block content %}
-<div>
+<div class="profileRow">
     <p class="pageTitle">EVENTS</p>
+    {% if userType == "club" %}
+        <a href="{% url 'create_event' %}">
+            <button class="btn empty"><img src="/media/images/joinButton.svg"></button>
+        </a>
+    {% endif %}
 </div>
 <div class="grid">
     {% for event in events %}
+
+
+
+    {% if event.group == "ngr" and event.grade == "nosec" %}
+    
+    {% if not event.members_only %}
     <div>
         <a href="{% url 'event_detail' event.id %}">
             <img class="eventCover" src="{{ event.cover.url }}" alt="Event Cover">
@@ -21,6 +32,102 @@
             </div>
         </a>
     </div>
+    {% else %}
+    {% if user in event.author.members.all %}
+    <div>
+        <a href="{% url 'event_detail' event.id %}">
+            <img class="eventCover" src="{{ event.cover.url }}" alt="Event Cover">
+            <p class="text">{{ event.title }}</p>
+            <p class="aboutText">{{ event.date }}</p>
+            <div class="tagBox" style="background: {{ event.author.color }};">
+                <p class="tagText">{{ event.author.name }}</p>
+            </div>
+        </a>
+    </div>
+    {% endif %}
+    {% endif %}
+    {% elif event.group == "ngr" and event.grade == user.associated_student.section %}
+    
+    {% if not event.members_only %}
+    <div>
+        <a href="{% url 'event_detail' event.id %}">
+            <img class="eventCover" src="{{ event.cover.url }}" alt="Event Cover">
+            <p class="text">{{ event.title }}</p>
+            <p class="aboutText">{{ event.date }}</p>
+            <div class="tagBox" style="background: {{ event.author.color }};">
+                <p class="tagText">{{ event.author.name }}</p>
+            </div>
+        </a>
+    </div>
+    {% else %}
+    {% if user in event.author.members.all %}
+    <div>
+        <a href="{% url 'event_detail' event.id %}">
+            <img class="eventCover" src="{{ event.cover.url }}" alt="Event Cover">
+            <p class="text">{{ event.title }}</p>
+            <p class="aboutText">{{ event.date }}</p>
+            <div class="tagBox" style="background: {{ event.author.color }};">
+                <p class="tagText">{{ event.author.name }}</p>
+            </div>
+        </a>
+    </div>
+    {% endif %}
+    {% endif %}
+    {% elif event.group == gradelevel and event.grade == "nosec" %}
+    
+    {% if not event.members_only %}
+    <div>
+        <a href="{% url 'event_detail' event.id %}">
+            <img class="eventCover" src="{{ event.cover.url }}" alt="Event Cover">
+            <p class="text">{{ event.title }}</p>
+            <p class="aboutText">{{ event.date }}</p>
+            <div class="tagBox" style="background: {{ event.author.color }};">
+                <p class="tagText">{{ event.author.name }}</p>
+            </div>
+        </a>
+    </div>
+    {% else %}
+    {% if user in event.author.members.all %}
+    <div>
+        <a href="{% url 'event_detail' event.id %}">
+            <img class="eventCover" src="{{ event.cover.url }}" alt="Event Cover">
+            <p class="text">{{ event.title }}</p>
+            <p class="aboutText">{{ event.date }}</p>
+            <div class="tagBox" style="background: {{ event.author.color }};">
+                <p class="tagText">{{ event.author.name }}</p>
+            </div>
+        </a>
+    </div>
+    {% endif %}
+    {% endif %}
+    {% elif event.group == gradelevel and event.grade == user.associated_student.section %}
+    
+    {% if not event.members_only %}
+    <div>
+        <a href="{% url 'event_detail' event.id %}">
+            <img class="eventCover" src="{{ event.cover.url }}" alt="Event Cover">
+            <p class="text">{{ event.title }}</p>
+            <p class="aboutText">{{ event.date }}</p>
+            <div class="tagBox" style="background: {{ event.author.color }};">
+                <p class="tagText">{{ event.author.name }}</p>
+            </div>
+        </a>
+    </div>
+    {% else %}
+    {% if user in event.author.members.all %}
+    <div>
+        <a href="{% url 'event_detail' event.id %}">
+            <img class="eventCover" src="{{ event.cover.url }}" alt="Event Cover">
+            <p class="text">{{ event.title }}</p>
+            <p class="aboutText">{{ event.date }}</p>
+            <div class="tagBox" style="background: {{ event.author.color }};">
+                <p class="tagText">{{ event.author.name }}</p>
+            </div>
+        </a>
+    </div>
+    {% endif %}
+    {% endif %}
+    {% endif %}
     {% empty %}
     <p class="text">No events available.</p>
     {% endfor %}

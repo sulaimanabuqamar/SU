@@ -26,7 +26,7 @@
             {% for head in heads %}
             <div>
                 <a href="{% url 'student_detail' head.id %}">
-                    <img src="{{ head.profile_picture.url }}" class="studentPFP" alt="{{ head.name }}" class="profileCover">
+                    <img src="{{ head.associated_student.profile_picture.url }}" class="studentPFP" alt="{{ head.name }}" class="profileCover">
                     <p class="text">{{ head.name }}</p>
                 </a>
             </div>
@@ -39,7 +39,7 @@
             {% for leader in leadership %}  <!-- Changed variable name for clarity -->
             <div>
                 <a href="{% url 'student_detail' leader.id %}">
-                    <img src="{{ leader.profile_picture.url }}" alt="{{ leader.name }}" class="studentPFP profileCover">
+                    <img src="{{ leader.associated_student.profile_picture.url }}" alt="{{ leader.name }}" class="studentPFP profileCover">
                     <p class="text">{{ leader.name }}</p>
                 </a>
             </div>
@@ -68,7 +68,7 @@
             {% endfor %}
         </div>
         <p class="subtitle">Events</p>
-        <div class="studentGrid">
+        <div class="grid">
             {% for event in events %}
             <div>
                 <a href="{% url 'event_detail' event.id %}">

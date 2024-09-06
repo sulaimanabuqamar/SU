@@ -1,0 +1,78 @@
+{% extends 'Base.html' %}
+{% load static %}
+{% load custom_tags %}
+
+{% block style %}
+<title>SU - Modify News Post</title>
+{% endblock %}
+
+{% block content %}
+<div>
+    <p class="pageTitle">Modify News Post</p>
+</div>
+<form method="post" class="profileRow" style="align-items: start;" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div style="display: flex; flex-direction: column;">
+    <p class="subtext" id="wrongcred" hidden style="color: red">Incorrect Username or Password</p>
+    <input class="textfield" required name="title" placeholder="Title" value="{{news.title}}">
+    <textarea class="textfield" required name="content" placeholder="Content" style="width: 600px; height: 200px; padding-top: 10px;">{{ news.text }}</textarea>
+    <input class="textfield" required name="summary" placeholder="Summary" style="width: 600px;" value="{{news.summary}}">
+    <textarea class="textfield" name="links" placeholder="Links (One link per line, text to show first then link separated by space)" style="width: 600px; height: 100px;">{{links}}</textarea>
+    <select class="textfield" name="gradefilter">
+        <option value="ngr" selected>All Year Levels</option>
+        <option value="12">Seniors (Gr 12) Only</option>
+        <option value="11">Juniors (Gr 11) Only</option>
+        <option value="10">Sophomores (Gr 10) Only</option>
+        <option value="9">Freshmen (Gr 9) Only</option>
+    </select>
+    <select class="textfield" name="sectionfilter" >
+        <option value="nosec" selected>All Sections</option>
+        <option value="A">A</option>
+        <option value="B">B</option>
+        <option value="C">C</option>
+        <option value="D">D</option>
+        <option value="E">E</option>
+        <option value="F">F</option>
+        <option value="G">G</option>
+        <option value="H">H</option>
+        <option value="I">I</option>
+        <option value="J">J</option>
+    </select>
+    <script>
+        document.getElementsByName("gradefilter")[0].value = "{{news.group}}";
+        document.getElementsByName("sectionfilter")[0].value = "{{news.grade}}";
+    </script>
+
+<label style="font-family: Inter; margin-left: 10px;"><input name="highlight" type="checkbox" checked> Highlight</label>
+    <input type="submit" class="btn primary" value="Save Event">
+    </div>
+    <div style="display: flex; flex-direction: column;">
+        <img class="eventCover" id="coverPreview" style="border: black 1px solid; border-radius: 10px; cursor: pointer;" src="{{news.cover.url}}" onclick="document.getElementsByName('coverPhoto')[0].click();">
+        <input type="file" hidden name="coverPhoto" accept="image/*" onchange="setPreviewImage(this.files[0])">
+        <script>
+            function uploadImageToServer(file) {
+                var formData = new FormData();
+                formData.append('file', file);
+                fetch('/uploadCover/Event', {
+                    method: 'POST',
+                    body: formData
+                    })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('coverPreview').src = data.url;
+                })
+                .catch(error => console.error('Error:', error));
+            }
+            function setPreviewImage(file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    console.log(document.getElementById('coverPreview'));
+                    document.getElementById('coverPreview').src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+
+        </script>
+    </div>
+</form>
+{% endblock %}

@@ -6,11 +6,16 @@
 {% endblock %}
 
 {% block content %}
-<div>
+<div class="profileRow">
     <p class="pageTitle">LATEST NEWS</p>
+    <a href="{% url 'create_news' %}">
+        <button class="btn empty"><img src="/media/images/joinButton.svg"></button>
+    </a>
 </div>
 <div class="grid">
     {% for news in news %}
+    {% if news.approved %}
+    {% if news.group == "ngr" and news.grade == "nosec" %}
     <div>
         <a href="{% url 'news_detail' news.id %}">
             <img class="newsCover" src="{{ news.cover.url }}" alt="News Cover">
@@ -18,6 +23,32 @@
             <p class="aboutText">{{ news.published_date|date:"N j, Y" }}</p>
         </a>
     </div>
+    {% elif news.group == "ngr" and news.grade == user.associated_student.section %}
+    <div>
+        <a href="{% url 'news_detail' news.id %}">
+            <img class="newsCover" src="{{ news.cover.url }}" alt="News Cover">
+            <p class="text">{{ news.title }}</p>
+            <p class="aboutText">{{ news.published_date|date:"N j, Y" }}</p>
+        </a>
+    </div>
+    {% elif news.group == gradelevel and news.grade == "nosec" %}
+    <div>
+        <a href="{% url 'news_detail' news.id %}">
+            <img class="newsCover" src="{{ news.cover.url }}" alt="News Cover">
+            <p class="text">{{ news.title }}</p>
+            <p class="aboutText">{{ news.published_date|date:"N j, Y" }}</p>
+        </a>
+    </div>
+    {% elif news.group == gradelevel and news.grade == user.associated_student.section %}
+    <div>
+        <a href="{% url 'news_detail' news.id %}">
+            <img class="newsCover" src="{{ news.cover.url }}" alt="News Cover">
+            <p class="text">{{ news.title }}</p>
+            <p class="aboutText">{{ news.published_date|date:"N j, Y" }}</p>
+        </a>
+    </div>
+    {% endif %}
+    {% endif %}
     {% empty %}
     <p class="text">No news available.</p>
     {% endfor %}

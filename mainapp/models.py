@@ -4,11 +4,14 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.core import exceptions
+from django.core.mail import send_mail
 # Custom user model manager for Students and Faculty
 
 class Links(models.Model):
-    name = models.CharField(max_length=10000, primary_key=True)
+    name = models.CharField(max_length=10000)
     link = models.URLField()
+    def __str__(self) -> str:
+        return self.name
 
 class UserManager(BaseUserManager):
     def create_user(self, email, name, password=None):
@@ -67,11 +70,12 @@ class Student(models.Model):
         ('G', 'G'),
         ('H', 'H'),
         ('I', 'I'),
+        ('J', 'J'),
     ]
     year_level = models.IntegerField(blank=True, null=True)
     section = models.CharField(max_length=1, choices=SECTION_CHOICES)
-    clubs = models.ManyToManyField('Club', related_name='students', blank=True)
-    varsities = models.ManyToManyField('Varsity', related_name='students', blank=True)
+    # clubs = models.ManyToManyField('Club', related_name='students', blank=True)
+    # varsities = models.ManyToManyField('Varsity', related_name='students', blank=True)
     profile_picture = models.ImageField(upload_to='profiles/', null=True, blank=True, default='default-pfp.png/')
     year_level_title = models.CharField(max_length=10, blank=True)
     def save(self, *args, **kwargs):
@@ -111,6 +115,26 @@ class Club(models.Model):
     links = models.ManyToManyField(Links, related_name='club_links', blank=True)
     
 class Event(models.Model):
+    GROUP_CHOICES = [
+        ('ngr', 'All Year Levels'),
+        ('12', 'Senior'),
+        ('11', 'Junior'),
+        ('10', 'Sophomore'),
+        ('9', 'Freshman'),
+    ]
+    GRADE_CHOICES = [
+        ('nosec', 'All Sections'),
+        ('A', 'A'),
+        ('B', 'B'),
+        ('C', 'C'),
+        ('D', 'D'),
+        ('E', 'E'),
+        ('F', 'F'),
+        ('G', 'G'),
+        ('H', 'H'),
+        ('I', 'I'),
+        ('J', 'J'),
+    ]
     author = models.ForeignKey(Club, on_delete=models.CASCADE, related_name='authored_events')
     cover = models.ImageField(upload_to='event_covers/', blank=True, null=True)  # Remove default and allow blank/null
     title = models.CharField(max_length=100)
@@ -119,9 +143,12 @@ class Event(models.Model):
     date = models.DateField()
     location = models.CharField(max_length=150, blank=True)
     color = models.ForeignKey(Club, on_delete=models.CASCADE, related_name='club_color', blank=True, null=True)
+    group = models.CharField(max_length=3, choices=GROUP_CHOICES,default="ngr")
+    grade = models.CharField(max_length=5, choices=GRADE_CHOICES,default="nosec")
     members_only = models.BooleanField(default=False)
     highlight = models.BooleanField(default=False)
-    attending_Students = models.ManyToManyField(Student, related_name='attending_students', blank=True)
+    significant_event = models.BooleanField(default=False)
+    attending_Students = models.ManyToManyField(User, related_name='attending_students', blank=True)
     links = models.ManyToManyField(Links, related_name='events_links', blank=True)
 
     def save(self, *args, **kwargs):
@@ -132,12 +159,14 @@ class Event(models.Model):
         
 class News(models.Model):
     GROUP_CHOICES = [
-        ('SR', 'Senior'),
-        ('JR', 'Junior'),
-        ('SO', 'Sophomore'),
-        ('FR', 'Freshman'),
+        ('ngr', 'All Year Levels'),
+        ('12', 'Senior'),
+        ('11', 'Junior'),
+        ('10', 'Sophomore'),
+        ('9', 'Freshman'),
     ]
     GRADE_CHOICES = [
+        ('nosec', 'All Sections'),
         ('A', 'A'),
         ('B', 'B'),
         ('C', 'C'),
@@ -147,6 +176,7 @@ class News(models.Model):
         ('G', 'G'),
         ('H', 'H'),
         ('I', 'I'),
+        ('J', 'J'),
     ]
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     cover = models.ImageField(upload_to='news_covers/')
@@ -154,9 +184,12 @@ class News(models.Model):
     text = models.TextField()
     published_date = models.DateTimeField(null=True, blank=True)
     summary = models.CharField(max_length=150)
-    group = models.CharField(max_length=3, choices=GROUP_CHOICES, blank=True, null=True)
-    grade = models.CharField(max_length=1, choices=GRADE_CHOICES, blank=True, null=True)
+    group = models.CharField(max_length=3, choices=GROUP_CHOICES,default="ngr")
+    grade = models.CharField(max_length=5, choices=GRADE_CHOICES,default="nosec")
     highlight = models.BooleanField(default=False)
+    approved = models.BooleanField(default=False)
+    awaiting_approval = models.BooleanField(default=True)
+    denied_reason = models.CharField(max_length=150, blank=True, null=True)
     links = models.ManyToManyField(Links, related_name='news_links', blank=True)
     def __str__(self):
         return self.summary
@@ -165,7 +198,7 @@ class Varsity(models.Model):
     name = models.CharField(max_length=255)
     email = models.EmailField(max_length=255)
     password = models.CharField(max_length=255)
-    players = models.ManyToManyField(User, related_name='varsity_players', blank=True)
+    members = models.ManyToManyField(User, related_name='varsity_players', blank=True)
     captains = models.ManyToManyField(User, related_name='varsity_captains', blank=True)
     coaches = models.ManyToManyField(User, related_name='varsity_coaches', blank=True)
     events = models.ForeignKey('Event', on_delete=models.CASCADE, blank=True, null=True)
