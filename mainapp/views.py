@@ -221,6 +221,8 @@ def UserProfile(request: WSGIRequest):
         return render(request, "profile.html", {'userType':getUserType(request.user),'url':request.build_absolute_uri(), 'user': request.user, 'userType': userType, 'memberCount': memberCount,"clubSlashMembers": clubSlashMembers, 'allUsers': allUsers, 'attendingEvents':events})
 
 def CreateEvent(request:WSGIRequest):
+    if request.user.associated_club is None:
+        return HttpResponse("<h1>CLUB ENDPOINT ONLY</h1>")
     if request.method == "GET":
         students = []
         for user in User.objects.all():
@@ -272,6 +274,8 @@ def CreateEvent(request:WSGIRequest):
         return redirect("/Event/Detail/" + str(event.pk)) 
 def ModifyEvent(request: WSGIRequest, event_id):
     event = Event.objects.get(id=event_id)
+    if request.user is not event.author:
+        return HttpResponse("<h1>YOU ARE NOT THE AUTHOR OF THIS EVENT, OPERATION FAILED</h1>")
     students = []
     for user in User.objects.all():
         if user.associated_student is not None:
@@ -368,6 +372,8 @@ def CreateNews(request: WSGIRequest):
 
 def ModifyNews(request: WSGIRequest, news_id):
     news = News.objects.get(id=news_id)
+    if request.user is not news.author:
+        return HttpResponse("<h1>YOU ARE NOT THE AUTHOR OF THIS NEWS POST, OPERATION FAILED</h1>")
     students = []
     for user in User.objects.all():
         if user.associated_student is not None:
@@ -411,14 +417,20 @@ def AttendeesListPrintable(request: WSGIRequest, event_id: int):
 
 def removeAttendee(request: WSGIRequest):
     event = Event.objects.get(id=int(request.GET.get("id")))
+    if request.user is not event.author:
+        return HttpResponse("<h1>YOU ARE NOT THE AUTHOR OF THIS EVENT, OPERATION FAILED</h1>")
     event.attending_Students.remove(request.user.associated_club.members.get(email=request.GET.get("email")))
     return HttpResponse("{\"message\":\"competed\"}")
 def addAttendee(request: WSGIRequest):
     event = Event.objects.get(id=int(request.GET.get("id")))
+    if request.user is not event.author:
+        return HttpResponse("<h1>YOU ARE NOT THE AUTHOR OF THIS EVENT, OPERATION FAILED</h1>")
     event.attending_Students.add(request.user.associated_club.members.get(email=request.GET.get("email")))
     return HttpResponse("{\"message\":\"competed\"}")
 
 def removeClubMember(request: WSGIRequest, sector: str):
+    if request.user.associated_club is None:
+        return HttpResponse("<h1>YOU ARE NOT A CLUB, OPERATION FAILED</h1>")
     club: Club = request.user.associated_club
     if sector == "Member":
         club.members.remove(User.objects.get(email=request.GET.get("email")))
@@ -432,6 +444,8 @@ def removeClubMember(request: WSGIRequest, sector: str):
         return HttpResponse("{\"message\":\"invalid sector\"}")
     return HttpResponse("{\"message\":\"competed\"}")
 def addClubMember(request: WSGIRequest, sector: str):
+    if request.user.associated_club is None:
+        return HttpResponse("<h1>YOU ARE NOT A CLUB, OPERATION FAILED</h1>")
     club: Club = request.user.associated_club
     if sector == "Member":
         club.members.add(User.objects.get(email=request.GET.get("email")))
@@ -445,6 +459,8 @@ def addClubMember(request: WSGIRequest, sector: str):
     return HttpResponse("{\"message\":\"competed\"}")
 
 def removeVarsityPlayer(request: WSGIRequest, sector: str):
+    if request.user.associated_varsity is None:
+        return HttpResponse("<h1>YOU ARE NOT A VARSITY, OPERATION FAILED</h1>")
     varsity: Varsity = request.user.associated_varsity
     if sector == "Member":
         varsity.members.remove(User.objects.get(email=request.GET.get("email")))
@@ -455,6 +471,8 @@ def removeVarsityPlayer(request: WSGIRequest, sector: str):
     varsity.save() 
     return HttpResponse("{\"message\":\"competed\"}")
 def addVarsityPlayer(request: WSGIRequest, sector: str):
+    if request.user.associated_varsity is None:
+        return HttpResponse("<h1>YOU ARE NOT A VARSITY, OPERATION FAILED</h1>")
     varsity: Varsity = request.user.associated_varsity
     if sector == "Member":
         varsity.members.add(User.objects.get(email=request.GET.get("email")))
