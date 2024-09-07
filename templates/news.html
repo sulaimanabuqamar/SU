@@ -8,9 +8,11 @@
 {% block content %}
 <div class="profileRow">
     <p class="pageTitle">LATEST NEWS</p>
+    {% if user.is_authenticated %}
     <a href="{% url 'create_news' %}">
         <button class="btn empty"><img src="/media/images/joinButton.svg"></button>
     </a>
+    {% endif %}
 </div>
 <div class="grid">
     {% for news in news %}

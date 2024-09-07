@@ -75,7 +75,7 @@ def Event_Detail(request, event_id):
 
 def News_View(request):
     news = News.objects.all()
-    if request.user.associated_student is not None:
+    if hasattr(request.user, 'associated_student') and request.user.associated_student is not None:
         grlevel = str(request.user.associated_student.year_level)
         return render(request, "news.html", {'userType':getUserType(request.user),'news': news, 'gradelevel': grlevel})
     else:
