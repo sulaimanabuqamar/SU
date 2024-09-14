@@ -455,6 +455,21 @@ def CreateNews(request: WSGIRequest):
                 linkobj = Links.objects.create(name=link[:link.find(" ")], link=link[link.find(" "):])
                 event.links.add(linkobj)
         event.save()
+        email = ""
+        with open(os.path.join(settings.BASE_DIR, "templates", "new_news_email.html"), 'r') as f:
+            email = f.read()
+            email = email.replace("{{title}}",event.title)
+            email = email.replace("{{summary}}",event.summary)
+            email = email.replace("{{author}}",event.author.name)
+            email = email.replace("{{event_id}}",str(event.pk)) 
+            email = email.replace("{{logo}}",logo) 
+            email = email.replace("{{email}}",request.user.email) 
+            email = email.replace("{{text}}",event.text) 
+        officers = []
+        for user in User.objects.all():
+            if user.is_admin:
+                officers.append(str(user.email))
+        send_mail("News Post Awaiting Approval", "Student Union", None, officers, False, html_message=email)
         return redirect("/News/Detail/" + str(event.pk)) 
 
 def ModifyNews(request: WSGIRequest, news_id):

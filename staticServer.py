@@ -3,12 +3,15 @@ import socketserver
 
 Handler = http.server.SimpleHTTPRequestHandler
 PORT = 81
-server: socketserver.TCPServer = None
+httpd = None
 def startServer():
+    global httpd
     httpd = socketserver.TCPServer(("", PORT), Handler)
-    # print(f"[Static Media Server] Serving files on port {PORT}")
-    server = httpd
-    server.serve_forever()
-    server.shutdown()
+    print(httpd)
+    httpd.serve_forever()
 def stopServer():
-    server.shutdown()
+    global httpd
+    print(httpd)
+    if httpd:
+        httpd.shutdown()
+        httpd.server_close()
