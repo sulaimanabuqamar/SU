@@ -18,14 +18,14 @@
     <input class="textfield" required name="summary" placeholder="Summary">
     <textarea class="textfield" name="links" placeholder="Links (One link per line, text to show first then link separated by space)" style="width: 600px; height: 100px;"></textarea>
     <select class="textfield" name="gradefilter">
-        <option value="nograde" selected>All Year Levels</option>
+        <option value="ngr" selected>All Year Levels</option>
         <option value="12">Seniors (Gr 12) Only</option>
         <option value="11">Juniors (Gr 11) Only</option>
         <option value="10">Sophomores (Gr 10) Only</option>
         <option value="9">Freshmen (Gr 9) Only</option>
     </select>
     <select class="textfield" name="sectionfilter">
-        <option value="nosection" selected>All Sections</option>
+        <option value="nosec" selected>All Sections</option>
         <option value="A">A</option>
         <option value="B">B</option>
         <option value="C">C</option>
@@ -38,10 +38,13 @@
         <option value="J">J</option>
     </select>
     <label style="font-family: Inter; margin-left: 10px;"><input name="highlight" type="checkbox" checked> Highlight</label>
-    <input type="submit" class="btn primary" value="Create News Post">
+    <div style="display: flex; flex-direction:row; margin-left: -10px; margin-top: 30px;">
+        <button class="btn" onclick="navigation.back()" type="reset">Cancel Changes</button>
+    <input type="submit" class="btn primary" value="Create News Post" onclick="if(document.getElementsByName('coverPhoto')[0].files[0] == null) {alert('Make sure you uploaded a cover photo for the news post!');} else { var element = this; setTimeout(function() {element.disabled = true; element.style.backgroundColor = '#aaaaaa'; }, 250); setTimeout(function(){element.disabled = false; element.style.backgroundColor = '#1F355E';}, 10000);}">
+    </div>
     </div>
     <div style="display: flex; flex-direction: column;">
-        <img class="eventCover" id="coverPreview" onclick="document.getElementsByName('coverPhoto')[0].click();">
+        <img class="eventCover" id="coverPreview" style="cursor: pointer;" onclick="document.getElementsByName('coverPhoto')[0].click();">
         <input type="file" required name="coverPhoto" accept="image/*" hidden onchange="setPreviewImage(this.files[0])">
         <script>
             function uploadImageToServer(file) {

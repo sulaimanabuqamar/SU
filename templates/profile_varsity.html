@@ -1,0 +1,228 @@
+{% extends 'Base.html' %}
+{% load static %}
+{% load custom_tags %}
+
+{% block style %}
+<title>Profile</title>
+{% endblock %}
+
+{% block content %}
+<div style="display: flex; gap: 100px; justify-content: space-between;">
+    <div style="display: flex; justify-content: space-between; flex-direction: column; flex: 1;">
+        <p class="pageTitle" style="margin: 0px;">{{ club.name }}</p>
+        <br>
+        <div class="profileRow">
+        <p class="pageSubtitle" style="margin: 0px;">{{memberCount}} Players</p>
+        <button class="btn empty" onclick="openMemberPopup('player')"><img src="{%static '../media/images/joinButton.svg' %}"></button>
+        </div>
+        <input class="textfield" placeholder="Search..." style="margin: 0px; width: unset;" id="playerSearch">
+        <br>
+        <div class="grid" id="playerField">
+            {% for player in varsity.members.all %}
+            <div class="profileRow">
+                <div class="profileRow Box" style="border: blue 3px solid; border-radius: 15px; padding: 10px; gap: 10px;">
+                    <img class="eventCover" style=" width: 50px; height: 50px; margin-right: 10px;" src="{{ player.associated_student.profile_picture.url }}" alt="Club Cover">
+                    <p class="text">{{ player.name }}</p>
+                    <p class="aboutText">{{ player.associated_student.year_level }}{{ player.associated_student.section }}</p>
+                    <button class="btn empty" onclick="removeMember('{{player.email}}', 'Member')"><img src="{%static '../media/images/removeButton.svg' %}"></button>
+                </div>
+            </div>
+            {% empty %}
+            <p class="text">No Players.</p>
+            {% endfor %}
+        </div>
+
+        <div class="profileRow">
+            <p class="pageSubtitle" style="margin: 0px;">{{memberCount}} Coaches</p>
+            <button class="btn empty" onclick="openMemberPopup('coach')"><img src="{%static '../media/images/joinButton.svg' %}"></button>
+            </div>
+            <input class="textfield" placeholder="Search..." style="margin: 0px; width: unset;" id="coachSearch">
+            <br>
+            <div class="grid" id="coachField">
+                {% for player in varsity.coaches.all %}
+                <div class="profileRow">
+                    <div class="profileRow Box" style="border: blue 3px solid; border-radius: 15px; padding: 10px; gap: 10px;">
+                        <img class="eventCover" style=" width: 50px; height: 50px; margin-right: 10px;" src="{{ player.associated_student.profile_picture.url }}" alt="Club Cover">
+                        <p class="text">{{ player.name }}</p>
+                        <p class="aboutText">{{ player.associated_student.year_level }}{{ player.associated_student.section }}</p>
+                        <button class="btn empty" onclick="removeMember('{{player.email}}', 'Coach')"><img src="{%static '../media/images/removeButton.svg' %}"></button>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="text">No Coaches.</p>
+                {% endfor %}
+            </div>
+
+            <div class="profileRow">
+                <p class="pageSubtitle" style="margin: 0px;">{{memberCount}} Captains</p>
+                <button class="btn empty" onclick="openMemberPopup('captain')"><img src="{%static '../media/images/joinButton.svg' %}"></button>
+                </div>
+                <input class="textfield" placeholder="Search..." style="margin: 0px; width: unset;" id="captainSearch">
+                <br>
+                <div class="grid" id="captainField">
+                    {% for player in varsity.captains.all %}
+                    <div class="profileRow">
+                        <div class="profileRow Box" style="border: blue 3px solid; border-radius: 15px; padding: 10px; gap: 10px;">
+                            <img class="eventCover" style=" width: 50px; height: 50px; margin-right: 10px;" src="{{ player.associated_student.profile_picture.url }}" alt="Club Cover">
+                            <p class="text">{{ player.name }}</p>
+                            <p class="aboutText">{{ player.associated_student.year_level }}{{ player.associated_student.section }}</p>
+                            <button class="btn empty" onclick="removeMember('{{player.email}}', 'Captain')"><img src="{%static '../media/images/removeButton.svg' %}"></button>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p class="text">No Captains.</p>
+                    {% endfor %}
+                </div>
+    </div>
+    <div>
+        <div class="centerer huns" style="margin-bottom: 20px;">
+        <img src="{{ varsity.logo.url }}" alt="Profile Picture" class="articleCover">
+        </div>
+        <div class="tagBox" style="background: #5ee329;">
+            <p class="tagText">Varsity</p>
+        </div>
+        <p class="aboutText sidebar">{{ varsity.about }}</p>
+        <a href="/profile/Edit/Varsity/{{varsity.pk}}"><button class="btn">Edit Varsity</button></a>
+    </div>
+</div>
+<div class="popupBG" hidden id="addPlayerBG" onclick="if(event.srcElement == this) {this.hidden = true}">
+    <div class="accountPopupWindow">
+        <p class="subtitle" style="text-align: center; margin-bottom: 15px;">Add Player To Varsity</p>
+        <input class="textfield" placeholder="Search..." style="margin: 0px; margin-bottom: 20px; width: calc( 100% - 55px ); margin-left: 20px; margin-right: 20px;" id="addPlayerSearch">
+        <div class="grid popup" style="margin-bottom: 30px;" id="addPlayerField">
+            {% for member in allUsers %}
+            {% if member not in varsity.members.all and member.associated_student is not None %}
+            <div class="profileRow">
+                <div class="profileRow" style="border: blue 3px solid; border-radius: 15px; padding: 5px; gap: 10px;">
+                    <img class="eventCover" style=" width: 50px; height: 50px;" src="{{ member.associated_student.profile_picture.url }}" alt="Club Cover">
+                    <p class="text">{{ member.name }}</p>
+                    <p class="aboutText">{{ member.associated_student.year_level }}{{ member.associated_student.section }}</p>
+                    <button class="btn empty" onclick="addMember('{{member.email}}', 'Member')"><img src="{%static '../media/images/joinButton.svg' %}"></button>
+                </div>
+            </div>
+            {% endif %}
+            {% empty %}
+            <p class="text">No Students.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+<div class="popupBG" hidden id="addCoachBG" onclick="if(event.srcElement == this) {this.hidden = true}">
+    <div class="accountPopupWindow">
+        <p class="subtitle" style="text-align: center; margin-bottom: 15px;">Add Coach To Varsity</p>
+        <input class="textfield" placeholder="Search..." style="margin: 0px; margin-bottom: 20px; width: calc( 100% - 55px ); margin-left: 20px; margin-right: 20px;" id="addCoachSearch">
+        <div class="grid popup" style="margin-bottom: 30px;" id="addCoachField">
+            {% for member in allUsers %}
+            {% if member not in varsity.coaches.all and member.associated_faculty is not None %}
+            <div class="profileRow">
+                <div class="profileRow" style="border: blue 3px solid; border-radius: 15px; padding: 5px; gap: 10px;">
+                    <img class="eventCover" style=" width: 50px; height: 50px;" src="{{ member.associated_student.profile_picture.url }}" alt="Club Cover">
+                    <p class="text">{{ member.name }}</p>
+                    <p class="aboutText">{{ member.associated_student.year_level }}{{ member.associated_student.section }}</p>
+                    <button class="btn empty" onclick="addMember('{{member.email}}', 'Coach')"><img src="{%static '../media/images/joinButton.svg' %}"></button>
+                </div>
+            </div>
+            {% endif %}
+            {% empty %}
+            <p class="text">No Faculty.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+<div class="popupBG" hidden id="addCaptainBG" onclick="if(event.srcElement == this) {this.hidden = true}">
+    <div class="accountPopupWindow">
+        <p class="subtitle" style="text-align: center; margin-bottom: 15px;">Add Captain To Varsity</p>
+        <input class="textfield" placeholder="Search..." style="margin: 0px; margin-bottom: 20px; width: calc( 100% - 55px ); margin-left: 20px; margin-right: 20px;" id="addCaptainSearch">
+        <div class="grid popup" style="margin-bottom: 30px;" id="addCaptainField">
+            {% for member in allUsers %}
+            {% if member not in varsity.captains.all and member.associated_student is not None %}
+            <div class="profileRow">
+                <div class="profileRow" style="border: blue 3px solid; border-radius: 15px; padding: 5px; gap: 10px;">
+                    <img class="eventCover" style=" width: 50px; height: 50px;" src="{{ member.associated_student.profile_picture.url }}" alt="Club Cover">
+                    <p class="text">{{ member.name }}</p>
+                    <p class="aboutText">{{ member.associated_student.year_level }}{{ member.associated_student.section }}</p>
+                    <button class="btn empty" onclick="addMember('{{member.email}}', 'Captain')"><img src="{%static '../media/images/joinButton.svg' %}"></button>
+                </div>
+            </div>
+            {% endif %}
+            {% empty %}
+            <p class="text">No Students.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<script>
+    function openMemberPopup(type) {
+        if(type == "player") {
+            document.getElementById('addPlayerBG').hidden = false;
+        }
+        else if(type == "coach") {
+            document.getElementById('addCoachBG').hidden = false;
+        }
+        else if(type == "captain") {
+            document.getElementById('addCaptainBG').hidden = false;
+        }
+        else if(type == "selectApplicant") {
+            document.getElementById('selectApplicantBG').hidden = false;
+        }
+        
+    }
+    function removeMember(email, sector) {
+        confirm("Are you sure you would like to delete " + email + "?");
+        fetch("/Varsity/Remove/{{varsity.pk}}/" + sector + "?email=" + email)
+        .then(data => data.json())
+        .then(json => {console.log(json); location.reload();});
+    }
+    function addMember(email, sector) {
+        fetch("/Varsity/Add/{{varsity.pk}}/" + sector + "?email=" + email)
+        .then(data => data.json())
+        .then(json => {console.log(json); location.reload();});
+    }
+    function searchMemberGrid(searchTerm, grid) {
+        try{
+        for(var i = 0; i < grid.children.length; i++) {
+            var child = grid.children[i];
+            if(child.children[0].children[1].innerText.toLowerCase().includes(searchTerm.toLowerCase())) {
+                child.style.display = "flex";
+            }
+            else {
+                child.style.display = "none";
+            }
+        }
+    }
+    catch(e) {
+        {% comment %} console.error(e); {% endcomment %}
+    }
+    }
+    function searchAddMemberGrid(searchTerm,  grid) {
+        try{
+        for(var i = 0; i < grid.children.length; i++) {
+            var child = grid.children[i];
+            if(child.children[0].children[1].innerText.toLowerCase().includes(searchTerm.toLowerCase())) {
+                child.style.display = "flex";
+            }
+            else {
+                child.style.display = "none";
+            }
+        }
+    }
+    catch{}
+    }
+    
+    setInterval(function() {
+        searchMemberGrid(document.getElementById("playerSearch").value, document.getElementById("playerField"));
+        searchMemberGrid(document.getElementById("coachSearch").value, document.getElementById("coachField"));
+        searchMemberGrid(document.getElementById("captainSearch").value, document.getElementById("captainField"));
+    }, 1);
+    setInterval(function() {
+        searchAddMemberGrid(document.getElementById("addPlayerSearch").value, document.getElementById("addPlayerField"));
+        searchAddMemberGrid(document.getElementById("addCoachSearch").value, document.getElementById("addCoachField"));
+        searchAddMemberGrid(document.getElementById("addCaptainSearch").value, document.getElementById("addCaptainField"));
+        searchAddMemberGrid(document.getElementById("selectApplicantSearch").value, document.getElementById("selectApplicantField"));
+    }, 1);
+
+    
+    
+</script>
+{% endblock %}

@@ -1,4 +1,4 @@
-@font-face {
+/* @font-face {
 font-family: 'inter';
 src: url('/static/fonts/inter/Inter-Thin.ttf') format('truetype');
 font-weight: 100;
@@ -51,4 +51,6 @@ font-family: 'inter';
 src: url('/static/fonts/inter/Inter-Black.ttf') format('truetype');
 font-weight: 900;
 font-style: normal;
-}
+} */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');

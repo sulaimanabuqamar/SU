@@ -1,0 +1,2 @@
+## Important Note
+if you are gonna shut down the server, kill the process that is running on port 81 and the whole server will shutdown automatically, this is to stop the static files server and not leave it running

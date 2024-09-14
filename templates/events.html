@@ -8,11 +8,27 @@
 {% block content %}
 <div class="profileRow">
     <p class="pageTitle">EVENTS</p>
-    {% if userType == "club" %}
-        <a href="{% url 'create_event' %}">
-            <button class="btn empty"><img src="/media/images/joinButton.svg"></button>
-        </a>
+    {% if hasClubs %}
+        <button class="btn empty" onclick="document.getElementById('createEventBG').hidden = false;"><img src="{%static '../media/images/joinButton.svg' %}"></button>
     {% endif %}
+</div>
+<div class="popupBG" hidden id="createEventBG" onclick="if(event.srcElement == this) {this.hidden = true}">
+    <div class="accountPopupWindow">
+        <p class="subtitle" style="text-align: center; margin-bottom: 15px;">Choose Club To Create Event</p>
+        <input class="textfield" placeholder="Search..." style="margin: 0px; margin-bottom: 20px; width: calc( 100% - 55px ); margin-left: 20px; margin-right: 20px;" id="createEventSearch">
+        <div class="grid popup" style="margin-bottom: 30px;" id="createEventField">
+            {% for club in user.associated_clubs.all %}
+            <a class="profileRow" href="{% url "create_event" club.pk %}">
+                <div class="profileRow" style="border: blue 3px solid; border-radius: 15px; padding: 5px; gap: 10px;">
+                    <img class="eventCover" style=" width: 50px; height: 50px;" src="{{ club.logo.url }}" alt="Club Cover">
+                    <p class="text">{{ club.name }}</p>
+                </div>
+            </a>
+            {% empty %}
+            <p class="text">No Students.</p>
+            {% endfor %}
+        </div>
+    </div>
 </div>
 <div class="grid">
     {% for event in events %}

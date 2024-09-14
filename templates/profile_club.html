@@ -1,0 +1,309 @@
+{% extends 'Base.html' %}
+{% load static %}
+{% load custom_tags %}
+
+{% block style %}
+<title>SU - Club Profile</title>
+{% endblock %}
+
+{% block content %}
+<div style="display: flex; gap: 100px; justify-content: space-between;">
+    <div style="display: flex; justify-content: space-between; flex-direction: column; flex: 1;">
+        <p class="pageTitle" style="margin: 0px;">{{ club.name }}</p>
+        <br>
+        <div class="profileRow">
+        <p class="pageSubtitle" style="margin: 0px;">{{club.members.count}} Members</p>
+        <button class="btn empty" onclick="openMemberPopup('member')"><img src="{%static '../media/images/joinButton.svg' %}"></button>
+        </div>
+        <input class="textfield" placeholder="Search..." style="margin: 0px; width: unset;" id="memberSearch">
+        <br>
+        <div class="grid" id="memberField">
+            {% for member in club.members.all %}
+            <div class="profileRow">
+                <div class="profileRow Box" style="border: {{ member.color }} 3px solid; border-radius: 15px; padding: 10px; gap: 10px;">
+                    <img class="eventCover" style=" width: 50px; height: 50px; margin-right: 10px;" src="{{ member.associated_student.profile_picture.url }}" alt="Club Cover">
+                    <p class="text">{{ member.name }}</p>
+                    <p class="aboutText">{{ member.associated_student.year_level }}{{ member.associated_student.section }}</p>
+                    <button class="btn empty" onclick="removeMember('{{member.email}}', 'Member')"><img src="{%static '../media/images/removeButton.svg' %}"></button>
+                </div>
+            </div>
+            {% empty %}
+            <p class="text">No Members.</p>
+            {% endfor %}
+        </div>
+        <div class="profileRow">
+        <p class="pageSubtitle" style="margin: 0px; margin-top: 30px;">{{club.heads.count}} Heads</p>
+        <button class="btn empty" onclick="openMemberPopup('head')"><img src="{%static '../media/images/joinButton.svg' %}"></button>
+        </div>
+        <input class="textfield" placeholder="Search..." style="margin: 0px; width: unset;" id="headSearch">
+        <br>
+        <div class="grid" id="headField">
+            {% for head in club.heads.all %}
+            <div class="profileRow">
+                <div class="profileRow Box" style="border: {{ head.color }} 3px solid; border-radius: 15px; padding: 10px; gap: 10px;">
+                    <img class="eventCover" style=" width: 50px; height: 50px; margin-right: 10px;" src="{{ head.associated_student.profile_picture.url }}" alt="Club Cover">
+                    <p class="text">{{ head.name }}</p>
+                    <p class="aboutText">{{ head.associated_student.year_level }}{{ head.associated_student.section }}</p>
+                    <button class="btn empty" onclick="removeMember('{{head.email}}', 'Head')"><img src="{%static '../media/images/removeButton.svg' %}"></button>
+                </div>
+            </div>
+            {% empty %}
+            <p class="text">No Heads.</p>
+            {% endfor %}
+        </div>
+
+        <div class="profileRow">
+        <p class="pageSubtitle" style="margin: 0px; margin-top: 30px;">{{club.leadership.count}} Leadership</p>
+        <button class="btn empty" onclick="openMemberPopup('leadership')"><img src="{%static '../media/images/joinButton.svg' %}"></button>
+        </div>
+        <input class="textfield" placeholder="Search..." style="margin: 0px; width: unset;" id="leaderSearch">
+        <br>
+        <div class="grid" id="leaderField">
+            {% for leader in club.leadership.all %}
+            <div class="profileRow">
+                <div class="profileRow Box" style="border: {{ leader.color }} 3px solid; border-radius: 15px; padding: 10px; gap: 10px;">
+                    <img class="eventCover" style=" width: 50px; height: 50px; margin-right: 10px;" src="{{ leader.associated_student.profile_picture.url }}" alt="Club Cover">
+                    <p class="text">{{ leader.name }}</p>
+                    <p class="aboutText">{{ leader.associated_student.year_level }}{{ leader.associated_student.section }}</p>
+                    <button class="btn empty" onclick="removeMember('{{leader.email}}', 'Leadership')"><img src="{%static '../media/images/removeButton.svg' %}"></button>
+                </div>
+            </div>
+            {% empty %}
+            <p class="text">No Leadership.</p>
+            {% endfor %}
+        </div>
+
+        <div class="profileRow">
+        <p class="pageSubtitle" style="margin: 0px; margin-top: 30px;">{{club.advisors.count}} Advisors</p>
+        <button class="btn empty" onclick="openMemberPopup('advisor')"><img src="{%static '../media/images/joinButton.svg' %}"></button>
+        </div>
+        <input class="textfield" placeholder="Search..." style="margin: 0px; width: unset;" id="advisorSearch">
+        <br>
+        <div class="grid" id="advisorField">
+            {% for advisor in club.advisors.all %}
+            <div class="profileRow">
+                <div class="profileRow Box" style="border: {{ advisor.color }} 3px solid; border-radius: 15px; padding: 10px; gap: 10px;">
+                    <img class="eventCover" style=" width: 50px; height: 50px; margin-right: 10px;" src="{{ advisor.associated_student.profile_picture.url }}" alt="Club Cover">
+                    <p class="text">{{ advisor.name }}</p>
+                    <p class="aboutText">{{ advisor.associated_student.year_level }}{{ advisor.associated_student.section }}</p>
+                    <button class="btn empty" onclick="removeMember('{{advisor.email}}', 'Advisor')"><img src="{%static '../media/images/removeButton.svg' %}"></button>
+                </div>
+            </div>
+            {% empty %}
+            <p class="text">No Advisors.</p>
+            {% endfor %}
+        </div>
+        
+    </div>
+    <div>
+        <div class="centerer huns" style="margin-bottom: 20px;">
+        <img src="{{ club.logo.url }}" alt="Profile Picture" class="articleCover">
+        </div>
+        <div class="tagBox" style="background: #d7e329;">
+            <p class="tagText">Club</p>
+        </div>
+        <p class="aboutText sidebar">{{ club.about }}</p>
+        <button class="btn" onclick="openMemberPopup('selectApplicant')">Send Admission Emails</button>
+        <br>
+        <a href="/profile/Edit/Club/{{club.pk}}"><button class="btn">Edit Club</button></a>
+    </div>
+</div>
+<div class="popupBG" hidden id="selectApplicantBG" onclick="if(event.srcElement == this) {this.hidden = true}">
+    <div class="accountPopupWindow">
+        <p class="subtitle" style="text-align: center; margin-bottom: 15px;">Select Applicants To Send Emails</p>
+        <input class="textfield" placeholder="Search..." style="margin: 0px; margin-bottom: 20px; width: calc( 100% - 55px ); margin-left: 20px; margin-right: 20px;" id="selectApplicantSearch">
+        <form action="/Club/SendEmails/" method="POST">
+        <div class="grid popup" style="margin-bottom: 30px;" id="selectApplicantField">
+            {% csrf_token %}
+            {% for member in allUsers %}
+            {% if member.associated_student is not None %}
+            <div class="profileRow">
+                <div class="profileRow" style="border: blue 3px solid; border-radius: 15px; padding: 5px; gap: 10px;">
+                    <img class="eventCover" style=" width: 50px; height: 50px;" src="{{ member.associated_student.profile_picture.url }}" alt="Club Cover">
+                    <p class="text">{{ member.name }}</p>
+                    <p class="aboutText">{{ member.associated_student.year_level }}{{ member.associated_student.section }}</p>
+                    {% comment %} <button class="btn empty" onclick="addMember('{{member.email}}', 'Member')"><img src="{%static '../media/images/joinButton.svg' %}"></button> {% endcomment %}
+                    <input type="checkbox" name="{{member.email}}">
+                </div>
+            </div>
+            {% endif %}
+            {% empty %}
+            <p class="text">No Students.</p>
+            {% endfor %}    
+        </div>
+        <div style="display: flex; justify-content: center;">
+        <button type="submit" class="btn primary" onclick="openMemberPopup('selectApplicant')">Send Admission Emails</button>
+        </div>
+        </form>
+    </div>
+</div>
+<div class="popupBG" hidden id="addMemberBG" onclick="if(event.srcElement == this) {this.hidden = true}">
+    <div class="accountPopupWindow">
+        <p class="subtitle" style="text-align: center; margin-bottom: 15px;">Add Student To Club</p>
+        <input class="textfield" placeholder="Search..." style="margin: 0px; margin-bottom: 20px; width: calc( 100% - 55px ); margin-left: 20px; margin-right: 20px;" id="addMemberSearch">
+        <div class="grid popup" style="margin-bottom: 30px;" id="addMemberField">
+            {% for member in allUsers %}
+            {% if member not in club.members.all and member.associated_student is not None %}
+            <div class="profileRow">
+                <div class="profileRow" style="border: blue 3px solid; border-radius: 15px; padding: 5px; gap: 10px;">
+                    <img class="eventCover" style=" width: 50px; height: 50px;" src="{{ member.associated_student.profile_picture.url }}" alt="Club Cover">
+                    <p class="text">{{ member.name }}</p>
+                    <p class="aboutText">{{ member.associated_student.year_level }}{{ member.associated_student.section }}</p>
+                    <button class="btn empty" onclick="addMember('{{member.email}}', 'Member')"><img src="{%static '../media/images/joinButton.svg' %}"></button>
+                </div>
+            </div>
+            {% endif %}
+            {% empty %}
+            <p class="text">No Students.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+<div class="popupBG" hidden id="addHeadBG" onclick="if(event.srcElement == this) {this.hidden = true}">
+    <div class="accountPopupWindow">
+        <p class="subtitle" style="text-align: center; margin-bottom: 15px;">Add Head To Club</p>
+        <input class="textfield" placeholder="Search..." style="margin: 0px; margin-bottom: 20px; width: calc( 100% - 55px ); margin-left: 20px; margin-right: 20px;" id="addHeadsSearch">
+        <div class="grid popup" style="margin-bottom: 30px;" id="addHeadField">
+            {% for member in allUsers %}
+            {% if member not in club.heads.all and member.associated_student is not None %}
+            <div class="profileRow">
+                <div class="profileRow" style="border: blue 3px solid; border-radius: 15px; padding: 5px; gap: 10px;">
+                    <img class="eventCover" style=" width: 50px; height: 50px;" src="{{ member.associated_student.profile_picture.url }}" alt="Club Cover">
+                    <p class="text">{{ member.name }}</p>
+                    <p class="aboutText">{{ member.associated_student.year_level }}{{ member.associated_student.section }}</p>
+                    <button class="btn empty" onclick="addMember('{{member.email}}', 'Head')"><img src="{%static '../media/images/joinButton.svg' %}"></button>
+                </div>
+            </div>
+            {% endif %}
+            {% empty %}
+            <p class="text">No Students.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+<div class="popupBG" hidden id="addAdvisorBG" onclick="if(event.srcElement == this) {this.hidden = true}">
+    <div class="accountPopupWindow">
+        <p class="subtitle" style="text-align: center; margin-bottom: 15px;">Add Advisor To Club</p>
+        <input class="textfield" placeholder="Search..." style="margin: 0px; margin-bottom: 20px; width: calc( 100% - 55px ); margin-left: 20px; margin-right: 20px;" id="addAdvisorSearch">
+        <div class="grid popup" style="margin-bottom: 30px;" id="addAdvisorField">
+            {% for member in allUsers %}
+            {% if member not in club.advisors.all and member.associated_faculty is not None %}
+            <div class="profileRow">
+                <div class="profileRow" style="border: blue 3px solid; border-radius: 15px; padding: 5px; gap: 10px;">
+                    <img class="eventCover" style=" width: 50px; height: 50px;" src="{{ member.associated_student.profile_picture.url }}" alt="Club Cover">
+                    <p class="text">{{ member.name }}</p>
+                    <p class="aboutText">{{ member.associated_student.year_level }}{{ member.associated_student.section }}</p>
+                    <button class="btn empty" onclick="addMember('{{member.email}}', 'Advisor')"><img src="{%static '../media/images/joinButton.svg' %}"></button>
+                </div>
+            </div>
+            {% endif %}
+            {% empty %}
+            <p class="text">No Faculty.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+<div class="popupBG" hidden id="addLeadershipBG" onclick="if(event.srcElement == this) {this.hidden = true}">
+    <div class="accountPopupWindow">
+        <p class="subtitle" style="text-align: center; margin-bottom: 15px;">Add Leadership To Club</p>
+        <input class="textfield" placeholder="Search..." style="margin: 0px; margin-bottom: 20px; width: calc( 100% - 55px ); margin-left: 20px; margin-right: 20px;" id="addLeadershipSearch">
+        <div class="grid popup" style="margin-bottom: 30px;" id="addLeadershipField">
+            {% for member in allUsers %}
+            {% if member not in club.leadership.all and member.associated_student is not None %}
+            <div class="profileRow">
+                <div class="profileRow" style="border: blue 3px solid; border-radius: 15px; padding: 5px; gap: 10px;">
+                    <img class="eventCover" style=" width: 50px; height: 50px;" src="{{ member.associated_student.profile_picture.url }}" alt="Club Cover">
+                    <p class="text">{{ member.name }}</p>
+                    <p class="aboutText">{{ member.associated_student.year_level }}{{ member.associated_student.section }}</p>
+                    <button class="btn empty" onclick="addMember('{{member.email}}', 'Leadership')"><img src="{%static '../media/images/joinButton.svg' %}"></button>
+                </div>
+            </div>
+            {% endif %}
+            {% empty %}
+            <p class="text">No Students.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<script>
+    function openMemberPopup(type) {
+        if(type == "member") {
+            document.getElementById('addMemberBG').hidden = false;
+        }
+        else if(type == "advisor") {
+            document.getElementById('addAdvisorBG').hidden = false;
+        }
+        else if(type == "leadership") {
+            document.getElementById('addLeadershipBG').hidden = false;
+        }
+        else if(type == "head") {
+            document.getElementById('addHeadBG').hidden = false;
+        }
+        else if(type == "selectApplicant") {
+            document.getElementById('selectApplicantBG').hidden = false;
+        }
+        
+    }
+    function removeMember(email, sector) {
+        confirm("Are you sure you would like to delete " + email + "?");
+        fetch("/Club/Remove/{{club.pk}}/" + sector + "?email=" + email)
+        .then(data => data.json())
+        .then(json => {console.log(json); location.reload();});
+    }
+    function addMember(email, sector) {
+        fetch("/Club/Add/{{club.pk}}/" + sector + "?email=" + email)
+        .then(data => data.json())
+        .then(json => {console.log(json); location.reload();});
+    }
+    
+    function searchMemberGrid(searchTerm, grid) {
+        try{
+        for(var i = 0; i < grid.children.length; i++) {
+            var child = grid.children[i];
+            if(child.children[0].children[1].innerText.toLowerCase().includes(searchTerm.toLowerCase())) {
+                child.style.display = "flex";
+            }
+            else {
+                child.style.display = "none";
+            }
+        }
+    }
+    catch(e) {
+        {% comment %} console.error(e); {% endcomment %}
+    }
+    }
+    function searchAddMemberGrid(searchTerm,  grid) {
+        try{
+        for(var i = 0; i < grid.children.length; i++) {
+            var child = grid.children[i];
+            if(child.children[0].children[1].innerText.toLowerCase().includes(searchTerm.toLowerCase())) {
+                child.style.display = "flex";
+            }
+            else {
+                child.style.display = "none";
+            }
+        }
+    }
+    catch{}
+    }
+    
+    setInterval(function() {
+        searchMemberGrid(document.getElementById("memberSearch").value, document.getElementById("memberField"));
+        searchMemberGrid(document.getElementById("headSearch").value, document.getElementById("headField"));
+        searchMemberGrid(document.getElementById("leaderSearch").value, document.getElementById("leaderField"));
+        searchMemberGrid(document.getElementById("advisorSearch").value, document.getElementById("advisorField"));
+        
+    }, 1);
+    setInterval(function() {
+        searchAddMemberGrid(document.getElementById("addMemberSearch").value, document.getElementById("addMemberField"));
+        searchAddMemberGrid(document.getElementById("addHeadsSearch").value, document.getElementById("addHeadField"));
+        searchAddMemberGrid(document.getElementById("addAdvisorSearch").value, document.getElementById("addAdvisorField"));
+        searchAddMemberGrid(document.getElementById("addLeadershipSearch").value, document.getElementById("addLeadershipField"));
+        searchAddMemberGrid(document.getElementById("selectApplicantSearch").value, document.getElementById("selectApplicantField"));
+    }, 1);
+
+    
+    
+</script>
+{% endblock %}

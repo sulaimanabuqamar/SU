@@ -46,11 +46,13 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=True)
     associated_student = models.ForeignKey("Student",null=True, blank=True, on_delete=models.CASCADE)
     associated_faculty = models.ForeignKey("Faculty",null=True, blank=True, on_delete=models.CASCADE)
-    associated_club = models.ForeignKey("Club",null=True, blank=True, on_delete=models.CASCADE)
-    associated_varsity = models.ForeignKey("Varsity",null=True, blank=True, on_delete=models.CASCADE)
+    associated_clubs = models.ManyToManyField("Club", blank=True,related_name="associated_clubs")
+    associated_varsities = models.ManyToManyField("Varsity", blank=True,related_name="associated_varsity")
     objects = UserManager()
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['name']
+    def __str__(self) -> str:
+        return self.name
 
 class Student(models.Model):
     student_db_id = models.CharField(max_length=20, primary_key=True,help_text="Student ID")
@@ -76,7 +78,7 @@ class Student(models.Model):
     section = models.CharField(max_length=1, choices=SECTION_CHOICES)
     # clubs = models.ManyToManyField('Club', related_name='students', blank=True)
     # varsities = models.ManyToManyField('Varsity', related_name='students', blank=True)
-    profile_picture = models.ImageField(upload_to='profiles/', null=True, blank=True, default='default-pfp.png/')
+    profile_picture = models.ImageField(upload_to='profiles/', null=True, blank=True, default='default-pfp.png')
     year_level_title = models.CharField(max_length=10, blank=True)
     def save(self, *args, **kwargs):
         # super().save(*args, **kwargs)
@@ -98,22 +100,22 @@ class Student(models.Model):
         return super().save(*args, **kwargs)
 class Faculty(models.Model):
     faculty_db_id = models.CharField(max_length=20, primary_key=True,help_text="Faculty ID")
-    profile_picture = models.ImageField(upload_to='profiles/', null=True, blank=True, default='default-pfp.png/')
+    profile_picture = models.ImageField(upload_to='profiles/', null=True, blank=True, default='default-pfp.png')
 
 class Club(models.Model):
     name = models.CharField(max_length=255)
-    email = models.EmailField(max_length=255)
-    password = models.CharField(max_length=255)
     heads = models.ManyToManyField(User, related_name='head_clubs', blank=True)
     leadership = models.ManyToManyField(User, related_name='leadership_roles', blank=True)
     members = models.ManyToManyField(User, related_name='membership_clubs', blank=True)
     advisors = models.ManyToManyField(User, related_name='advisor_clubs', blank=True)
-    events = models.ManyToManyField('Event', related_name='clubs', blank=True)
+    events = models.ManyToManyField('Event', related_name='events', blank=True)
     about = models.TextField()
     logo = models.ImageField(upload_to='clubs_logos/')
     color = models.CharField(max_length=7)  # Hex color code
     links = models.ManyToManyField(Links, related_name='club_links', blank=True)
-    
+    def __str__(self) -> str:
+        return self.name
+
 class Event(models.Model):
     GROUP_CHOICES = [
         ('ngr', 'All Year Levels'),
@@ -150,7 +152,9 @@ class Event(models.Model):
     significant_event = models.BooleanField(default=False)
     attending_Students = models.ManyToManyField(User, related_name='attending_students', blank=True)
     links = models.ManyToManyField(Links, related_name='events_links', blank=True)
-
+    def __str__(self) -> str:
+        return self.title
+    typeitem = "event"
     def save(self, *args, **kwargs):
         if not self.cover:  # Check if cover is not provided
             if self.author and self.author.logo:  # Ensure the author and their logo exist
@@ -191,13 +195,12 @@ class News(models.Model):
     awaiting_approval = models.BooleanField(default=True)
     denied_reason = models.CharField(max_length=150, blank=True, null=True)
     links = models.ManyToManyField(Links, related_name='news_links', blank=True)
+    typeitem = "news"
     def __str__(self):
-        return self.summary
+        return self.title
 
 class Varsity(models.Model):
     name = models.CharField(max_length=255)
-    email = models.EmailField(max_length=255)
-    password = models.CharField(max_length=255)
     members = models.ManyToManyField(User, related_name='varsity_players', blank=True)
     captains = models.ManyToManyField(User, related_name='varsity_captains', blank=True)
     coaches = models.ManyToManyField(User, related_name='varsity_coaches', blank=True)
@@ -206,16 +209,17 @@ class Varsity(models.Model):
     logo = models.ImageField(upload_to='varsities_logos/')
     color = models.CharField(max_length=7)  # Hex color code
     links = models.ManyToManyField(Links, related_name='varsity_links', blank=True)
-
+    def __str__(self) -> str:
+        return self.name
 class HomePage(models.Model):
-    event_highlight_1 = models.ForeignKey(Event, related_name='home_event_highlight_1', on_delete=models.CASCADE)
-    event_highlight_2 = models.ForeignKey(Event, related_name='home_event_highlight_2', on_delete=models.CASCADE)
-    event_highlight_3 = models.ForeignKey(Event, related_name='home_event_highlight_3', on_delete=models.CASCADE)
-    news_highlight_1 = models.ForeignKey(News, related_name='home_news_highlight_1', on_delete=models.CASCADE)
-    news_highlight_2 = models.ForeignKey(News, related_name='home_news_highlight_2', on_delete=models.CASCADE)
-    news_highlight_3 = models.ForeignKey(News, related_name='home_news_highlight_3', on_delete=models.CASCADE)
-    officer_highlight_1 = models.ForeignKey(Student, related_name='home_officer_highlight_1', on_delete=models.CASCADE, null=True)
-    officer_highlight_2 = models.ForeignKey(Student, related_name='home_officer_highlight_2', on_delete=models.CASCADE, null=True)
-    officer_highlight_3 = models.ForeignKey(Student, related_name='home_officer_highlight_3', on_delete=models.CASCADE, null=True)
-    officer_highlight_4 = models.ForeignKey(Student, related_name='home_officer_highlight_4', on_delete=models.CASCADE, null=True)
+    event_highlight_1 = models.ForeignKey(Event, related_name='home_event_highlight_1', on_delete=models.CASCADE, null=True, blank=True)
+    event_highlight_2 = models.ForeignKey(Event, related_name='home_event_highlight_2', on_delete=models.CASCADE, null=True, blank=True)
+    event_highlight_3 = models.ForeignKey(Event, related_name='home_event_highlight_3', on_delete=models.CASCADE, null=True, blank=True)
+    news_highlight_1 = models.ForeignKey(News, related_name='home_news_highlight_1', on_delete=models.CASCADE, null=True, blank=True)
+    news_highlight_2 = models.ForeignKey(News, related_name='home_news_highlight_2', on_delete=models.CASCADE, null=True, blank=True)
+    news_highlight_3 = models.ForeignKey(News, related_name='home_news_highlight_3', on_delete=models.CASCADE, null=True, blank=True)
+    officer_highlight_1 = models.ForeignKey(User, related_name='home_officer_highlight_1', on_delete=models.CASCADE, null=True, blank=True)
+    officer_highlight_2 = models.ForeignKey(User, related_name='home_officer_highlight_2', on_delete=models.CASCADE, null=True, blank=True)
+    officer_highlight_3 = models.ForeignKey(User, related_name='home_officer_highlight_3', on_delete=models.CASCADE, null=True, blank=True)
+    officer_highlight_4 = models.ForeignKey(User, related_name='home_officer_highlight_4', on_delete=models.CASCADE, null=True, blank=True)
     

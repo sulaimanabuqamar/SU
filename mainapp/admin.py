@@ -13,7 +13,7 @@ class UserAdmin(BaseUserAdmin):
         (None, {'fields': ('email', 'password')}),
         ('Personal Info', {'fields': ('name',)}),
         ('Permissions', {'fields': ('is_admin', 'is_staff', 'is_active')}),
-        ('Account Type', {'fields': ('associated_student', 'associated_faculty', 'associated_club', 'associated_varsity')}),
+        ('Account Type', {'fields': ('associated_student', 'associated_faculty', 'associated_clubs', 'associated_varsities')}),
     )
     add_fieldsets = (
         (None, {
@@ -44,23 +44,22 @@ class FacultyAdmin(admin.ModelAdmin):
     search_fields = ('faculty_db_id',)
 
 class ClubAdmin(admin.ModelAdmin):
-    list_display = ('name', 'email')  # Display name and email in the list view
-    search_fields = ('name', 'email')  # Allow searching by name and email
+    list_display = ('name', 'pk')  # Display name and email in the list view
+    search_fields = ('name', )  # Allow searching by name and email
     filter_horizontal = ('heads', 'leadership', 'members', 'advisors', 'events')  # Use a horizontal filter for many-to-many fields
 
     fieldsets = (
-        (None, {'fields': ('name', 'email', 'password', 'about', 'logo', 'color', 'links')}),
+        (None, {'fields': ('name', 'about', 'logo', 'color', 'links')}),
         ('Membership', {'fields': ('heads', 'leadership', 'members', 'advisors')}),
-        ('Events', {'fields': ('events',)}),
     )
 
 class VarsityAdmin(admin.ModelAdmin):
-    list_display = ('name', 'email')  # Display name and email in the list view
-    search_fields = ('name', 'email')  # Allow searching by name and email
+    list_display = ('name', 'about')  # Display name and email in the list view
+    search_fields = ('name', 'about')  # Allow searching by name and email
     filter_horizontal = ('captains', 'members', 'coaches')  # Use a horizontal filter for many-to-many fields
 
     fieldsets = (
-        (None, {'fields': ('name', 'email', 'password', 'about', 'logo', 'color', 'links')}),
+        (None, {'fields': ('name', 'about', 'logo', 'color', 'links')}),
         ('Captains', {'fields': ('captains',)}),
         ('Players', {'fields': ('members',)}), 
         ('Coaches', {'fields': ('coaches',)}),
@@ -97,4 +96,4 @@ admin.site.register(Club, ClubAdmin)
 admin.site.register(Varsity, VarsityAdmin)
 admin.site.register(Event, EventAdmin)
 admin.site.register(Links, LinksAdmin) 
-admin.site.register(News, NewsAdmin) 
+admin.site.register(News, NewsAdmin)

@@ -12,6 +12,9 @@
   <script src="https://alcdn.msauth.net/browser/2.30.0/js/msal-browser.js"
   integrity="sha384-o4ufwq3oKqc7IoCcR08YtZXmgOljhTggRwxP2CLbSqeXGtitAxwYaUln/05nJjit"
   crossorigin="anonymous"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
     {% block  style%}{% endblock %}
 </head>
 <body style="margin: 0px;">
@@ -22,7 +25,12 @@
                 document.getElementsByClassName("popupBG")[0].onclick = "";
             }
             else {
-                document.getElementsByClassName("popupBG")[0].onclick = "if(event.srcElement == this) {this.hidden = true; showLoginPopup('accounttypepopup');}";
+                console.log("readding")
+                document.getElementsByClassName("popupBG")[0].onclick = function() {
+                    if(event.srcElement == this) {
+                        this.hidden = true; 
+                        showLoginPopup('accounttypepopup');}
+                    };
             }
             for(var i = 0; i < ids.length; i++) {
                 console.log(ids[i]);
@@ -37,7 +45,7 @@
             }
         }
     </script>
-    <div class="popupBG" hidden onclick="if(event.srcElement == this) {this.hidden = true; showLoginPopup('accounttypepopup');}">
+    <div class="popupBG" hidden onclick="console.log(event.srcElement); if(event.srcElement == this) {this.hidden = true; showLoginPopup('accounttypepopup');}">
         <div id="accountPopupWindow" class="accountPopupWindow">
             <p class="subtitle" style="text-align: center; margin-bottom: 15px;">Welcome Back</p>
             <p class="subtext">Sign in to access the student union</p>
@@ -85,10 +93,14 @@
             </div>
         </div>
     </div>
+    <div class="popupBG" hidden id="loadingBG">
+        <div class="loadingIcon"></div>
+        {% comment %} <svg xmlns="http://www.w3.org/2000/svg" class="loadingIcon" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M272-120 64-480l208-360h416l208 360-208 360H272Zm46-80h324l161-280-161-280H318L156-480l162 280Zm162-280Z"/></svg> {% endcomment %}
+    </div>
     <div class="navBar">
         <div>
             <a style="display: flex; align-items: center;" href="{% url 'home' %}">
-                <p class="logoText">STUDENTS' UNION</p>
+                <p class="logoText">ALMAWAKEB<br>STUDENTS' UNION</p>
                 <img class="logo" src="{% static '../media/images/su-white-logo.png' %}" alt="SU Logo">
             </a>
         </div>
@@ -110,24 +122,79 @@
             <a href="{% url 'varsity' %}">
                 <p class="navText">Varsity Teams</p>
             </a>
+            <a href="{% url 'scouts' %}">
+                <p class="navText">Scouts</p>
+            </a>
+            
             <!-- Popup of signin -->
             {% if user.is_authenticated %}
                 {% if "profile" in url %}
-                <p class="navText" style="cursor: pointer;" onclick="signOut();">Sign Out</p>
+                <div class="dropdown">
+                <p class="dropbtn navText" style="cursor: pointer;" onclick="signOut();">Sign Out</p>
+                <div class="dropdown-content" style="margin-left: -60px;">
+                    <a href="/profile/User">
+                        <p class="navText" style="margin: 0px;">{{ user.name }}</p>
+                    </a>
+                    {% if user.associated_clubs.count > 0 %}
+                    <hr>
+                    {% endif %}
+                    {% for club in user.associated_clubs.all %}
+                    <a href="/profile/Club/{{club.pk}}">
+                        <p class="navText" style="margin: 0px;">{{ club.name }}</p>
+                    </a>
+                    {% endfor %}
+                    {% if user.associated_varsities.count > 0 %}
+                    <hr>
+                    {% endif %}
+                    {% for varsity in user.associated_varsities.all %}
+                    <a href="/profile/Varsity/{{varsity.pk}}">
+                        <p class="navText" style="margin: 0px;">{{ varsity.name }}</p>
+                    </a>
+                    {% endfor %}
+                </div>
+                </div>
                 {% else %}
-                <a href="/profile"><p class="navText" style="cursor: pointer;">Profile</p></a>
+                {% if user.associated_clubs is None and user.associated_varsities is None %}
+                <a href="/profile/User"><p class="navText" style="cursor: pointer;">Profile</p></a>
+                {% else %}
+                <div class="dropdown">
+                <div class="dropbtn navText">Profile</div>
+                <div class="dropdown-content">
+                    <a href="/profile/User">
+                        <p class="navText" style="margin: 0px;">{{ user.name }}</p>
+                    </a>
+                    {% if user.associated_clubs.count > 0 %}
+                    <hr>
+                    {% endif %}
+                    {% for club in user.associated_clubs.all %}
+                    <a href="/profile/Club/{{club.pk}}">
+                        <p class="navText" style="margin: 0px;">{{ club.name }}</p>
+                    </a>
+                    {% endfor %}
+                    {% if user.associated_varsities.count > 0 %}
+                    <hr>
+                    {% endif %}
+                    {% for varsity in user.associated_varsities.all %}
+                    <a href="/profile/Varsity/{{varsity.pk}}">
+                        <p class="navText" style="margin: 0px;">{{ varsity.name }}</p>
+                    </a>
+                    {% endfor %}
+                </div>
+                </div>
+                {% endif %}
                 {% endif %}
             {% else %}
-                <p class="navText" style="cursor: pointer;" onclick="document.getElementsByClassName('popupBG')[0].hidden = false;">Sign In</p>
+                <p class="navText" style="cursor: pointer;" onclick="signIn()">Sign In</p>
+                {% comment %} <p class="navText" style="cursor: pointer;" onclick="document.getElementsByClassName('popupBG')[0].hidden = false;">Sign In</p> {% endcomment %}
             {% endif %}
 
         </div>
     </div>
-    <div class="content {% if request.path == "/" %}centerer hirr{% endif %} "> 
+    <div class="content {% if request.path == "/" %}centerer hirr" style="padding-top:0px;"{% else %}"{% endif %}> 
         {% block content %}{% endblock %}
     </div>
     <div class="footer">
-        <p class="logoText">STUDENTS' UNION</p>
+        <p class="logoText">ALMAWAKEB<br>STUDENTS' UNION</p>
         <img class="logo" src="{% static '../media/images/su-white-logo.png' %}" alt="SU Logo">
     </div>
 </body>
@@ -135,14 +202,17 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        var dropdown = document.querySelector('.dropbtn');
-        dropdown.onclick = function(event) {
-            var dropdownContent = this.nextElementSibling;
-            if (dropdownContent.style.display === "block") {
-                dropdownContent.style.display = "none";
-            } else {
+        var dropdown = document.getElementsByClassName('dropbtn');
+        for(var i = 0; i < dropdown.length; i++) {
+            dropdown[i].onmouseover = function(event) {
+                var dropdownContent = this.nextElementSibling;
                 dropdownContent.style.display = "block";
+                dropdownContent.onmouseleave = function(event) {
+                    var dropdownContent = this;
+                    dropdownContent.style.display = "none";
+                }
             }
+            
         }
     });
 </script>
@@ -154,7 +224,6 @@
         document.getElementById('wrongcred').hidden = false;
         document.getElementById('accounttypepopup').style.display = 'none';
     }
-    
 </script>
 <script src="{% static "js/authConfig.js" %}"></script>
 <script src="{% static "js/graphConfig.js" %}"></script>

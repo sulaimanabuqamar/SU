@@ -17,59 +17,118 @@
 {% endblock %}
 
 {% block content %}
+<div class="highlightBox">
+    <button class="btn empty" onclick="previousHighlight()"><img src="{% static '../media/images/leftArrow.svg' %}"></button>
+    <div class="highlightOverflow">
+        {% for event in highlights %}
+        <a class="highlightContent" href="/{% if event.typeitem == "event" %}Event{% elif event.typeitem == "news" %}News{% endif %}/Detail/{{event.pk}}">
+            <div>
+                <p class="highlightTitle">{{event.title}}</p>
+                <p class="highlightSubtitle">{{event.summary}}</p>
+            </div>
+            <img class="highlightImage" src="{{ event.cover.url }}" style="border: 2px solid {{ event.color.color }};" alt="Event Highlight">
+        </a>
+        {% endfor %}
+    </div>
+    <button class="btn empty" onclick="nextHighlight()"><img src="{% static '../media/images/rightArrow.svg' %}"></button>
+</div>
 <div class="centerer hirr">
 <p style="color: black; font-size: 90px; font-family: Inter; font-weight: 800; margin: 0px;">WELCOME TO AMBSU</p>
 <div style="width: 100%;display: flex;justify-content: space-around;">
+    {% if home_page.event_highlight_1 is not None %}
     <a href="{% url 'event_detail' home_page.event_highlight_1.id %}">
         <img class="eventCover" src="{{ home_page.event_highlight_1.cover.url }}" alt="Event Highlight 1">
     </a>
+    {% endif %}
+    {% if home_page.event_highlight_2 is not None %}
     <a href="{% url 'event_detail' home_page.event_highlight_2.id %}">
         <img class="eventCover" src="{{ home_page.event_highlight_2.cover.url }}" alt="Event Highlight 2">
     </a>
+    {% endif %}
+    {% if home_page.event_highlight_3 is not None %}
     <a href="{% url 'event_detail' home_page.event_highlight_3.id %}">
         <img class="eventCover" src="{{ home_page.event_highlight_3.cover.url }}" alt="Event Highlight 3">
     </a>
+    {% endif %}
 </div>
 <div style="text-align: left; width: 100%;">
     <p class="hpsubtitle">LATEST NEWS</p>
 </div>
 <div style="width: 100%;display: flex;justify-content: space-around;">
+    {% if home_page.news_highlight_1 is not None %}
     <a href="{% url 'news_detail' home_page.news_highlight_1.id %}">
         <img class="newsCover" src="{{ home_page.news_highlight_1.cover.url }}" alt="News Highlight 1">
         <p class="text">{{ home_page.news_highlight_1.title }}</p>
         <p class="aboutText">{{ home_page.news_highlight_1.published_date|date:"N j, Y" }}</p>
     </a>
+    {% endif %}
+    {% if home_page.news_highlight_2 is not None %}
     <a href="{% url 'news_detail' home_page.news_highlight_2.id %}">
         <img class="newsCover" src="{{ home_page.news_highlight_2.cover.url }}" alt="News Highlight 2">
         <p class="text">{{ home_page.news_highlight_2.title }}</p>
         <p class="aboutText">{{ home_page.news_highlight_2.published_date|date:"N j, Y" }}</p>
     </a>
+    {% endif %}
+    {% if home_page.news_highlight_3 is not None %}
     <a href="{% url 'news_detail' home_page.news_highlight_3.id %}">
         <img class="newsCover" src="{{ home_page.news_highlight_3.cover.url }}" alt="News Highlight 3">
         <p class="text">{{ home_page.news_highlight_3.title }}</p>
         <p class="aboutText">{{ home_page.news_highlight_3.published_date|date:"N j, Y" }}</p>
     </a>
+    {% endif %}
 </div>
 <div style="text-align: left; width: 100%;">
     <p class="hpsubtitle">OFFICERS OF THE SU</p>
 </div> 
 <div style="width: 100%;display: flex;justify-content: space-between;">
-    <a href="/Student/Detail/{{home_page.officer_highlight_1.id}}">
-        <img class="studentPFP" src="{{ home_page.officer_highlight_1.profile_picture.url }}" alt="Officer Highlight 1">
+    {% if home_page.officer_highlight_1 is not None %}
+    <a href="mailto:{{home_page.officer_highlight_1.email}}">
+        <img class="studentPFP" src="{{ home_page.officer_highlight_1.associated_student.profile_picture.url }}" alt="Officer Highlight 1">
         <p class="text">{{ home_page.officer_highlight_1.name }}</p>
     </a>
-    <a href="/Student/Detail/{{home_page.officer_highlight_2.id}}">
-        <img class="studentPFP" src="{{ home_page.officer_highlight_2.profile_picture.url }}" alt="Officer Highlight 1">
+    {% endif %}
+    {% if home_page.officer_highlight_2 is not None %}
+    <a href="mailto:{{home_page.officer_highlight_2.email}}">
+        <img class="studentPFP" src="{{ home_page.officer_highlight_2.associated_student.profile_picture.url }}" alt="Officer Highlight 1">
         <p class="text">{{ home_page.officer_highlight_2.name }}</p>
     </a>
-    <a href="/Student/Detail/{{home_page.officer_highlight_3.id}}">
-        <img class="studentPFP" src="{{ home_page.officer_highlight_3.profile_picture.url }}" alt="Officer Highlight 1">
+    {% endif %}
+    {% if home_page.officer_highlight_3 is not None %}
+    <a href="mailto:{{home_page.officer_highlight_3.email}}">
+        <img class="studentPFP" src="{{ home_page.officer_highlight_3.associated_student.profile_picture.url }}" alt="Officer Highlight 1">
         <p class="text">{{ home_page.officer_highlight_3.name }}</p>
     </a>
-    <a href="/Student/Detail/{{home_page.officer_highlight_4.id}}">
-        <img class="studentPFP" src="{{ home_page.officer_highlight_4.profile_picture.url }}" alt="Officer Highlight 1">
+    {% endif %}
+    {% if home_page.officer_highlight_4 is not None %}
+    <a href="mailto:{{home_page.officer_highlight_4.email}}">
+        <img class="studentPFP" src="{{ home_page.officer_highlight_4.associated_student.profile_picture.url }}" alt="Officer Highlight 1">
         <p class="text">{{ home_page.officer_highlight_4.name }}</p>
     </a>
+    {% endif %}
 </div>
 </div>
+<script>
+var currentHighlight = 0;
+var highlights = document.getElementsByClassName("highlightContent");
+var container = document.getElementsByClassName("highlightOverflow")[0];
+function previousHighlight() {
+    if(currentHighlight <= 0) {
+        currentHighlight = highlights.length-1;
+    }
+    else {
+        currentHighlight--;
+    }
+    container.scroll({left: highlights[currentHighlight].offsetLeft-50,behavior:'smooth'});
+}
+function nextHighlight() {
+    if(currentHighlight >= highlights.length-1) {
+        currentHighlight = 0;
+    }
+    else {
+        currentHighlight++;
+    }
+    container.scroll({left: highlights[currentHighlight].offsetLeft-50,behavior:'smooth'});
+}
+
+</script>
 {% endblock %}

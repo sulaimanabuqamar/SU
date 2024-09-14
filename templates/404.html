@@ -1,0 +1,93 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" class="tabIcon" href="{% static '../media/images/tab-icon.png' %}" type="image/png">
+    <link rel="stylesheet" href="{% static 'CSS/base.css' %}">
+    <link rel="stylesheet" href="{% static 'CSS/fonts.css' %}">
+    {% comment %} <script src="https://alcdn.msauth.net/browser/2.18.0/js/msal-browser.min.js"></script> {% endcomment %}
+     <!-- msal.min.js can be used in the place of msal.js; included msal.js to make debug easy -->
+  <script src="https://alcdn.msauth.net/browser/2.30.0/js/msal-browser.js"
+  integrity="sha384-o4ufwq3oKqc7IoCcR08YtZXmgOljhTggRwxP2CLbSqeXGtitAxwYaUln/05nJjit"
+  crossorigin="anonymous"></script>
+</head>
+<body style="margin: 0px;">
+    <div class="navBar">
+        <div>
+            <a style="display: flex; align-items: center;" href="{% url 'home' %}">
+                <p class="logoText">ALMAWAKEB<br>STUDENTS' UNION</p>
+                <img class="logo" src="{% static '../media/images/su-white-logo.png' %}" alt="SU Logo">
+            </a>
+        </div>
+        <div style="display: flex; align-items: center; gap: 30px;">
+            <div class="dropdown">
+                <div class="dropbtn navText">What's On</div>
+                <div class="dropdown-content">
+                    <a href="{% url 'events' %}">
+                        <p class="navText" style="margin: 0px;">Events</p>
+                    </a>
+                    <a href="{% url 'news' %}">
+                        <p class="navText" style="margin: 0px;">News</p>
+                    </a>
+                </div>
+            </div>
+            <a href="{% url 'clubs' %}">
+                <p class="navText">Clubs & Societies</p>
+            </a>
+            <a href="{% url 'varsity' %}">
+                <p class="navText">Varsity Teams</p>
+            </a>
+            <!-- Popup of signin -->
+            {% if user.is_authenticated %}
+                {% if "profile" in url %}
+                <p class="navText" style="cursor: pointer;" onclick="signOut();">Sign Out</p>
+                {% else %}
+                <a href="/profile"><p class="navText" style="cursor: pointer;">Profile</p></a>
+                {% endif %}
+            {% else %}
+                <p class="navText" style="cursor: pointer;" onclick="document.getElementsByClassName('popupBG')[0].hidden = false;">Sign In</p>
+            {% endif %}
+
+        </div>
+    </div>
+    <div class="content {% if request.path == "/" %}centerer hirr{% endif %} "> 
+        <p style="font-size: 150px; font-weight: bold; margin-top: 50px; text-align: center; font-family: Inter;">404</p>
+        <p style="font-size: 20px; text-align: center; font-family: Inter;">Oops, this page is not found, if you were redirected here, press the browser back button and try your action again, otherwise notify one of the SU Officers about the problem you're having. </p>
+    </div>
+    <div class="footer">
+        <p class="logoText">ALMAWAKEB<br>STUDENTS' UNION</p>
+        <img class="logo" src="{% static '../media/images/su-white-logo.png' %}" alt="SU Logo">
+    </div>
+</body>
+</html>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var dropdown = document.querySelector('.dropbtn');
+        dropdown.onclick = function(event) {
+            var dropdownContent = this.nextElementSibling;
+            if (dropdownContent.style.display === "block") {
+                dropdownContent.style.display = "none";
+            } else {
+                dropdownContent.style.display = "block";
+            }
+        }
+    });
+</script>
+<script>
+    var loginfailed = {{ login_failed }};
+    if(loginfailed) {
+        document.getElementsByClassName("popupBG")[0].hidden = false;
+        showLoginPopup('clubvarsityloginpopup');
+        document.getElementById('wrongcred').hidden = false;
+        document.getElementById('accounttypepopup').style.display = 'none';
+    }
+    
+</script>
+<script src="{% static "js/authConfig.js" %}"></script>
+<script src="{% static "js/graphConfig.js" %}"></script>
+{% comment %} <script src="{% static "js/authPopup.js" %}"></script> {% endcomment %}
+<script src="{% static "js/authRedirect.js" %}"></script>
+<script src="{% static "js/graph.js" %}"></script>

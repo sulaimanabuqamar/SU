@@ -2,7 +2,8 @@
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
-
+import threading
+import staticServer
 
 def main():
     """Run administrative tasks."""
@@ -17,6 +18,17 @@ def main():
         ) from exc
     execute_from_command_line(sys.argv)
 
-
+if 'runserver' in sys.argv:
+    print("Static Media Server Initializing...")
+    thread = threading.Thread(target=staticServer.startServer)
+    print("Second Thread Starting...")
+    thread.start()
+    print("Starting Django Server...")
 if __name__ == "__main__":
     main()
+    if 'runserver' in sys.argv:
+        print("Django Shutdown\nShutting Down Static Media Server...")
+        staticServer.stopServer()
+        print("Aborting Second Thread...")
+        thread.join()
+        print("Exit")

@@ -44,7 +44,10 @@
     </script>
 
 <label style="font-family: Inter; margin-left: 10px;"><input name="highlight" type="checkbox" checked> Highlight</label>
-    <input type="submit" class="btn primary" value="Save Event">
+<div style="display: flex; flex-direction:row; margin-left: -10px; margin-top: 30px;">
+    <button class="btn" onclick="navigation.back()" type="reset">Cancel Changes</button>
+    <input type="submit" class="btn primary" value="Save Event" onclick="var element = this; setTimeout(function() {element.disabled = true; element.style.backgroundColor = '#aaaaaa'; }, 250); setTimeout(function(){element.disabled = false; element.style.backgroundColor = '#1F355E';}, 10000);">
+    </div>
     </div>
     <div style="display: flex; flex-direction: column;">
         <img class="eventCover" id="coverPreview" style="border: black 1px solid; border-radius: 10px; cursor: pointer;" src="{{news.cover.url}}" onclick="document.getElementsByName('coverPhoto')[0].click();">

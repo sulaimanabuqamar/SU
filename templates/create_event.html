@@ -12,7 +12,6 @@
 <form method="post" class="profileRow" style="align-items: start;" enctype="multipart/form-data">
     {% csrf_token %}
     <div style="display: flex; flex-direction: column;">
-    <p class="subtext" id="wrongcred" hidden style="color: red">Incorrect Username or Password</p>
     <input class="textfield" required name="title" placeholder="Title">
     <textarea class="textfield" required name="content" placeholder="Content" style="width: 600px; height: 200px; padding-top: 10px;"></textarea>
     <input class="textfield" required name="summary" placeholder="Summary" style="width: 600px;">
@@ -47,7 +46,7 @@
         {% for member in members %}
         <div class="profileRow" style="border: black 3px solid; border-radius: 15px; padding: 10px; gap: 10px; margin-bottom: 10px;">
             <div style="display: flex; flex-direction: row; align-items: center; gap: 10px;">
-            <img class="eventCover" style=" width: 50px; height: 50px; margin-right: 10px;" src="/media/{{ member.associated_student.profile_picture }}" alt="pfp">
+            <img class="eventCover" style=" width: 50px; height: 50px; margin-right: 10px;" src="{{ member.associated_student.profile_picture.url }}" alt="pfp">
             <p class="text">{{ member.name }}</p>
             <p class="aboutText">{{ member.associated_student.year_level }}{{ member.associated_student.section }}</p>
             </div>
@@ -64,20 +63,21 @@
     <div id="hosemail" hidden>
     <p class="aboutText" style="margin-left: 10px">Send Email About Event To: </p>
     <div class="container">
-        {% for fauclty in faculties %}
-        {% if faculty.title_type == "hos" %}
+        {% for faculty in faculties %}
         <div class="profileRow" style="border: black 3px solid; border-radius: 15px; padding: 10px; gap: 10px; margin-bottom: 5px">
-            <p class="text">{{ faculty.name}}</p>
+            <p class="text">{{ faculty.name }}</p>
             <input type="checkbox" class="btn empty" name="{{faculty.email}}">
         </div>
-        {% endif %}
         {% endfor %}
     </div>
 </div>
-    <input type="submit" class="btn primary" value="Create Event">
+<div style="display: flex; flex-direction:row; margin-left: -10px; margin-top: 30px;">
+    <button class="btn" onclick="navigation.back()" type="reset">Cancel Changes</button>
+    <input type="submit" class="btn primary" value="Create Event" onclick="var element = this; setTimeout(function() {element.disabled = true; element.style.backgroundColor = '#aaaaaa'; }, 250); setTimeout(function(){element.disabled = false; element.style.backgroundColor = '#1F355E';}, 10000);">
+    </div>
     </div>
     <div style="display: flex; flex-direction: column;">
-        <img class="eventCover" id="coverPreview" style="border: black 1px solid; border-radius: 10px; cursor: pointer;" src="/media/{{user.associated_club.logo}}" onclick="document.getElementsByName('coverPhoto')[0].click();">
+        <img class="eventCover" id="coverPreview" style="border: black 1px solid; border-radius: 10px; cursor: pointer;" src="{{club.logo.url}}" onclick="document.getElementsByName('coverPhoto')[0].click();">
         <input type="file" hidden name="coverPhoto" accept="image/*" onchange="setPreviewImage(this.files[0])">
         <script>
             function uploadImageToServer(file) {

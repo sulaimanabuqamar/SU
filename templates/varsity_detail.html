@@ -23,8 +23,8 @@
     <div class="studentGrid">
         {% for captain in captains %}
         <div>
-            <a href="{% url 'student_detail' captain.id %}">
-                <img src="/media/{{ captain.associated_student.profile_picture }}" class="studentPFP" alt="{{ captain.name }}">
+            <a >
+                <img src="{{ captain.associated_student.profile_picture.url }}" class="studentPFP" alt="{{ captain.name }}">
                 <p class="text">{{ captain.name }}</p>
             </a>
         </div>
@@ -36,8 +36,8 @@
     <div class="studentGrid">
         {% for player in players %}
         <div>
-            <a href="{% url 'student_detail' player.id %}">
-                <img src="/media/{{ player.associated_student.profile_picture }}" class="studentPFP" alt="{{ player.name }}">
+            <a>
+                <img src="{{ player.associated_student.profile_picture.url }}" class="studentPFP" alt="{{ player.name }}">
                 <p class="text">{{ player.name }}</p>
             </a>
         </div>
@@ -49,8 +49,8 @@
     <div class="studentGrid">
         {% for coach in coaches %}
         <div>
-            <a href="{% url 'student_detail' coach.id %}">
-                <img src="/media/{{ coach.associated_faculty.profile_picture }}" class="studentPFP" alt="{{ coach.name }}">
+            <a>
+                <img src="{{ coach.associated_faculty.profile_picture.url }}" class="studentPFP" alt="{{ coach.name }}">
                 <p class="text">{{ coach.name }}</p>
             </a>
         </div>

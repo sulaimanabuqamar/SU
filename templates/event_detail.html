@@ -17,9 +17,9 @@
         <p class="articleDescriptionText"><strong>Note:</strong> This event is only for members.</p>
         {% endif %}
         <div class="profileRow">
-            <p class="pageSubtitle" style="margin: 0px;">{{event.attending_Students.count}} Members</p>
-            {% if event.author == user.associated_club %}
-            <button class="btn empty" onclick="document.getElementById('addMemberBG').hidden = false;"><img src="/media/images/joinButton.svg"></button>
+            <p class="pageSubtitle" style="margin: 0px;">{{event.attending_Students.count}} Attendee{% if event.attending_Students.count > 1 %}s{% endif %}</p>
+            {% if event.author in user.associated_clubs.all %}
+            <button class="btn empty" onclick="document.getElementById('addMemberBG').hidden = false;"><img src="{% static '../media/images/joinButton.svg' %}"></button>
             {% endif %}
             </div>
             <input class="textfield" placeholder="Search..." style="margin: 0px; width: unset;" id="memberSearch">
@@ -28,11 +28,11 @@
                 {% for member in event.attending_Students.all %}
                 <div class="profileRow">
                     <div class="profileRow Box" style="border: black 3px solid; border-radius: 15px; padding: 10px; gap: 10px;">
-                        <img class="eventCover" style=" width: 50px; height: 50px; margin-right: 10px;" src="/media/{{ member.associated_student.profile_picture }}" alt="Club Cover">
+                        <img class="eventCover" style=" width: 50px; height: 50px; margin-right: 10px;" src="{{ member.associated_student.profile_picture.url }}" alt="Club Cover">
                         <p class="text">{{ member.name }}</p>
                         <p class="aboutText">{{ member.associated_student.year_level }}{{ member.associated_student.section }}</p>
-                        {% if event.author == user.associated_club %}
-                        <button class="btn empty" onclick="removeAttendeeFromList('{{member.email}}')"><img src="/media/images/removeButton.svg"></button>
+                        {% if event.author in user.associated_clubs.all %}
+                        <button class="btn empty" onclick="removeAttendeeFromList('{{member.email}}')"><img src="{%static '../media/images/removeButton.svg' %}"></button>
                         {% endif %}
                     </div>
                 </div>
@@ -54,12 +54,12 @@
             <a class="links" href="{{link.link }}" target="_blank">{{ link.name }}</a>, 
         {% endfor %}
         <br>
-        {% if event.author == user.associated_club %}
+        {% if event.author in user.associated_clubs.all %}
         <a href="/AttendeesList/Printable/{{ event.pk }}" target="_blank"><button class="btn">Printable List of Attendees</button></a><br>
         <a href="/Event/Modify/{{ event.pk }}" ><button class="btn">Edit Event</button></a>
         {% endif %}
     </div>
-</div>{% if event.author == user.associated_club %}
+</div>{% if event.author in user.associated_clubs.all %}
 <div class="popupBG" hidden id="addMemberBG" onclick="if(event.srcElement == this) {this.hidden = true}">
     <div class="accountPopupWindow">
         <p class="subtitle" style="text-align: center; margin-bottom: 15px;">Add Student To Club</p>
@@ -68,10 +68,10 @@
             {% for member in allUsers %}
             <div class="profileRow">
                 <div class="profileRow" style="border: blue 3px solid; border-radius: 15px; padding: 5px; gap: 10px;">
-                    <img class="eventCover" style=" width: 50px; height: 50px;" src="/media/{{ member.associated_student.profile_picture }}" alt="Club Cover">
+                    <img class="eventCover" style=" width: 50px; height: 50px;" src="{{ member.associated_student.profile_picture.url }}" alt="Club Cover">
                     <p class="text">{{ member.name }}</p>
                     <p class="aboutText">{{ member.associated_student.year_level }}{{ member.associated_student.section }}</p>
-                    <button class="btn empty" onclick="addAttendeeToList('{{member.email}}')"><img src="/media/images/joinButton.svg"></button>
+                    <button class="btn empty" onclick="addAttendeeToList('{{member.email}}')"><img src="{%static '../media/images/joinButton.svg' %}"></button>
                 </div>
             </div>
             {% empty %}
@@ -81,7 +81,7 @@
     </div>
 </div>
 {% endif %}
-<script>{% if event.author == user.associated_club %}
+<script>{% if event.author in user.associated_clubs.all %}
     function removeAttendeeFromList(email) {
         fetch("/Event/Remove?id=" + {{event.id}} + "&email=" + email)
         .then(data => data.json())

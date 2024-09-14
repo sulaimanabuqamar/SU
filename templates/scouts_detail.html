@@ -1,0 +1,66 @@
+{% extends 'Base.html' %}
+{% load static %}
+
+{% block style %}
+<title>{{ scouts.name }} - Details</title>
+{% endblock %}
+
+{% block content %}
+<div>
+    <div style="display: flex; justify-content: space-between; flex-direction: row; gap: 100px">
+            <div style="display: flex; justify-content: space-between; flex-direction: column; justify-content: flex-start;">
+            <p class="pageTitle" style="margin: 0px;">{{ scouts.name }}</p>
+                <div class="articleDescriptionText">
+                    <p>{{ scouts.about }}</p>
+                </div>
+            </div>
+            <div>
+                <img src="{{ scouts.logo.url }}" style="border: {{ scouts.color }} 3px solid;" alt="{{ scouts.name }} Logo" class="articleCover">
+            </div>
+        </div>
+        <p class="subtitle">Members</p>
+        <div class="studentGrid">
+            {% for member in scouts.members.all %}  <!-- Changed variable name for clarity -->
+            <div>
+                <a>
+                    <img src="{{ member.associated_student.profile_picture.url }}" alt="{{ member.name }}" class="studentPFP profileCover">
+                    <p class="text">{{ member.name }}</p>
+                </a>
+            </div>
+            {% empty %}
+            <p class="text">No members available.</p>
+            {% endfor %}
+        </div>
+        <p class="subtitle">Leaders</p>
+        <div class="studentGrid">
+            {% for leader in scouts.advisors.all %}
+            <div>
+                <a>
+                    <img src="{{ leader.associated_faculty.profile_picture.url }}" class="studentPFP" alt="{{ leader.name }}" class="profileCover">
+                    <p class="text">{{ leader.name }}</p>
+                </a>
+            </div>
+            {% empty %}
+            <p class="text">No scout leaders available.</p>
+            {% endfor %}
+        </div>
+        <p class="subtitle">Events</p>
+        <div class="grid">
+            {% for event in events %}
+            <div>
+                <a href="{% url 'event_detail' event.id %}">
+                    <img class="eventCover" src="{{ event.cover.url }}" alt="Event Cover">
+                    <p class="text">{{ event.title }}</p>
+                    <p class="aboutText">{{ event.date }}</p>
+                    <div class="tagBox" style="background: {{ event.author.color }};">
+                        <p class="tagText">{{ event.author.name }}</p>
+                    </div>
+                </a>
+            </div>
+            {% empty %}
+            <p class="text">No events available.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

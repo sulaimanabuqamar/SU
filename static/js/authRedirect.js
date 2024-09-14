@@ -99,6 +99,7 @@ function seeProfile() {
 
 function loginUserBackend() {
     var account = myMSALObj.getAllAccounts()[0];
+        document.getElementById("loadingBG").hidden = false;
     fetch(location.origin + "/singlelogin/", {
         method: 'POST',
         headers: {
@@ -113,6 +114,7 @@ function loginUserBackend() {
         .then(response => response.json())
         .then(data => {
             console.log(data);
+            document.getElementById("loadingBG").hidden = true;
             if(data["message"] == "logged in successfully") {
                 console.log("logged in successfully");
                 location.href = location.origin

@@ -56,7 +56,7 @@
         {% for member in allUsers %}
         <div class="profileRow" style="border: black 3px solid; border-radius: 15px; padding: 10px; gap: 10px; margin-bottom: 10px;">
             <div style="display: flex; flex-direction: row; align-items: center; gap: 10px;">
-            <img class="eventCover" style=" width: 50px; height: 50px; margin-right: 10px;" src="/media/{{ member.associated_student.profile_picture }}" alt="pfp">
+            <img class="eventCover" style=" width: 50px; height: 50px; margin-right: 10px;" src="{{ member.associated_student.profile_picture.url }}" alt="pfp">
             <p class="text">{{ member.name }}</p>
             <p class="aboutText">{{ member.associated_student.year_level }}{{ member.associated_student.section }}</p>
             </div>
@@ -73,17 +73,15 @@
     <div id="hosemail" hidden>
     <p class="aboutText" style="margin-left: 10px">Send Email About Event To: </p>
     <div class="container">
-        {% for fauclty in faculties %}
-        {% if faculty.title_type == "hos" %}
+        {% for faculty in faculties %}
         <div class="profileRow" style="border: black 3px solid; border-radius: 15px; padding: 10px; gap: 10px; margin-bottom: 5px">
             <p class="text">{{ faculty.name}}</p>
             <input type="checkbox" class="btn empty" name="{{faculty.email}}" {% getUserAttending faculty.email event.id %}>
         </div>
-        {% endif %}
         {% endfor %}
     </div>
 </div>
-    <input type="submit" class="btn primary" value="Save Event">
+    <input type="submit" class="btn primary" value="Save Event" onclick="var element = this; setTimeout(function() {element.disabled = true; element.style.backgroundColor = '#aaaaaa'; }, 250); setTimeout(function(){element.disabled = false; element.style.backgroundColor = '#1F355E';}, 10000);">
     </div>
     <div style="display: flex; flex-direction: column;">
         <img class="eventCover" id="coverPreview" style="border: black 1px solid; border-radius: 10px; cursor: pointer;" src="{{event.cover.url}}" onclick="document.getElementsByName('coverPhoto')[0].click();">

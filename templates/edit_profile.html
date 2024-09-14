@@ -1,0 +1,56 @@
+{% extends 'Base.html' %}
+{% load static %}
+{% load custom_tags %}
+
+{% block style %}
+<title>SU - Modify News Post</title>
+{% endblock %}
+
+{% block content %}
+<div>
+    <p class="pageTitle">Edit Profile</p>
+</div>
+<form method="post" class="profileRow" style="align-items: start;" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div style="display: flex; flex-direction: column;">
+        {% if userType == "student" %}
+        <img class="eventCover" id="coverPreview" style="border: black 1px solid; border-radius: 10px; cursor: pointer;" src="{{user.associated_student.profile_picture.url}}" onclick="document.getElementsByName('coverPhoto')[0].click();">
+        {% elif userType == "faculty" %}
+        <img class="eventCover" id="coverPreview" style="border: black 1px solid; border-radius: 10px; cursor: pointer;" src="{{user.associated_faculty.profile_picture.url}}" onclick="document.getElementsByName('coverPhoto')[0].click();">
+        {% elif userType == "club" %}
+        <input class="textfield" required name="name" placeholder="Name" value="{{club.name}}">
+        <textarea class="textfield" required name="about" placeholder="About" style="width: 600px; height: 200px; padding-top: 10px;">{{ club.about }}</textarea>
+        <input class="textfield" type="color" required name="color" placeholder="Color" value="{{club.color}}">
+        <textarea class="textfield" name="links" placeholder="Links (One link per line, text to show first then link separated by space)" style="width: 600px; height: 100px;">{{links}}</textarea>
+        {% elif userType == "varsity" %}
+        <input class="textfield" required name="name" placeholder="Name" value="{{varsity.name}}">
+        <textarea class="textfield" required name="about" placeholder="About" style="width: 600px; height: 200px; padding-top: 10px;">{{ varsity.about }}</textarea>
+        <input class="textfield" type="color" required name="color" placeholder="Color" value="{{varsity.color}}">
+        <textarea class="textfield" name="links" placeholder="Links (One link per line, text to show first then link separated by space)" style="width: 600px; height: 100px;">{{links}}</textarea>
+        {% endif %}
+        <div style="display: flex; flex-direction:row; margin-left: -10px; margin-top: 30px;">
+        <button class="btn" onclick="navigation.back()" type="reset">Cancel Changes</button>
+        <input type="submit" class="btn primary" value="Save Changes" onclick="var element = this; setTimeout(function() {element.disabled = true; element.style.backgroundColor = '#aaaaaa'; }, 250); setTimeout(function(){element.disabled = false; element.style.backgroundColor = '#1F355E';}, 10000);">
+        </div>
+    </div>
+    <div style="display: flex; flex-direction: column;">
+        {% if userType == "club" %}
+        <img class="eventCover" id="coverPreview" style="border: black 1px solid; border-radius: 10px; cursor: pointer;" src="{{club.logo.url}}" onclick="document.getElementsByName('coverPhoto')[0].click();">
+        {% elif userType == "varsity" %}
+        <img class="eventCover" id="coverPreview" style="border: black 1px solid; border-radius: 10px; cursor: pointer;" src="{{varsity.logo.url}}" onclick="document.getElementsByName('coverPhoto')[0].click();">
+        {% endif %}
+        <input type="file" hidden name="coverPhoto" accept="image/*" onchange="setPreviewImage(this.files[0])">
+        <script>
+            function setPreviewImage(file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    console.log(document.getElementById('coverPreview'));
+                    document.getElementById('coverPreview').src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+
+        </script>
+    </div>
+</form>
+{% endblock %}

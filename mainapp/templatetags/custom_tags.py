@@ -1,5 +1,6 @@
 from django import template
 from mainapp.models import *
+from studentsunion import settings
 register = template.Library()
 
 @register.simple_tag
@@ -10,7 +11,6 @@ def getUserAttending(email, event_id):
         return "checked"
     else:
         return ""
-
 @register.simple_tag
 def getVacantUsersClub(type, club_id):
     # return datetime.datetime.now().strftime(format_string)

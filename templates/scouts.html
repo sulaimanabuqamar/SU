@@ -1,0 +1,25 @@
+{% extends 'Base.html' %}
+{% load static %}
+
+{% block style %}
+<title>SU - Scouts</title>
+{% endblock %}
+
+{% block content %}
+<div>
+    <p class="pageTitle">SCOUTS</p>
+</div>
+<div class="grid">
+    {% for scouts in scoutsteams %}
+    <div>
+        <a href="{% url 'scouts_detail' scouts.id %}">
+            <img class="eventCover" style="border: {{ scouts.color }} 3px solid;" src="{{ scouts.logo.url }}" alt="Scouts Cover">
+            <p class="text">{{ scouts.name }}</p>
+            <p class="aboutText">{{ scouts.date }}</p>
+        </a>
+    </div>
+    {% empty %}
+    <p class="text">No scouts available.</p>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -25,7 +25,7 @@
         <div class="studentGrid">
             {% for head in heads %}
             <div>
-                <a href="{% url 'student_detail' head.id %}">
+                <a>
                     <img src="{{ head.associated_student.profile_picture.url }}" class="studentPFP" alt="{{ head.name }}" class="profileCover">
                     <p class="text">{{ head.name }}</p>
                 </a>
@@ -38,7 +38,7 @@
         <div class="studentGrid">
             {% for leader in leadership %}  <!-- Changed variable name for clarity -->
             <div>
-                <a href="{% url 'student_detail' leader.id %}">
+                <a>
                     <img src="{{ leader.associated_student.profile_picture.url }}" alt="{{ leader.name }}" class="studentPFP profileCover">
                     <p class="text">{{ leader.name }}</p>
                 </a>

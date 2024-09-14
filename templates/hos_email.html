@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}} | Student Union Event Email</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+    </style>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: "Inter" sans-serif;
+        }
+        .light_blue, .dark_blue {
+            width: 100%;
+        }
+        .light_blue {
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .dark_blue {
+            background-color: #1F355E;
+        }
+        .mbox {
+            width: 70%;
+            background-color: #BFD5FF;
+            z-index: 1; /* Ensures it is on top */
+            box-shadow: 0px 6px 10px 3px rgba(0, 0, 0, 0.25);
+            border-radius: 20px;
+            padding: 20px; /* Add padding for better text spacing */
+            box-sizing: border-box; /* Ensures padding is included in width/height calculations */
+        }             
+        a {
+            text-decoration: none;
+        }
+
+        .logo {
+            width: 85px;
+            height: 40px;
+        }
+        
+        .logoText {
+            color: white; 
+            font-size: 20px; 
+            font-family: "Inter" sans-serif; 
+            font-weight: 700;
+            word-wrap: break-word;
+            text-align: center;
+        }
+
+        .buttontext {
+            text-align: center; 
+            color: white; font-size: 
+            20px; font-family: "Inter" sans-serif; 
+            font-weight: 600;
+            margin: 0px;
+        }
+
+        .buttonbox {
+            width: 40%; 
+            height: 50px; 
+            background: #1F355E; 
+            box-shadow: 0px 3px 8px 3px rgba(0, 0, 0, 0.25); 
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body style="display: flex; flex-direction: column; align-items: center;">
+    <div style="display: flex; flex-direction: column; width: 100%; background-color: #BFD5FF;">
+        <div class="dark_blue" style="display: flex; min-height: 300px;box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25); border-bottom-left-radius: 30px; border-bottom-right-radius: 30px; flex-direction: column; align-items: center;">
+            <a style="display: flex; align-items: center;" href="https://su.amb.sch.ae">
+                <p class="logoText">ALMAWAKEB<br>STUDENTS' UNION</p>
+                <img class="logo" src="{{logo}}">
+            </a>
+            <!-- <img style="width: 300px; height: 175;" src="https://raw.githubusercontent.com/hypercreeper/lag-test/main/emailpic.png" > -->
+            <p style="font-weight: bold; font-size: 30px; text-align: center; color: white;">{{title}}</p> 
+            <p style="color: white; font-size: 20px; max-width: 400px;">this is an event that will blow your minds, ofc we had to make this description long so it would be realistic yk
+
+                 {{summary}}</p>
+            <p style="color: #949494; font-size: 12px;">Hosted by</p>
+            <p style="color: white; font-size: 14px;">{{author}}</p>
+        </div>
+        <!-- <div style="display: flex; justify-content: center; margin-top: -100px;">
+            <div class="mbox">
+            
+            </div>
+        </div> -->
+        <div class="light_blue">
+            <div style="display: flex; justify-content: space-evenly; width: 100%;">
+                <a class="buttonbox" href="https://su.amb.sch.ae/Event/Detail/{{event_id}}">
+                  <p class="buttontext">Read More</p>
+                </a>
+                <a class="buttonbox" href="https://su.amb.sch.ae/AttendeesList/Printable/{{event_id}}">
+                    <p class="buttontext">View Attendees</p>
+                </a>
+              </div>
+        </div>
+        <p style="color: black; font-size: 20px; text-align: center;">This is an automated message. Do not reply to this email. <br>If you have any inquiries, please send an email to the club at {{email}}</p>
+        <div class="dark_blue" style="display: flex; align-items: center; justify-content: center; border-top-left-radius: 30px; border-top-right-radius: 30px;">
+                <a style="display: flex; align-items: center;" href="/">
+                    <p class="logoText">ALMAWAKEB<br>STUDENTS' UNION</p>
+                    <img class="logo" src="{{logo}}" alt="SU Logo">
+                </a>
+            </div>
+    </div>
+</body>
+</html>
