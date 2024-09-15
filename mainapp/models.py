@@ -222,4 +222,5 @@ class HomePage(models.Model):
     officer_highlight_2 = models.ForeignKey(User, related_name='home_officer_highlight_2', on_delete=models.CASCADE, null=True, blank=True)
     officer_highlight_3 = models.ForeignKey(User, related_name='home_officer_highlight_3', on_delete=models.CASCADE, null=True, blank=True)
     officer_highlight_4 = models.ForeignKey(User, related_name='home_officer_highlight_4', on_delete=models.CASCADE, null=True, blank=True)
+    carousel_scroll_duration = models.IntegerField(default=2000, help_text="Time Before Carousel Autoscrolls (ms)")
     

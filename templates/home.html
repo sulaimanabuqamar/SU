@@ -129,6 +129,6 @@ function nextHighlight() {
     }
     container.scroll({left: highlights[currentHighlight].offsetLeft-50,behavior:'smooth'});
 }
-
+setInterval(function() {nextHighlight();}, {{home_page.carousel_scroll_duration}});
 </script>
 {% endblock %}
