@@ -221,6 +221,7 @@
         </div>
         <p class="aboutText sidebar">{{ user.associated_student.year_level_title }}</p>
         <p class="aboutText sidebar">Grade {{ user.associated_student.year_level }}{{ user.associated_student.section }}</p>
+        <p class="aboutText sidebar">{{ user.associated_student.about }}</p>
         {% if user.is_admin %}
         <a href="/admin" target="_blank"><button class="btn">Admin Page</button></a>
         {% endif %}

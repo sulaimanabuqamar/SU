@@ -30,7 +30,7 @@ class StudentAdmin(admin.ModelAdmin):
     list_filter = ('year_level', 'section')
     fieldsets = (
         (None, {'fields': ('student_db_id',)}),
-        (None, {'fields': ('year_level', 'section', 'profile_picture')}),
+        (None, {'fields': ('year_level', 'section', 'profile_picture', 'about')}),
         # ('Memberships', {'fields': ('clubs', 'varsities')}),
     )
     search_fields = ('year_level', 'section')
@@ -81,7 +81,7 @@ class NewsAdmin(admin.ModelAdmin):
     )
     
 class HomepageAdmin(admin.ModelAdmin):
-    fields = ['event_highlight_1', 'event_highlight_2', 'event_highlight_3', 'news_highlight_1', 'news_highlight_2', 'news_highlight_3', 'officer_highlight_1', 'officer_highlight_2', 'officer_highlight_3', 'officer_highlight_4']
+    fields = ['event_highlight_1', 'event_highlight_2', 'event_highlight_3', 'news_highlight_1', 'news_highlight_2', 'news_highlight_3', 'officer_highlight_1', 'officer_highlight_2', 'officer_highlight_3', 'officer_highlight_4','carousel_scroll_duration']
 class LinksAdmin(admin.ModelAdmin):
     list_display = ('name',  'link')
     list_filter = ('name', 'link')

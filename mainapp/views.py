@@ -148,8 +148,25 @@ def Varsity_Detail(request, varsity_id):
     return render(request, "varsity_detail.html", {'varsity': varsity, 'players': players, 'captains': captains, 'coaches': coaches, 'links':links}) 
 
 def Student_Detail(request, student_id):
-    student = get_object_or_404(Student, id=student_id)
-    return render(request, "student_detail.html", {'student': student})
+    user = get_object_or_404(User, id=student_id)
+    headclubs = []
+    for club in Club.objects.all():
+        if request.user in club.heads.all():
+            headclubs.append(club)
+    clubs = []
+    for club in Club.objects.all():
+        if request.user in club.members.all():
+            clubs.append(club)
+    varsitiescaptain = []
+    for varsity in Varsity.objects.all():
+        if request.user in varsity.captains.all():
+            varsitiescaptain.append(varsity)
+    varsities = []
+    for varsity in Varsity.objects.all():
+        if request.user in varsity.members.all():
+            varsities.append(varsity)
+    
+    return render(request, "student_detail.html", {'user': user, 'headclubs': headclubs, 'clubs': clubs, 'varsitiescaptain': varsitiescaptain, 'varsities':varsities}) 
 
 def Club_Varsity_login(request: WSGIRequest):
     user = authenticate(request, username=request.POST.get("email"), password=request.POST.get("password"))
@@ -185,6 +202,18 @@ def Student_Faculty_login(request: WSGIRequest):
             user.save()
             authuser = authenticate(username=body["username"],password=body["password"])
             login(request, authuser)
+            if request.user.associated_student is None and request.user.associated_faculty is None and request.user.associated_clubs.count() <= 0 and request.user.associated_varsities.count() <=  0:
+                if "almawakeb" in body["username"]: 
+                    string = ""
+                    for i in range(10):
+                        string += random.choice("ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890")
+                    fac = Faculty.objects.create(faculty_db_id=string)
+                    fac.save()
+                    user.associated_faculty = fac
+                    user.save()
+                    return HttpResponse("{\"message\":\"faculty created successfully\"}")
+                if "amb" in body["username"]: 
+                    return HttpResponse("{\"message\":\"user created successfully complete student setup\"}") 
             return HttpResponse("{\"message\":\"logged in successfully\"}")
         except Exception as e:
             print(e)
@@ -211,7 +240,13 @@ def Student_Faculty_logout(request: WSGIRequest):
 @csrf_exempt
 def Finish_Setup_Student(request: WSGIRequest):
     if request.method == "POST":
-        student = Student.objects.create(student_db_id=request.POST.get("student_id"),year_level=int(request.POST.get("yearlevel")),section=request.POST.get("sectionletter"))
+        try:
+            student = Student.objects.get(student_db_id=request.POST.get("student_id"))
+        except Exception as e: 
+            print(e)
+            student = Student.objects.create(student_db_id=request.POST.get("student_id"),year_level=int(request.POST.get("yearlevel")))
+        student.year_level=int(request.POST.get("yearlevel"))
+        student.section=request.POST.get("sectionletter")
         student.save()
         request.user.associated_student = student
         request.user.save()
@@ -601,6 +636,7 @@ def editProfile(request:WSGIRequest):
                     for chunk in file.chunks():
                         f.write(chunk)
                 request.user.associated_student.profile_picture = filename.removeprefix(str(settings.BASE_DIR)).replace("/media", "")
+            request.user.associated_student.about = request.POST.get("about")
             request.user.associated_student.save()
             request.user.save()
         elif userType == "faculty":

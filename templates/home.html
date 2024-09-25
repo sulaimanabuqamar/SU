@@ -82,25 +82,25 @@
 </div> 
 <div style="width: 100%;display: flex;justify-content: space-between;">
     {% if home_page.officer_highlight_1 is not None %}
-    <a href="mailto:{{home_page.officer_highlight_1.email}}">
+    <a href="/Student/Detail/{{home_page.officer_highlight_1.pk}}">
         <img class="studentPFP" src="{{ home_page.officer_highlight_1.associated_student.profile_picture.url }}" alt="Officer Highlight 1">
         <p class="text">{{ home_page.officer_highlight_1.name }}</p>
     </a>
     {% endif %}
     {% if home_page.officer_highlight_2 is not None %}
-    <a href="mailto:{{home_page.officer_highlight_2.email}}">
+    <a href="/Student/Detail/{{home_page.officer_highlight_2.pk}}">
         <img class="studentPFP" src="{{ home_page.officer_highlight_2.associated_student.profile_picture.url }}" alt="Officer Highlight 1">
         <p class="text">{{ home_page.officer_highlight_2.name }}</p>
     </a>
     {% endif %}
     {% if home_page.officer_highlight_3 is not None %}
-    <a href="mailto:{{home_page.officer_highlight_3.email}}">
+    <a href="/Student/Detail/{{home_page.officer_highlight_3.pk}}">
         <img class="studentPFP" src="{{ home_page.officer_highlight_3.associated_student.profile_picture.url }}" alt="Officer Highlight 1">
         <p class="text">{{ home_page.officer_highlight_3.name }}</p>
     </a>
     {% endif %}
     {% if home_page.officer_highlight_4 is not None %}
-    <a href="mailto:{{home_page.officer_highlight_4.email}}">
+    <a href="/Student/Detail/{{home_page.officer_highlight_4.pk}}">
         <img class="studentPFP" src="{{ home_page.officer_highlight_4.associated_student.profile_picture.url }}" alt="Officer Highlight 1">
         <p class="text">{{ home_page.officer_highlight_4.name }}</p>
     </a>

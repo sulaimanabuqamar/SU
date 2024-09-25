@@ -15,6 +15,7 @@
     <div style="display: flex; flex-direction: column;">
         {% if userType == "student" %}
         <img class="eventCover" id="coverPreview" style="border: black 1px solid; border-radius: 10px; cursor: pointer;" src="{{user.associated_student.profile_picture.url}}" onclick="document.getElementsByName('coverPhoto')[0].click();">
+        <textarea class="textfield" required name="about" placeholder="About" style="width: 600px; height: 200px; padding-top: 10px; margin-left: 0px;">{{ user.associated_student.about }}</textarea>
         {% elif userType == "faculty" %}
         <img class="eventCover" id="coverPreview" style="border: black 1px solid; border-radius: 10px; cursor: pointer;" src="{{user.associated_faculty.profile_picture.url}}" onclick="document.getElementsByName('coverPhoto')[0].click();">
         {% elif userType == "club" %}

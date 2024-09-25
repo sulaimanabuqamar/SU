@@ -79,6 +79,7 @@ class Student(models.Model):
     # clubs = models.ManyToManyField('Club', related_name='students', blank=True)
     # varsities = models.ManyToManyField('Varsity', related_name='students', blank=True)
     profile_picture = models.ImageField(upload_to='profiles/', null=True, blank=True, default='default-pfp.png')
+    about = models.TextField(blank=True,null=True)
     year_level_title = models.CharField(max_length=10, blank=True)
     def save(self, *args, **kwargs):
         # super().save(*args, **kwargs)
