@@ -11,6 +11,7 @@ import json
 import random
 import os
 import datetime
+import sys 
 # Create your views here.
 
 register = template.Library()
@@ -741,4 +742,5 @@ def error_500_view(request):
    
     # we add the path to the 500.html file
     # here. The name of our HTML file is 404.html
-    return render(request, '500.html', status=500) 
+    exc_type, exc_value, exc_traceback = sys.exc_info()
+    return render(request, '500.html', {'exc': exc_value, 'exc_trace': exc_traceback}, status=500) 

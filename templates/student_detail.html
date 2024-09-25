@@ -16,6 +16,9 @@
             </div>
             <div>
                 <img src="{{ user.associated_student.profile_picture.url }}" style="border: black 3px solid;" alt="{{ user.name }} Logo" class="articleCover">
+                <p class="aboutText sidebar">{{ user.associated_student.year_level_title }}</p>
+                <p class="aboutText sidebar">Grade {{ user.associated_student.year_level }}{{ user.associated_student.section }}</p>
+                <p class="aboutText sidebar">{{ user.email }}</p>
             </div>
         </div>
         <p class="subtitle">Head of Clubs</p>
