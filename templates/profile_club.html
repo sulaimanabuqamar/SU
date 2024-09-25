@@ -19,7 +19,7 @@
         <br>
         <div class="grid" id="memberField">
             {% for member in club.members.all %}
-            <div class="profileRow">
+            <a href="/Student/Detail/{{member.associated_student.pk}}"  class="profileRow">
                 <div class="profileRow Box" style="border: {{ member.color }} 3px solid; border-radius: 15px; padding: 10px; gap: 10px;">
                     <img class="eventCover" style=" width: 50px; height: 50px; margin-right: 10px;" src="{{ member.associated_student.profile_picture.url }}" alt="Club Cover">
                     <p class="text">{{ member.name }}</p>
@@ -39,7 +39,7 @@
         <br>
         <div class="grid" id="headField">
             {% for head in club.heads.all %}
-            <div class="profileRow">
+            <a href="/Student/Detail/{{head.associated_student.pk}}"  class="profileRow">
                 <div class="profileRow Box" style="border: {{ head.color }} 3px solid; border-radius: 15px; padding: 10px; gap: 10px;">
                     <img class="eventCover" style=" width: 50px; height: 50px; margin-right: 10px;" src="{{ head.associated_student.profile_picture.url }}" alt="Club Cover">
                     <p class="text">{{ head.name }}</p>
@@ -60,7 +60,7 @@
         <br>
         <div class="grid" id="leaderField">
             {% for leader in club.leadership.all %}
-            <div class="profileRow">
+            <a href="/Student/Detail/{{leader.associated_student.pk}}"  class="profileRow">
                 <div class="profileRow Box" style="border: {{ leader.color }} 3px solid; border-radius: 15px; padding: 10px; gap: 10px;">
                     <img class="eventCover" style=" width: 50px; height: 50px; margin-right: 10px;" src="{{ leader.associated_student.profile_picture.url }}" alt="Club Cover">
                     <p class="text">{{ leader.name }}</p>
@@ -83,9 +83,9 @@
             {% for advisor in club.advisors.all %}
             <div class="profileRow">
                 <div class="profileRow Box" style="border: {{ advisor.color }} 3px solid; border-radius: 15px; padding: 10px; gap: 10px;">
-                    <img class="eventCover" style=" width: 50px; height: 50px; margin-right: 10px;" src="{{ advisor.associated_student.profile_picture.url }}" alt="Club Cover">
+                    <img class="eventCover" style=" width: 50px; height: 50px; margin-right: 10px;" src="{{ advisor.associated_faculty.profile_picture.url }}" alt="Club Cover">
                     <p class="text">{{ advisor.name }}</p>
-                    <p class="aboutText">{{ advisor.associated_student.year_level }}{{ advisor.associated_student.section }}</p>
+                    {% comment %} <p class="aboutText">{{ advisor.associated_student.year_level }}{{ advisor.associated_student.section }}</p> {% endcomment %}
                     <button class="btn empty" onclick="removeMember('{{advisor.email}}', 'Advisor')"><img src="{%static '../media/images/removeButton.svg' %}"></button>
                 </div>
             </div>

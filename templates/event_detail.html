@@ -26,7 +26,7 @@
             <br>
             <div class="grid" id="memberField">
                 {% for member in event.attending_Students.all %}
-                <div class="profileRow">
+                <a href="/Student/Detail/{{member.associated_student.pk}}" class="profileRow">
                     <div class="profileRow Box" style="border: black 3px solid; border-radius: 15px; padding: 10px; gap: 10px;">
                         <img class="eventCover" style=" width: 50px; height: 50px; margin-right: 10px;" src="{{ member.associated_student.profile_picture.url }}" alt="Club Cover">
                         <p class="text">{{ member.name }}</p>
@@ -35,7 +35,7 @@
                         <button class="btn empty" onclick="removeAttendeeFromList('{{member.email}}')"><img src="{%static '../media/images/removeButton.svg' %}"></button>
                         {% endif %}
                     </div>
-                </div>
+                </a>
                 {% empty %}
                 <p class="text">No Members.</p>
                 {% endfor %}
