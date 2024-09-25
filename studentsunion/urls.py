@@ -24,6 +24,7 @@ urlpatterns = [
     path('', include('mainapp.urls')), 
 ]
 handler404 = 'mainapp.views.error_404_view'
+handler500 = 'mainapp.views.error_500_view'
 
 if not settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
