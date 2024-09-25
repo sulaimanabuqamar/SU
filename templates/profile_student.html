@@ -136,9 +136,9 @@
             {% for club in user.associated_clubs.advisors.all %}
             <div class="profileRow">
                 <div class="profileRow Box" style="border: {{ club.color }} 3px solid; border-radius: 15px; padding: 10px; gap: 10px;">
-                    <img class="eventCover" style=" width: 50px; height: 50px; margin-right: 10px;" src="{{ club.associated_student.profile_picture.url }}" alt="Club Cover">
+                    <img class="eventCover" style=" width: 50px; height: 50px; margin-right: 10px;" src="{{ club.associated_faculty.profile_picture.url }}" alt="Club Cover">
                     <p class="text">{{ club.name }}</p>
-                    <p class="aboutText">{{ club.associated_student.year_level }}{{ club.associated_student.section }}</p>
+                    {% comment %} <p class="aboutText">{{ club.associated_student.year_level }}{{ club.associated_student.section }}</p> {% endcomment %}
                     <button class="btn empty" onclick="removeMember('{{club.email}}', 'Advisor')"><img src="{%static '../media/images/removeButton.svg' %}"></button>
                 </div>
             </div>
