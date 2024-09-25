@@ -54,8 +54,9 @@
             <a class="links" href="{{link.link }}" target="_blank">{{ link.name }}</a>, 
         {% endfor %}
         <br>
-        {% if event.author in user.associated_clubs.all %}
+        {% if event.author in user.associated_clubs.all or user.associated_faculty is not None %}
         <a href="/AttendeesList/Printable/{{ event.pk }}" target="_blank"><button class="btn">Printable List of Attendees</button></a><br>
+        {% if event.author in user.associated_clubs.all %}
         <a href="/Event/Modify/{{ event.pk }}" ><button class="btn">Edit Event</button></a>
         {% endif %}
     </div>
