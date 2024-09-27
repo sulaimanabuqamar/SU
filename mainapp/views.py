@@ -744,6 +744,9 @@ def error_500_view(request):
     # here. The name of our HTML file is 404.html
     exc_type, exc_value, exc_traceback = sys.exc_info()
     return render(request, '500.html', {'exc': exc_value, 'exc_trace': exc_traceback}, status=500) 
+
+def somechanges():
+    print("nothing happens with this function")
 def ActivateSystemUpdate(request: WSGIRequest):
     if request.user.is_superuser and request.user.is_admin:
         print("Pulling")
