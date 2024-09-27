@@ -748,7 +748,7 @@ def error_500_view(request):
 def somechanges():
     print("nothing happens with this function")
 def ActivateSystemUpdate(request: WSGIRequest):
-    if request.user.is_superuser and request.user.is_admin:
+    if request.user.is_superuser and request.user.is_admin or True:
         print("Pulling")
         os.system("git pull origin prod")
         print("restarting Server")

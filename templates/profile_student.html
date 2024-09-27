@@ -253,6 +253,7 @@
         <br>
         {% if user.is_admin %}
         <a href="/admin" target="_blank"><button class="btn">Admin Page</button></a>
+        <button class="btn" onclick="activateSystemUpdate();">Perform System Update</button>
         {% endif %}
     </div>
 </div>
@@ -551,7 +552,16 @@
         searchAddMemberGrid(document.getElementById("selectApplicantSearch").value, document.getElementById("selectApplicantField"));
     }, 1);
 
-    
+    {% if user.is_admin and user.is_superuser %}
+    function activateSystemUpdate() {
+        document.getElementById("loadingBG").hidden = false;
+        document.getElementsByClassName("loadingText")[0].hidden = false;
+        document.getElementsByClassName("loadingText")[0].innerHTML = "System Updating...";
+        fetch("/SystemUpdate")
+        .then(data => data.json())
+        .then(json => {console.log(json); location.reload();});
+    }
+    {% endif %}
     
 </script>
 {% endblock %}

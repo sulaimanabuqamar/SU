@@ -259,7 +259,12 @@ width: 45px;
 
   }
   @keyframes l1 {to{transform: rotate(360deg)}}
-  
+.loadingText {
+    font-family: Inter;
+    font-size: 40px;
+    font-weight: bold;
+    color: black;
+}
 .accountPopupWindow {
     /* position: fixed;
     top: calc( 50% - 175px );
