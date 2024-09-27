@@ -334,7 +334,7 @@ def CreateEvent(request:WSGIRequest, club_id):
         print("(" + linkstr + ")")
         if linkstr is not None and linkstr != "":
             for link in linkstr.split("\n"):
-                linkobj = Links.objects.create(name=link[:link.find(" ")], link=link[link.find(" "):])
+                linkobj = Links.objects.create(name=link[:link.find("!")], link=link[link.find("!"):])
                 event.links.add(linkobj)
         listofemails = []
         for member in User.objects.all():
@@ -390,7 +390,7 @@ def ModifyEvent(request: WSGIRequest, event_id):
             faculty.append(user)
     links = ""
     for link in event.links.all():
-        links += link.name + " " + link.link + "\n"
+        links += link.name + "!" + link.link + "\n"
     links = links[:-1]
     membersonly = ""
     if event.members_only:
@@ -420,7 +420,7 @@ def ModifyEvent(request: WSGIRequest, event_id):
         print("(" + linkstr + ")")
         if linkstr is not None and linkstr != "":
             for link in linkstr.split("\n"):
-                linkobj = Links.objects.create(name=link[:link.find(" ")], link=link[link.find(" "):])
+                linkobj = Links.objects.create(name=link[:link.find("!")], link=link[link.find("!"):])
                 event.links.add(linkobj)
         listofemails = []
         for member in User.objects.all():
@@ -488,7 +488,7 @@ def CreateNews(request: WSGIRequest):
         print("(" + linkstr + ")")
         if linkstr is not None and linkstr != "": 
             for link in linkstr.split("\n"):
-                linkobj = Links.objects.create(name=link[:link.find(" ")], link=link[link.find(" "):])
+                linkobj = Links.objects.create(name=link[:link.find("!")], link=link[link.find("!"):])
                 event.links.add(linkobj)
         event.save()
         email = ""
@@ -522,7 +522,7 @@ def ModifyNews(request: WSGIRequest, news_id):
             faculty.append(user)
     links = ""
     for link in news.links.all():
-        links += link.name + " " + link.link + "\n"
+        links += link.name + "!" + link.link + "\n"
     links = links[:-1]
     if request.method == "GET":
         print(news.grade)
@@ -547,7 +547,7 @@ def ModifyNews(request: WSGIRequest, news_id):
         news.links.clear()
         if linkstr is not None and linkstr != "":
             for link in linkstr.split("\n"):
-                linkobj = Links.objects.create(name=link[:link.find(" ")], link=link[link.find(" "):])
+                linkobj = Links.objects.create(name=link[:link.find("!")], link=link[link.find("!"):])
                 news.links.add(linkobj)
         news.save()
         return redirect("/News/Detail/" + str(news.pk))
@@ -658,7 +658,7 @@ def editVarsity(request:WSGIRequest, varsity_id: int):
     if request.method == "GET":
         links = ""
         for link in varsity.links.all():
-            links += link.name + " " + link.link + "\n"
+            links += link.name + "!" + link.link + "\n"
         links = links[:-1]
         return render(request, "edit_profile.html", { 'userType':'varsity', 'varsity':varsity, 'user': request.user, 'links': links})
     elif request.method == "POST":
@@ -671,7 +671,7 @@ def editVarsity(request:WSGIRequest, varsity_id: int):
         varsity.links.clear()
         if linkstr is not None and linkstr != "":
             for link in linkstr.split("\n"):
-                linkobj = Links.objects.create(name=link[:link.find(" ")], link=link[link.find(" "):])
+                linkobj = Links.objects.create(name=link[:link.find("!")], link=link[link.find("!"):])
                 varsity.links.add(linkobj)
         file = request.FILES.get("coverPhoto")
         if file is not None:
@@ -690,7 +690,7 @@ def editClub(request:WSGIRequest, club_id: int):
     if request.method == "GET":
         links = ""
         for link in club.links.all():
-            links += link.name + " " + link.link + "\n"
+            links += link.name + "!" + link.link + "\n"
         links = links[:-1]
         return render(request, "edit_profile.html", {'userType':'club','club':club, 'user': request.user, 'links': links}) 
     elif request.method == "POST":
@@ -702,7 +702,7 @@ def editClub(request:WSGIRequest, club_id: int):
         club.links.clear()
         if linkstr is not None and linkstr != "":
             for link in linkstr.split("\n"):
-                linkobj = Links.objects.create(name=link[:link.find(" ")], link=link[link.find(" "):])
+                linkobj = Links.objects.create(name=link[:link.find("!")], link=link[link.find("!"):])
                 club.links.add(linkobj)
         file = request.FILES.get("coverPhoto")
         if file is not None:

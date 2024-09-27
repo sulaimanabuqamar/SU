@@ -22,12 +22,12 @@
         <input class="textfield" required name="name" placeholder="Name" value="{{club.name}}">
         <textarea class="textfield" required name="about" placeholder="About" style="width: 600px; height: 200px; padding-top: 10px;">{{ club.about }}</textarea>
         <input class="textfield" type="color" required name="color" placeholder="Color" value="{{club.color}}">
-        <textarea class="textfield" name="links" placeholder="Links (One link per line, text to show first then link separated by space)" style="width: 600px; height: 100px;">{{links}}</textarea>
+        <textarea class="textfield" name="links" placeholder="Links (One link per line, text to show first then ! then link. Ex: Google!https://google.com)" style="width: 600px; height: 100px;">{{links}}</textarea>
         {% elif userType == "varsity" %}
         <input class="textfield" required name="name" placeholder="Name" value="{{varsity.name}}">
         <textarea class="textfield" required name="about" placeholder="About" style="width: 600px; height: 200px; padding-top: 10px;">{{ varsity.about }}</textarea>
         <input class="textfield" type="color" required name="color" placeholder="Color" value="{{varsity.color}}">
-        <textarea class="textfield" name="links" placeholder="Links (One link per line, text to show first then link separated by space)" style="width: 600px; height: 100px;">{{links}}</textarea>
+        <textarea class="textfield" name="links" placeholder="Links (One link per line, text to show first then ! then link. Ex: Google!https://google.com)" style="width: 600px; height: 100px;">{{links}}</textarea>
         {% endif %}
         <div style="display: flex; flex-direction:row; margin-left: -10px; margin-top: 30px;">
         <button class="btn" onclick="navigation.back()" type="reset">Cancel Changes</button>

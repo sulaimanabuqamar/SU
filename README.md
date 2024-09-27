@@ -39,6 +39,19 @@ To approve a post, go into the admin portal and find the post and open it, Unche
 ## Denying Posts
 To deny a post, go into the admin portal and find the post and open it, Uncheck the Awaiting Approval, make sure the Approved box is unchecked and optionally specify the reason for taking down the post in the denied reason box and then press save. 
 
+# Adding Links (When supported)
+In the text box you can add your links in this format: [Display Text]![URL]
+
+Example: Putting `Google!https://google.com` in the box will result in a link similar to this one: [Google](https://google.com)
+
+You can add multiple links by separating them into new lines. 
+
+Example: 
+```
+AMIC Member Applications!https://docs.google.com/forms
+AMIC Website!https://amic.amb.sch.ae
+```
+Result: [AMIC Member Applications](https://docs.google.com/forms), [AMIC Website](https://amic.amb.sch.ae)
 #  Common Issues and their solutions
 ## 1. "I Can't Access my profile page!" or "There is nothing in my profile page!"
 Check if the user has any associated clubs/varsities/student/faculty to their account, if there is none do this:
