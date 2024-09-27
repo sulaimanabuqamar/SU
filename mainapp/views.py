@@ -744,3 +744,12 @@ def error_500_view(request):
     # here. The name of our HTML file is 404.html
     exc_type, exc_value, exc_traceback = sys.exc_info()
     return render(request, '500.html', {'exc': exc_value, 'exc_trace': exc_traceback}, status=500) 
+def ActivateSystemUpdate(request: WSGIRequest):
+    if request.user.is_superuser and request.user.is_admin:
+        print("Pulling")
+        os.system("git pull origin prod")
+        print("restarting Server")
+        os.execv(sys.executable, ['python'] + sys.argv)
+        return HttpResponse("System Updated Successfully",status=200)
+    else:
+        return HttpResponse("Not Authorized",status=401)
