@@ -79,3 +79,13 @@ When someone contacts you about the 500 page, it means that they have experience
 This issue simply means the page they tried to visit does not exist on the site, ask them to double check the url or link if they were sent one. 
 ## 4. "I just created my news post and I can't see it on the news page"
 Check if the news post is still pending approval or denied and inform the user about their news status, if it is already approved, make sure that section/grade filter is not active/or set to the correct target demographic and inform the user.
+
+# GitHub Branches, Pushing Code, and More (ADMINS/DEVS ONLY)
+## Branches and Their Uses
+The GitHub repo has 3 branches: `main`, `prod`, and `data`. The `main` branch is used for the pre-release code, this code should usually be the most unstable and only used when a bug fix is being worked on for the main site or a new feature, etc. The `prod` branch is used for the production ready code, this is the code that is gonna go on the production server, it is usually the most stable and error free and should not be edited on. This is also the branch that the server will the system update from. The `data` branch is used only for the live server, this branch is where the server dumps its version of the code for bugfixes or whenever you have a new feature you want to work on, its used get the current save data from the server as it is.
+
+## Pushing Code
+The first thing you must do is prepare for a system update by pressing the prepare for system update button in the profile page, it will dump the server code on the `data` branch which then you pull and merge to the `main` branch to start working on the bug fix, if you took a long time to implement the feature/fix, do the prepare for system update process again and merge with `main` to sync then push your changes to `prod` once its ready, bug-checked and ready for production. Once the push is complete, go to the profile page and press on the perform system update button to start updating, the server will pull the latest code from the `prod` branch and automatically reboot to apply. 
+
+## Pushing Code To The Live Server
+If you are tasked with pushing the code to the server for the first time but you don't know which branch you must pull from, pull from the `prod` branch then use the command `git checkout data` to switch to the `data` branch to be able to receive updates. 
