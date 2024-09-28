@@ -747,8 +747,6 @@ def error_500_view(request):
     exc_type, exc_value, exc_traceback = sys.exc_info()
     return render(request, '500.html', {'exc': exc_value, 'exc_trace': exc_traceback}, status=500) 
 
-def somechanges():
-    print("nothing happens with this function")
 def restartServer():
     time.sleep(2)
     os.execv(sys.executable, ['python'] + sys.argv)
