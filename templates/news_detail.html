@@ -18,7 +18,7 @@
         <p class="pageTitle" style="margin: 0px;">{{ news.title }}</p>
         <br>
         <div class="articleDescriptionText">
-            <p>{{ news.text|linebreaks }}</p>
+            <p>{{ news.text|safe|linebreaks }}</p>
         </div>
     </div>
     <div>
@@ -34,7 +34,7 @@
         {% endfor %}
         <br>
         {% if news.author == user %}
-        <a href="/News/Modify/{{ news.pk }}" ><button class="btn">Edit Event</button></a>
+        <a href="/News/Modify/{{ news.pk }}" ><button class="btn">Edit News Post</button></a>
         {% endif %}
     </div>
 </div>

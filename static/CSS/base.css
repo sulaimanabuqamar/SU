@@ -348,6 +348,35 @@ width: 45px;
     font-weight: 500;
     padding-left: 10px;
 }
+.textfield.bottom {
+    border-top-left-radius: 0px;
+    border-top-right-radius: 0px;
+    border-top: none;
+}
+.textfieldtoolbar {
+    height: 40px;
+    width: 610px;
+    background: linear-gradient(180deg, lightgray, lightgray, gray);
+    margin-left: 10px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    border-top: 1px solid black;
+    border-left: 1px solid black;
+    border-right: 1px solid black;
+    display: flex;
+    flex-direction: row;
+}
+.toolbarBtn {
+    background: linear-gradient(180deg, lightgray, lightgray, gray);
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-right: 1px solid gray;
+    cursor: pointer;
+}
+.toolbarBtn:active {
+    background: linear-gradient(180deg, gray, gray, lightgray);
+}
 .subtext {
     font-family: Inter; 
     font-weight: 400;
