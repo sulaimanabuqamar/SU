@@ -12,6 +12,8 @@ import random
 import os
 import datetime
 import sys 
+from threading import Thread
+import time
 # Create your views here.
 
 register = template.Library()
@@ -747,12 +749,26 @@ def error_500_view(request):
 
 def somechanges():
     print("nothing happens with this function")
+def restartServer():
+    time.sleep(2)
+    os.execv(sys.executable, ['python'] + sys.argv)
 def ActivateSystemUpdate(request: WSGIRequest):
-    if request.user.is_superuser and request.user.is_admin or True:
-        print("Pulling")
+    if request.user.is_superuser and request.user.is_admin:
+        
         os.system("git pull origin prod")
         print("restarting Server")
-        os.execv(sys.executable, ['python'] + sys.argv)
-        return HttpResponse("System Updated Successfully",status=200)
+        Thread(target=restartServer).start() 
+        return HttpResponse("{\"message\":\"System Updated Successfully, Rebooting...\"}",status=200)
+    else:
+        return HttpResponse("Not Authorized",status=401)
+def PrepareSystemUpdate(request: WSGIRequest):
+    if request.user.is_superuser and request.user.is_admin:
+        print("adding changes")
+        os.system("git add *")
+        print("commit")
+        os.system("git commit -m \"Current Data\"")
+        print("pushing")
+        os.system("git push origin data")
+        return HttpResponse("{\"message\":\"Current Server Pushed\"}",status=200)
     else:
         return HttpResponse("Not Authorized",status=401)

@@ -252,7 +252,8 @@
         <a href="/profile/Edit"><button class="btn">Edit Profile</button></a>
         <br>
         {% if user.is_admin %}
-        <a href="/admin" target="_blank"><button class="btn">Admin Page</button></a>
+        <a href="/admin" target="_blank"><button class="btn">Admin Page</button></a><br>
+        <button class="btn" onclick="prepareSystemUpdate();">Prepare For System Update</button><br>
         <button class="btn" onclick="activateSystemUpdate();">Perform System Update</button>
         {% endif %}
     </div>
@@ -557,10 +558,19 @@
         document.getElementById("loadingBG").hidden = false;
         document.getElementsByClassName("loadingText")[0].hidden = false;
         document.getElementsByClassName("loadingText")[0].innerHTML = "System Updating...";
-        fetch("/SystemUpdate")
+        fetch("/SystemUpdate/Update")
         .then(data => data.json())
-        .then(json => {console.log(json); location.reload();});
+        .then(json => {document.getElementsByClassName("loadingText")[0].innerHTML = json["message"]; setTimeout(function() {location.reload();},4000);});
     }
+    function prepareSystemUpdate() {
+        document.getElementById("loadingBG").hidden = false;
+        document.getElementsByClassName("loadingText")[0].hidden = false;
+        document.getElementsByClassName("loadingText")[0].innerHTML = "Preparing For System Update...";
+        fetch("/SystemUpdate/Prepare")
+        .then(data => data.json())
+        .then(json => {document.getElementsByClassName("loadingText")[0].innerHTML = json["message"]; setTimeout(function() {location.reload();},4000);});
+    }
+    
     {% endif %}
     
 </script>

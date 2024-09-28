@@ -38,5 +38,6 @@ urlpatterns = [
     path("singlelogout/", views.Student_Faculty_logout, name="student_faculty_logout"),
     path("finishSetup/Student/", views.Finish_Setup_Student, name="finish_setup_student"),
     path("AttendeesList/Printable/<int:event_id>/", views.AttendeesListPrintable, name="attendees_list_printable"), 
-    path("SystemUpdate/", views.ActivateSystemUpdate, name="activate_system_update"),
+    path("SystemUpdate/Update/", views.ActivateSystemUpdate, name="activate_system_update"),
+    path("SystemUpdate/Prepare/", views.PrepareSystemUpdate, name="prepare_system_update"),
 ]  + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) 

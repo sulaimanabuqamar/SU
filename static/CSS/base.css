@@ -263,7 +263,15 @@ width: 45px;
     font-family: Inter;
     font-size: 40px;
     font-weight: bold;
-    color: black;
+    color: white;
+}
+#loadingBG {
+    display: flex;
+    flex-direction: column;
+    gap: 50px;
+}
+#loadingBG[hidden] {
+    display: none;
 }
 .accountPopupWindow {
     /* position: fixed;

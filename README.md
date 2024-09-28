@@ -52,6 +52,14 @@ AMIC Member Applications!https://docs.google.com/forms
 AMIC Website!https://amic.amb.sch.ae
 ```
 Result: [AMIC Member Applications](https://docs.google.com/forms), [AMIC Website](https://amic.amb.sch.ae)
+
+# Updating The Server Post Production
+To Update the server, follow these steps:
+1. Go to the profile page and press on the prepare system update button
+2. Then on your code, pull the code from the `data` branch and make your changes
+3. Push your changes to the `prod` branch
+4. Go to the profile page and press on the perform system update button and it should automatically update and finish
+
 #  Common Issues and their solutions
 ## 1. "I Can't Access my profile page!" or "There is nothing in my profile page!"
 Check if the user has any associated clubs/varsities/student/faculty to their account, if there is none do this:
