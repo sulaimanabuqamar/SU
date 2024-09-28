@@ -1,5 +1,8 @@
 ## Important
-Make sure that the port 81 is also able to be run on su.amb.sch.ae, this server is important to allow the main server to get static and media files
+Make sure that the port 81 is also able to be run on su.amb.sch.ae, this server is important to allow the main server to get static and media files.
+
+Make sure that the server is currently set to the `data` branch. Make sure to run `git checkout data` to switch to the `data` branch.
+This makes sure that the server can automatically update.
 # Switching from Debug enabled to disabled
 1. In `settings.py` change `Debug` to `False`
 2. In `settings.py` comment out `STATIC_URL = "http://localhost:81/static/"`
@@ -55,10 +58,10 @@ Result: [AMIC Member Applications](https://docs.google.com/forms), [AMIC Website
 
 # Updating The Server Post Production
 To Update the server, follow these steps:
-1. Go to the profile page and press on the prepare system update button
+1. Go to the profile page and press on the **prepare** system update button
 2. Then on your code, pull the code from the `data` branch and make your changes
 3. Push your changes to the `prod` branch
-4. Go to the profile page and press on the perform system update button and it should automatically update and finish
+4. Go to the profile page and press on the **perform** system update button and it should automatically update and finish
 
 #  Common Issues and their solutions
 ## 1. "I Can't Access my profile page!" or "There is nothing in my profile page!"
