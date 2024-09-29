@@ -451,7 +451,7 @@ def ModifyEvent(request: WSGIRequest, event_id):
                     email = email.replace("{{logo}}",logo) 
                     email = email.replace("{{email}}",request.user.email) 
                     email = email.replace("{{text}}",event.text) 
-                send_mail("Event Details Changed", "Student Union", None, ["mohamad.moukayed@amb.sch.ae"], False, html_message=email)
+                send_mail("Event Details Changed", "Student Union", None, listofemails, False, html_message=email)
 
         if request.POST.get("emailhos") is not None:
             print("emailing hos")
@@ -503,7 +503,7 @@ def CreateNews(request: WSGIRequest):
             email = email.replace("{{logo}}",logo) 
             email = email.replace("{{email}}",request.user.email) 
             email = email.replace("{{text}}",event.text) 
-        officers = []
+        officers = ['mohamad.moukayed@amb.sch.ae', 'sulaiman.abuqamar@amb.sch.ae']
         for user in User.objects.all():
             if user.is_admin:
                 officers.append(str(user.email))
@@ -551,6 +551,21 @@ def ModifyNews(request: WSGIRequest, news_id):
             for link in linkstr.split("\n"):
                 linkobj = Links.objects.create(name=link[:link.find("!")], link=link[link.find("!"):])
                 news.links.add(linkobj)
+        email = ""
+        with open(os.path.join(settings.BASE_DIR, "templates", "new_news_email.html"), 'r') as f:
+            email = f.read()
+            email = email.replace("{{title}}",event.title)
+            email = email.replace("{{summary}}",event.summary)
+            email = email.replace("{{author}}",event.author.name)
+            email = email.replace("{{event_id}}",str(event.pk)) 
+            email = email.replace("{{logo}}",logo) 
+            email = email.replace("{{email}}",request.user.email) 
+            email = email.replace("{{text}}",event.text) 
+        officers = ['mohamad.moukayed@amb.sch.ae', 'sulaiman.abuqamar@amb.sch.ae']
+        for user in User.objects.all():
+            if user.is_admin:
+                officers.append(str(user.email))
+        send_mail("News Post Awaiting Approval", "Student Union", None, officers, False, html_message=email)
         news.save()
         return redirect("/News/Detail/" + str(news.pk))
 
