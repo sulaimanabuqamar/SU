@@ -19,14 +19,14 @@
         <br>
         <div class="grid" id="memberField">
             {% for member in club.members.all %}
-            <a href="/Student/Detail/{{member.associated_student.pk}}"  class="profileRow">
+            <a href="/Student/Detail/{{member.pk}}"  class="profileRow">
                 <div class="profileRow Box" style="border: {{ member.color }} 3px solid; border-radius: 15px; padding: 10px; gap: 10px;">
                     <img class="eventCover" style=" width: 50px; height: 50px; margin-right: 10px;" src="{{ member.associated_student.profile_picture.url }}" alt="Club Cover">
                     <p class="text">{{ member.name }}</p>
                     <p class="aboutText">{{ member.associated_student.year_level }}{{ member.associated_student.section }}</p>
                     <button class="btn empty" onclick="removeMember('{{member.email}}', 'Member')"><img src="{%static '../media/images/removeButton.svg' %}"></button>
                 </div>
-            </div>
+            </a>
             {% empty %}
             <p class="text">No Members.</p>
             {% endfor %}
@@ -39,14 +39,14 @@
         <br>
         <div class="grid" id="headField">
             {% for head in club.heads.all %}
-            <a href="/Student/Detail/{{head.associated_student.pk}}"  class="profileRow">
+            <a href="/Student/Detail/{{head.pk}}"  class="profileRow">
                 <div class="profileRow Box" style="border: {{ head.color }} 3px solid; border-radius: 15px; padding: 10px; gap: 10px;">
                     <img class="eventCover" style=" width: 50px; height: 50px; margin-right: 10px;" src="{{ head.associated_student.profile_picture.url }}" alt="Club Cover">
                     <p class="text">{{ head.name }}</p>
                     <p class="aboutText">{{ head.associated_student.year_level }}{{ head.associated_student.section }}</p>
                     <button class="btn empty" onclick="removeMember('{{head.email}}', 'Head')"><img src="{%static '../media/images/removeButton.svg' %}"></button>
                 </div>
-            </div>
+            </a>
             {% empty %}
             <p class="text">No Heads.</p>
             {% endfor %}
@@ -60,14 +60,14 @@
         <br>
         <div class="grid" id="leaderField">
             {% for leader in club.leadership.all %}
-            <a href="/Student/Detail/{{leader.associated_student.pk}}"  class="profileRow">
+            <a href="/Student/Detail/{{leader.pk}}"  class="profileRow">
                 <div class="profileRow Box" style="border: {{ leader.color }} 3px solid; border-radius: 15px; padding: 10px; gap: 10px;">
                     <img class="eventCover" style=" width: 50px; height: 50px; margin-right: 10px;" src="{{ leader.associated_student.profile_picture.url }}" alt="Club Cover">
                     <p class="text">{{ leader.name }}</p>
                     <p class="aboutText">{{ leader.associated_student.year_level }}{{ leader.associated_student.section }}</p>
                     <button class="btn empty" onclick="removeMember('{{leader.email}}', 'Leadership')"><img src="{%static '../media/images/removeButton.svg' %}"></button>
                 </div>
-            </div>
+            </a>
             {% empty %}
             <p class="text">No Leadership.</p>
             {% endfor %}
@@ -81,19 +81,18 @@
         <br>
         <div class="grid" id="advisorField">
             {% for advisor in club.advisors.all %}
-            <div class="profileRow">
+            <a href="/Faculty/Detail/{{advisor.pk}}" class="profileRow">
                 <div class="profileRow Box" style="border: {{ advisor.color }} 3px solid; border-radius: 15px; padding: 10px; gap: 10px;">
                     <img class="eventCover" style=" width: 50px; height: 50px; margin-right: 10px;" src="{{ advisor.associated_faculty.profile_picture.url }}" alt="Club Cover">
                     <p class="text">{{ advisor.name }}</p>
                     {% comment %} <p class="aboutText">{{ advisor.associated_student.year_level }}{{ advisor.associated_student.section }}</p> {% endcomment %}
                     <button class="btn empty" onclick="removeMember('{{advisor.email}}', 'Advisor')"><img src="{%static '../media/images/removeButton.svg' %}"></button>
                 </div>
-            </div>
+            </a>
             {% empty %}
             <p class="text">No Advisors.</p>
             {% endfor %}
         </div>
-        
     </div>
     <div>
         <div class="centerer huns" style="margin-bottom: 20px;">

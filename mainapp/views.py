@@ -6,6 +6,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.views.decorators.csrf import csrf_exempt
 from django.core.mail import send_mail
 from django import template
+from django.core.exceptions import *
 import studentsunion.settings as settings
 import json
 import random
@@ -67,15 +68,21 @@ def Home(request, invalid_login = False):
         return render(request, "home.html", {'home_page': home_page,"login_failed":"false",'highlights':highlights})
 
 def Scouts_View(request):
+    
     clubs = Club.objects.all()
     scouts = []
     for club in clubs:
         if "Scouts" in club.about:
             scouts.append(club)
+    if len(scouts) < 1:
+        return error_404_view(request, None)
     return render(request, "scouts.html", {'scoutsteams': scouts, 'user': request.user})
 def Scouts_Detail(request, scouts_id):
-    scouts = Club.objects.get(id=scouts_id)
-    events = Event.objects.filter(author=scouts) 
+    try:
+        scouts = Club.objects.get(id=scouts_id)
+        events = Event.objects.filter(author=scouts) 
+    except ObjectDoesNotExist:
+        return error_404_view(request, None)
     return render(request, "scouts_detail.html", {'scouts': scouts, 'user': request.user, 'events':events})
 
 def Events(request):
@@ -83,7 +90,10 @@ def Events(request):
     return render(request, "events.html", {'hasClubs':hasClubs(request.user),'events': events, 'user': request.user})
 
 def Event_Detail(request, event_id):
-    event = Event.objects.get(id=event_id)
+    try:
+        event = Event.objects.get(id=event_id) 
+    except ObjectDoesNotExist:
+        return error_404_view(request, None) 
     links = event.links.all()
     allUsers = []
     if event.members_only:
@@ -105,7 +115,10 @@ def News_View(request):
         return render(request, "news.html", {'news': news})  
 
 def News_Detail(request, news_id):
-    news = News.objects.get(id=news_id)
+    try:
+        news = News.objects.get(id=news_id)
+    except ObjectDoesNotExist:
+        return error_404_view(request, None) 
     links = news.links.all()
     return render(request, "news_detail.html", {'news': news, 'links': links})
 
@@ -170,6 +183,18 @@ def Student_Detail(request, student_id):
             varsities.append(varsity)
     
     return render(request, "student_detail.html", {'user': user, 'headclubs': headclubs, 'clubs': clubs, 'varsitiescaptain': varsitiescaptain, 'varsities':varsities}) 
+
+def Faculty_Detail(request, faculty_id):
+    user = get_object_or_404(User, id=faculty_id)
+    advisorclubs = []
+    for club in Club.objects.all():
+        if request.user in club.advisors.all():
+            advisorclubs.append(club)
+    varsitiescoach = []
+    for varsity in Varsity.objects.all():
+        if request.user in varsity.coaches.all():
+            varsitiescoach.append(varsity)
+    return render(request, "student_detail.html", {'user': user, 'advisorclubs': advisorclubs, 'varsitiescoach': varsitiescoach}) 
 
 def Club_Varsity_login(request: WSGIRequest):
     user = authenticate(request, username=request.POST.get("email"), password=request.POST.get("password"))

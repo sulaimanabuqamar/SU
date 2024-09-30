@@ -25,6 +25,7 @@ urlpatterns = [
     path("Varsity/Remove/<int:varsity_id>/<str:sector>", views.removeVarsityPlayer, name="remove_varsity_player"),
     path("Varsity/Add/<int:varsity_id>/<str:sector>", views.addVarsityPlayer, name="add_varsity_player"),
     path("Student/Detail/<str:student_id>/", views.Student_Detail, name="student_detail"),
+    path("Faculty/Detail/<str:faculty_id>/", views.Faculty_Detail, name="faculty_detail"),
     path("Scouts/", views.Scouts_View, name="scouts"),
     path("Scouts/Detail/<int:scouts_id>/", views.Scouts_Detail, name="scouts_detail"),
     path("profile/User", views.UserProfile, name="user_profile"),

@@ -25,7 +25,7 @@
         <div class="studentGrid">
             {% for head in heads %}
             <div>
-                <a href="/Student/Detail/{{head.associated_student.pk}}" >
+                <a href="/Student/Detail/{{head.pk}}" >
                     <img src="{{ head.associated_student.profile_picture.url }}" class="studentPFP" alt="{{ head.name }}" class="profileCover">
                     <p class="text">{{ head.name }}</p>
                 </a>
@@ -38,7 +38,7 @@
         <div class="studentGrid">
             {% for leader in leadership %}  <!-- Changed variable name for clarity -->
             <div>
-                <a href="/Student/Detail/{{leader.associated_student.pk}}" >
+                <a href="/Student/Detail/{{leader.pk}}" >
                     <img src="{{ leader.associated_student.profile_picture.url }}" alt="{{ leader.name }}" class="studentPFP profileCover">
                     <p class="text">{{ leader.name }}</p>
                 </a>
@@ -50,9 +50,9 @@
         <p class="subtitle">Members</p>
         <div class="studentGrid">
             {% for member in members %}
-            <div>
+            <a href="/Student/Detail/{{member.pk}}">
                 <p class="text">• {{ member.name }}</p>
-            </div>
+            </a>
             {% empty %}
             <p class="text">No members available.</p>
             {% endfor %}
@@ -60,9 +60,9 @@
         <p class="subtitle">Advisors</p>
         <div class="studentGrid">
             {% for advisor in advisors %}
-            <div>
+            <a href="/Faculty/Detail/{{advisor.pk}}">
                 <p class="text">• {{ advisor.name }}</p>
-            </div>
+            </a>
             {% empty %}
             <p class="text">No advisors available.</p>
             {% endfor %}

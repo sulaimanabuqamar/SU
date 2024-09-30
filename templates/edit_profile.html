@@ -17,15 +17,15 @@
         <img class="eventCover" id="coverPreview" style="border: black 1px solid; border-radius: 10px; cursor: pointer; margin-left: 10px; margin-bottom: 20px;" src="{{user.associated_student.profile_picture.url}}" onclick="document.getElementsByName('coverPhoto')[0].click();">
         <div>
             <div class="textfieldtoolbar">
-                <button class="toolbarBtn" style="border-top-left-radius: 10px;" type="button" onclick="execCommand('bold')"><img src="{% static '../media/images/bold.svg' %}" alt="B"></button>
-                <button class="toolbarBtn" type="button" onclick="execCommand('italic')"><img src="{% static '../media/images/italic.svg' %}" alt="I"></button>
-                <button class="toolbarBtn" type="button" onclick="execCommand('underline')"><img src="{% static '../media/images/underline.svg' %}" alt="U"></button>
-                <button class="toolbarBtn" type="button" onclick="execCommand('strikethrough')"><img src="{% static '../media/images/strikethrough.svg' %}" alt="S"></button>
+                <button class="toolbarBtn" style="border-top-left-radius: 10px;" type="button" onclick="execCommand('bold'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/bold.svg' %}" alt="B"></button>
+                <button class="toolbarBtn" type="button" onclick="execCommand('italic'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/italic.svg' %}" alt="I"></button>
+                <button class="toolbarBtn" type="button" onclick="execCommand('underline'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/underline.svg' %}" alt="U"></button>
+                <button class="toolbarBtn" type="button" onclick="execCommand('strikethrough'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/strikethrough.svg' %}" alt="S"></button>
                 <button class="toolbarBtn" type="button" onclick="document.getElementById('fontcolor').click(); document.getElementById('maineditor').focus(); "><img src="{% static '../media/images/text_color.svg' %}" alt="A"></button>
                 <input type="color" style="width:  0px; border: none; margin:0px; padding: 0px;" id="fontcolor" onchange="document.getElementById('maineditor').focus(); execCommand('foreColor', true, this.value)">
                 <button class="toolbarBtn" type="button" onclick="document.getElementById('backcolor').click(); document.getElementById('maineditor').focus(); "><img src="{% static '../media/images/highlight.svg' %}" alt="H"></button>
                 <input type="color" style="width:  0px; border: none; margin:0px; padding: 0px;" id="backcolor" onchange="document.getElementById('maineditor').focus(); execCommand('backColor', true, this.value)">
-                <button class="toolbarBtn" type="button" onclick="execCommand('removeFormat')"><img src="{% static '../media/images/clear_format.svg' %}" alt="T"></button>
+                <button class="toolbarBtn" type="button" onclick="execCommand('removeFormat'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/clear_format.svg' %}" alt="T"></button>
             </div>
             <p class="textfield bottom" required placeholder="About" contentEditable="true" id="maineditor" style="width: 600px; height: 200px; padding-top: 10px; margin-top: 0px;">{{ user.associated_student.about|safe }}</p>
             <textarea class="textfield" hidden required name="about" contentEditable="true" style="width: 600px; height: 200px; padding-top: 10px;">{{ user.associated_student.about|safe }}</textarea>
@@ -39,15 +39,15 @@
         <input class="textfield" required name="name" placeholder="Name" value="{{club.name}}">
         <div>
             <div class="textfieldtoolbar">
-                <button class="toolbarBtn" style="border-top-left-radius: 10px;" type="button" onclick="execCommand('bold')"><img src="{% static '../media/images/bold.svg' %}" alt="B"></button>
-                <button class="toolbarBtn" type="button" onclick="execCommand('italic')"><img src="{% static '../media/images/italic.svg' %}" alt="I"></button>
-                <button class="toolbarBtn" type="button" onclick="execCommand('underline')"><img src="{% static '../media/images/underline.svg' %}" alt="U"></button>
-                <button class="toolbarBtn" type="button" onclick="execCommand('strikethrough')"><img src="{% static '../media/images/strikethrough.svg' %}" alt="S"></button>
+                <button class="toolbarBtn" style="border-top-left-radius: 10px;" type="button" onclick="execCommand('bold'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/bold.svg' %}" alt="B"></button>
+                <button class="toolbarBtn" type="button" onclick="execCommand('italic'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/italic.svg' %}" alt="I"></button>
+                <button class="toolbarBtn" type="button" onclick="execCommand('underline'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/underline.svg' %}" alt="U"></button>
+                <button class="toolbarBtn" type="button" onclick="execCommand('strikethrough'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/strikethrough.svg' %}" alt="S"></button>
                 <button class="toolbarBtn" type="button" onclick="document.getElementById('fontcolor').click(); document.getElementById('maineditor').focus(); "><img src="{% static '../media/images/text_color.svg' %}" alt="A"></button>
                 <input type="color" style="width:  0px; border: none; margin:0px; padding: 0px;" id="fontcolor" onchange="document.getElementById('maineditor').focus(); execCommand('foreColor', true, this.value)">
                 <button class="toolbarBtn" type="button" onclick="document.getElementById('backcolor').click(); document.getElementById('maineditor').focus(); "><img src="{% static '../media/images/highlight.svg' %}" alt="H"></button>
                 <input type="color" style="width:  0px; border: none; margin:0px; padding: 0px;" id="backcolor" onchange="document.getElementById('maineditor').focus(); execCommand('backColor', true, this.value)">
-                <button class="toolbarBtn" type="button" onclick="execCommand('removeFormat')"><img src="{% static '../media/images/clear_format.svg' %}" alt="T"></button>
+                <button class="toolbarBtn" type="button" onclick="execCommand('removeFormat'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/clear_format.svg' %}" alt="T"></button>
             </div>
             <p class="textfield bottom" required placeholder="About" contentEditable="true" id="maineditor" style="width: 600px; height: 200px; padding-top: 10px; margin-top: 0px;">{{ club.about|safe}}</p>
             <textarea class="textfield" hidden required name="about" placeholder="Content" contentEditable="true" style="width: 600px; height: 200px; padding-top: 10px;">{{ club.about|safe }}</textarea>
@@ -61,15 +61,15 @@
         <input class="textfield" required name="name" placeholder="Name" value="{{varsity.name}}">
         <div style="margin: 0;">
             <div class="textfieldtoolbar">
-                <button class="toolbarBtn" style="border-top-left-radius: 10px;" type="button" onclick="execCommand('bold')"><img src="{% static '../media/images/bold.svg' %}" alt="B"></button>
-                <button class="toolbarBtn" type="button" onclick="execCommand('italic')"><img src="{% static '../media/images/italic.svg' %}" alt="I"></button>
-                <button class="toolbarBtn" type="button" onclick="execCommand('underline')"><img src="{% static '../media/images/underline.svg' %}" alt="U"></button>
-                <button class="toolbarBtn" type="button" onclick="execCommand('strikethrough')"><img src="{% static '../media/images/strikethrough.svg' %}" alt="S"></button>
+                <button class="toolbarBtn" style="border-top-left-radius: 10px;" type="button" onclick="execCommand('bold'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/bold.svg' %}" alt="B"></button>
+                <button class="toolbarBtn" type="button" onclick="execCommand('italic'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/italic.svg' %}" alt="I"></button>
+                <button class="toolbarBtn" type="button" onclick="execCommand('underline'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/underline.svg' %}" alt="U"></button>
+                <button class="toolbarBtn" type="button" onclick="execCommand('strikethrough'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/strikethrough.svg' %}" alt="S"></button>
                 <button class="toolbarBtn" type="button" onclick="document.getElementById('fontcolor').click(); document.getElementById('maineditor').focus(); "><img src="{% static '../media/images/text_color.svg' %}" alt="A"></button>
                 <input type="color" style="width:  0px; border: none; margin:0px; padding: 0px;" id="fontcolor" onchange="document.getElementById('maineditor').focus(); execCommand('foreColor', true, this.value)">
                 <button class="toolbarBtn" type="button" onclick="document.getElementById('backcolor').click(); document.getElementById('maineditor').focus(); "><img src="{% static '../media/images/highlight.svg' %}" alt="H"></button>
                 <input type="color" style="width:  0px; border: none; margin:0px; padding: 0px;" id="backcolor" onchange="document.getElementById('maineditor').focus(); execCommand('backColor', true, this.value)">
-                <button class="toolbarBtn" type="button" onclick="execCommand('removeFormat')"><img src="{% static '../media/images/clear_format.svg' %}" alt="T"></button>
+                <button class="toolbarBtn" type="button" onclick="execCommand('removeFormat'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/clear_format.svg' %}" alt="T"></button>
             </div>
             <p class="textfield bottom" required placeholder="About" contentEditable="true" id="maineditor" style="width: 600px; height: 200px; padding-top: 10px; margin-top: 0px;">{{ varsity.about|safe }}</p>
             <textarea class="textfield" hidden required name="about" placeholder="Content" contentEditable="true" style="width: 600px; height: 200px; padding-top: 10px;">{{ varsity.about|safe }}</textarea>
