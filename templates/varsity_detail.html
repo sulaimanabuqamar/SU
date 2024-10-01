@@ -13,7 +13,7 @@
             <p class="articleDescriptionText">{{ varsity.about }}</p>
         </div>
         <div style="display: flex; flex-direction: column;">
-        <img src="{{ varsity.logo.url }}" style="border: {{ club.color }} 3px solid;" alt="{{ club.name }} Logo" class="articleCover">
+        <img src="{{ varsity.logo.url }}" style="border: {{ varsity.color }} 3px solid;" alt="{{ club.name }} Logo" class="articleCover">
         {% for link in links %}
             <a class="links" href="{{link.link }}" target="_blank">{{ link.name }}</a>
         {% endfor %}

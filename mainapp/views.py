@@ -74,8 +74,6 @@ def Scouts_View(request):
     for club in clubs:
         if "Scouts" in club.about:
             scouts.append(club)
-    if len(scouts) < 1:
-        return error_404_view(request, None)
     return render(request, "scouts.html", {'scoutsteams': scouts, 'user': request.user})
 def Scouts_Detail(request, scouts_id):
     try:

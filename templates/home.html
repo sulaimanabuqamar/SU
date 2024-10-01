@@ -38,16 +38,22 @@
     {% if home_page.event_highlight_1 is not None %}
     <a href="{% url 'event_detail' home_page.event_highlight_1.id %}">
         <img class="eventCover" src="{{ home_page.event_highlight_1.cover.url }}" alt="Event Highlight 1">
+        <p class="text">{{ home_page.event_highlight_1.title }}</p>
+        <p class="aboutText">{{ home_page.event_highlight_1.date|date:"N j, Y" }}</p>
     </a>
     {% endif %}
     {% if home_page.event_highlight_2 is not None %}
     <a href="{% url 'event_detail' home_page.event_highlight_2.id %}">
         <img class="eventCover" src="{{ home_page.event_highlight_2.cover.url }}" alt="Event Highlight 2">
+        <p class="text">{{ home_page.event_highlight_2.title }}</p>
+        <p class="aboutText">{{ home_page.event_highlight_2.date|date:"N j, Y" }}</p>
     </a>
     {% endif %}
     {% if home_page.event_highlight_3 is not None %}
     <a href="{% url 'event_detail' home_page.event_highlight_3.id %}">
         <img class="eventCover" src="{{ home_page.event_highlight_3.cover.url }}" alt="Event Highlight 3">
+        <p class="text">{{ home_page.event_highlight_3.title }}</p>
+        <p class="aboutText">{{ home_page.event_highlight_3.date|date:"N j, Y" }}</p>
     </a>
     {% endif %}
 </div>
