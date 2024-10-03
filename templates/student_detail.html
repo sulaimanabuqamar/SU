@@ -21,58 +21,52 @@
                 <p class="aboutText sidebar">{{ user.email }}</p>
             </div>
         </div>
-        <p class="subtitle">Head of Clubs</p>
+        <p class="subtitle">Roles</p>
         <div class="studentGrid">
             {% for club in headclubs %}
             <div>
                 <a href="{% url 'club_detail' club.id %}">
                     <img class="eventCover" style="border: {{ club.color }} 3px solid;" src="{{ club.logo.url }}" alt="Club Cover">
                     <p class="text">{{ club.name }}</p>
-                    <p class="aboutText">{{ club.date }}</p>
+                    <p class="aboutText">Head of Club</p>
                 </a>
             </div>
-            {% empty %}
-            <p class="text">Not Head of Any Clubs.</p>
             {% endfor %}
-        </div>
-        <p class="subtitle">Member of Clubs</p>
-        <div class="studentGrid">
+            {% for club in headleadership %}
+            <div>
+                <a href="{% url 'club_detail' club.id %}">
+                    <img class="eventCover" style="border: {{ club.color }} 3px solid;" src="{{ club.logo.url }}" alt="Club Cover">
+                    <p class="text">{{ club.name }}</p>
+                    <p class="aboutText">Committee of Club</p>
+                </a>
+            </div>
+            {% endfor %}
             {% for club in clubs %}
             <div>
                 <a href="{% url 'club_detail' club.id %}">
                     <img class="eventCover" style="border: {{ club.color }} 3px solid;" src="{{ club.logo.url }}" alt="Club Cover">
                     <p class="text">{{ club.name }}</p>
-                    <p class="aboutText">{{ club.date }}</p>
+                    <p class="aboutText">Member of Club</p>
                 </a>
             </div>
-            {% empty %}
-            <p class="text">Not In Any Clubs.</p>
             {% endfor %}
-        </div>
-        <p class="subtitle">Varsity Captain</p>
-        <div class="studentGrid">
             {% for varsity in varsitiescaptain %}
             <div>
                 <a href="{% url 'varsity_detail' varsity.id %}">
                     <img class="eventCover" style="border: {{ varsity.color }} 3px solid;" src="{{ varsity.logo.url }}" alt="{{ varsity.name }}">
                     <p class="text">{{ varsity.name }}</p>
+                    <p class="aboutText">Captain of Varsity</p>
                 </a>
             </div>
-            {% empty %}
-            <p class="text">Not Captain of Any Varsities.</p>
             {% endfor %}
-        </div>
-        <p class="subtitle">Player of Varsities</p>
-        <div class="studentGrid">
             {% for varsity in varsities %}
             <div>
                 <a href="{% url 'varsity_detail' varsity.id %}">
                     <img class="eventCover" style="border: {{ varsity.color }} 3px solid;" src="{{ varsity.logo.url }}" alt="{{ varsity.name }}">
                     <p class="text">{{ varsity.name }}</p>
+                    <p class="aboutText">Member of Varsity</p>
                 </a>
             </div>
-            {% empty %}
-            <p class="text">Not In Any Varsities.</p>
             {% endfor %}
         </div>
     </div>

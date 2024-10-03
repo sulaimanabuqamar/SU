@@ -167,6 +167,10 @@ def Student_Detail(request, student_id):
     for club in Club.objects.all():
         if request.user in club.heads.all():
             headclubs.append(club)
+    headleadership = []
+    for club in Club.objects.all():
+        if request.user in club.leadership.all():
+            headleadership.append(club)
     clubs = []
     for club in Club.objects.all():
         if request.user in club.members.all():
@@ -180,7 +184,7 @@ def Student_Detail(request, student_id):
         if request.user in varsity.members.all():
             varsities.append(varsity)
     
-    return render(request, "student_detail.html", {'user': user, 'headclubs': headclubs, 'clubs': clubs, 'varsitiescaptain': varsitiescaptain, 'varsities':varsities}) 
+    return render(request, "student_detail.html", {'user': user, 'headclubs': headclubs, 'headleadership': headleadership, 'clubs': clubs, 'varsitiescaptain': varsitiescaptain, 'varsities':varsities}) 
 
 def Faculty_Detail(request, faculty_id):
     user = get_object_or_404(User, id=faculty_id)
@@ -379,7 +383,7 @@ def CreateEvent(request:WSGIRequest, club_id):
                     email = email.replace("{{logo}}",logo) 
                     email = email.replace("{{email}}",request.user.email) 
                     email = email.replace("{{text}}",event.text) 
-                send_mail("New Event", "Student Union", None, listofemails, False, html_message=email)
+                send_mail("New Event", "Students' Society", None, listofemails, False, html_message=email)
 
         if request.POST.get("emailhos") is not None:
             print("emailing hos")
@@ -398,7 +402,7 @@ def CreateEvent(request:WSGIRequest, club_id):
                     email = email.replace("{{logo}}",logo) 
                     email = email.replace("{{email}}",request.user.email) 
                     email = email.replace("{{text}}",event.text) 
-                send_mail("New Event", "Student Union", None, hosemails, False, html_message=email)
+                send_mail("New Event", "Students' Society", None, hosemails, False, html_message=email)
         event.save()
         return redirect("/Event/Detail/" + str(event.pk)) 
 def ModifyEvent(request: WSGIRequest, event_id):
@@ -474,7 +478,7 @@ def ModifyEvent(request: WSGIRequest, event_id):
                     email = email.replace("{{logo}}",logo) 
                     email = email.replace("{{email}}",request.user.email) 
                     email = email.replace("{{text}}",event.text) 
-                send_mail("Event Details Changed", "Student Union", None, listofemails, False, html_message=email)
+                send_mail("Event Details Changed", "Students' Society", None, listofemails, False, html_message=email)
 
         if request.POST.get("emailhos") is not None:
             print("emailing hos")
@@ -493,7 +497,7 @@ def ModifyEvent(request: WSGIRequest, event_id):
                     email = email.replace("{{logo}}",logo) 
                     email = email.replace("{{email}}",request.user.email) 
                     email = email.replace("{{text}}",event.text) 
-                send_mail("Event Details Changed", "Student Union", None, hosemails, False, html_message=email)
+                send_mail("Event Details Changed", "Students' Society", None, hosemails, False, html_message=email)
         event.save()
         return redirect("/Event/Detail/" + str(event.pk))
 def CreateNews(request: WSGIRequest):
@@ -530,7 +534,7 @@ def CreateNews(request: WSGIRequest):
         for user in User.objects.all():
             if user.is_admin:
                 officers.append(str(user.email))
-        send_mail("News Post Awaiting Approval", "Student Union", None, officers, False, html_message=email)
+        send_mail("News Post Awaiting Approval", "Students' Society", None, officers, False, html_message=email)
         return redirect("/News/Detail/" + str(event.pk)) 
 
 def ModifyNews(request: WSGIRequest, news_id):
@@ -588,7 +592,7 @@ def ModifyNews(request: WSGIRequest, news_id):
         for user in User.objects.all():
             if user.is_admin:
                 officers.append(str(user.email))
-        send_mail("News Post Awaiting Approval", "Student Union", None, officers, False, html_message=email)
+        send_mail("News Post Awaiting Approval", "Students' Society", None, officers, False, html_message=email)
         news.save()
         return redirect("/News/Detail/" + str(news.pk))
 
@@ -769,8 +773,8 @@ def clubSendEmails(request: WSGIRequest):
         email = email.replace("{{event_id}}",str(club.pk)) 
         email = email.replace("{{logo}}",logo) 
         email = email.replace("{{email}}",request.user.email)
-    send_mail("Club Admission", "Student Union", None, listofemails, False, html_message=email) 
-    # send_mail("New Event", "Student Union", None, ["mohamad.moukayed@amb.sch.ae"], False, html_message=email)
+    send_mail("Club Admission", "Students' Society", None, listofemails, False, html_message=email) 
+    # send_mail("New Event", "Students' Society", None, ["mohamad.moukayed@amb.sch.ae"], False, html_message=email)
     return redirect("/profile")
 
 def error_404_view(request, exception):
