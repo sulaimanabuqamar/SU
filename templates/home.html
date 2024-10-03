@@ -3,7 +3,7 @@
 
 {% block style %}
 <link rel="stylesheet" href="{% static 'CSS/home.css' %}">
-<title>SU - Home</title>
+<title>SS - Home</title>
 <style>
     .content {
         display: flex;
@@ -33,7 +33,7 @@
     <button class="btn empty" onclick="nextHighlight()"><img src="{% static '../media/images/rightArrow.svg' %}"></button>
 </div>
 <div class="centerer hirr">
-<p style="color: black; font-size: 90px; font-family: Inter; font-weight: 800; margin: 0px;">WELCOME TO AMBSU</p>
+<p style="color: black; font-size: 90px; font-family: Inter; font-weight: 800; margin: 0px;">WELCOME TO AMBSS</p>
 <div style="width: 100%;display: flex;justify-content: space-around;">
     {% if home_page.event_highlight_1 is not None %}
     <a href="{% url 'event_detail' home_page.event_highlight_1.id %}">
@@ -84,7 +84,7 @@
     {% endif %}
 </div>
 <div style="text-align: left; width: 100%;">
-    <p class="hpsubtitle">OFFICERS OF THE SU</p>
+    <p class="hpsubtitle">OFFICERS OF THE SS</p>
 </div> 
 <div style="width: 100%;display: flex;justify-content: space-between;">
     {% if home_page.officer_highlight_1 is not None %}
