@@ -152,6 +152,7 @@ class Event(models.Model):
     highlight = models.BooleanField(default=False)
     significant_event = models.BooleanField(default=False)
     attending_Students = models.ManyToManyField(User, related_name='attending_students', blank=True)
+    confirmed_Students = models.ManyToManyField(User, related_name='confirm_students', blank=True)
     links = models.ManyToManyField(Links, related_name='events_links', blank=True)
     def __str__(self) -> str:
         return self.title

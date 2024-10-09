@@ -27,10 +27,18 @@
             <div class="grid" id="memberField">
                 {% for member in event.attending_Students.all %}
                 <a href="/Student/Detail/{{member.pk}}" class="profileRow">
-                    <div class="profileRow Box" style="border: black 3px solid; border-radius: 15px; padding: 10px; gap: 10px;">
+                    <div class="profileRow Box" style="border: {% if member in event.confirmed_Students.all %}lime{% else %}red{% endif %} 3px solid; border-radius: 15px; padding: 10px; gap: 10px;">
                         <img class="eventCover" style=" width: 50px; height: 50px; margin-right: 10px;" src="{{ member.associated_student.profile_picture.url }}" alt="Club Cover">
                         <p class="text">{{ member.name }}</p>
                         <p class="aboutText">{{ member.associated_student.year_level }}{{ member.associated_student.section }}</p>
+                        <p class="aboutText" style="color: {% if member in event.confirmed_Students.all %}lime{% else %}red{% endif %};">{% if member in event.confirmed_Students.all %}Confirmed{% else %}Not Confirmed{% endif %}</p>
+                        {% if member.email == user.email or event.author in user.associated_clubs.all %}
+                        {% if member not in event.confirmed_Students.all %}
+                        <button class="btn empty" onclick="setAttendeeConfirmed('{{member.email}}')"><img src="{%static '../media/images/confirmButton.svg' %}"></button>
+                        {% else %}
+                        <button class="btn empty" onclick="setAttendeeNotConfirmed('{{member.email}}')"><img src="{%static '../media/images/unconfirmButton.svg' %}"></button>
+                        {% endif %}
+                        {% endif %}
                         {% if event.author in user.associated_clubs.all %}
                         <button class="btn empty" onclick="removeAttendeeFromList('{{member.email}}')"><img src="{%static '../media/images/removeButton.svg' %}"></button>
                         {% endif %}
@@ -60,6 +68,12 @@
         {% if event.author in user.associated_clubs.all %}
         <a href="/Event/Modify/{{ event.pk }}" ><button class="btn">Edit Event</button></a>
         {% endif %}
+        <br>
+        {% if user in event.attending_Students.all %}
+        <button class="btn primary" onclick="removeAttendeeFromList('{{user.email}}')">Remove Attendance</button>
+        {% else %}
+        <button class="btn primary" onclick="addAttendeeToList('{{user.email}}')">Attend Event</button>
+        {% endif %}
     </div>
 </div>
 {% if event.author in user.associated_clubs.all %}
@@ -85,7 +99,6 @@
 </div>
 {% endif %}
 <script>
-    {% if event.author in user.associated_clubs.all %}
     function removeAttendeeFromList(email) {
         fetch("/Event/Remove?id=" + {{event.id}} + "&email=" + email)
         .then(data => data.json())
@@ -96,7 +109,17 @@
         .then(data => data.json())
         .then(json => {console.log(json); location.reload();});
     }
-{% endif %}
+function setAttendeeConfirmed(email) {
+    fetch("/Event/Confirm?id=" + {{event.id}} + "&email=" + email)
+    .then(data => data.json())
+    .then(json => {console.log(json); location.reload();});
+}
+function setAttendeeNotConfirmed(email) {
+    fetch("/Event/Unconfirm?id=" + {{event.id}} + "&email=" + email)
+    .then(data => data.json())
+    .then(json => {console.log(json); location.reload();});
+}
+
     function searchMemberGrid(searchTerm) {
         var grid = document.getElementById("memberField");
         try{

@@ -165,23 +165,23 @@ def Student_Detail(request, student_id):
     user = get_object_or_404(User, id=student_id)
     headclubs = []
     for club in Club.objects.all():
-        if request.user in club.heads.all():
+        if user in club.heads.all():
             headclubs.append(club)
     headleadership = []
     for club in Club.objects.all():
-        if request.user in club.leadership.all():
+        if user in club.leadership.all():
             headleadership.append(club)
     clubs = []
     for club in Club.objects.all():
-        if request.user in club.members.all():
+        if user in club.members.all():
             clubs.append(club)
     varsitiescaptain = []
     for varsity in Varsity.objects.all():
-        if request.user in varsity.captains.all():
+        if user in varsity.captains.all():
             varsitiescaptain.append(varsity)
     varsities = []
     for varsity in Varsity.objects.all():
-        if request.user in varsity.members.all():
+        if user in varsity.members.all():
             varsities.append(varsity)
     
     return render(request, "student_detail.html", {'user': user, 'headclubs': headclubs, 'headleadership': headleadership, 'clubs': clubs, 'varsitiescaptain': varsitiescaptain, 'varsities':varsities}) 
@@ -602,15 +602,33 @@ def AttendeesListPrintable(request: WSGIRequest, event_id: int):
 
 def removeAttendee(request: WSGIRequest):
     event = Event.objects.get(id=int(request.GET.get("id")))
-    if event.author not in request.user.associated_clubs.all():
+    if event.author not in request.user.associated_clubs.all() and request.GET.get("email") != request.user.email:
         return HttpResponse("<h1>YOU ARE NOT THE AUTHOR OF THIS EVENT, OPERATION FAILED</h1>")
     event.attending_Students.remove(User.objects.get(email=request.GET.get("email")))
+    try:
+        event.confirmed_Students.remove(User.objects.get(email=request.GET.get("email")))
+    except:
+        pass
     return HttpResponse("{\"message\":\"competed\"}")
 def addAttendee(request: WSGIRequest):
     event = Event.objects.get(id=int(request.GET.get("id")))
-    if event.author not in request.user.associated_clubs.all():
+    if event.author not in request.user.associated_clubs.all() and request.GET.get("email") != request.user.email:
         return HttpResponse("<h1>YOU ARE NOT THE AUTHOR OF THIS EVENT, OPERATION FAILED</h1>")
     event.attending_Students.add(User.objects.get(email=request.GET.get("email")))
+    return HttpResponse("{\"message\":\"competed\"}")
+def setConfirmed(request: WSGIRequest):
+    event = Event.objects.get(id=int(request.GET.get("id")))
+    user = User.objects.get(email=request.GET.get("email"))
+    if user != request.user:
+        return HttpResponse("<h1>YOU ARE NOT THE LOGGED IN USER, OPERATION FAILED</h1>")
+    event.confirmed_Students.add(user)
+    return HttpResponse("{\"message\":\"competed\"}")
+def setUnconfirmed(request: WSGIRequest):
+    event = Event.objects.get(id=int(request.GET.get("id")))
+    user = User.objects.get(email=request.GET.get("email"))
+    if user != request.user:
+        return HttpResponse("<h1>YOU ARE NOT THE LOGGED IN USER, OPERATION FAILED</h1>")
+    event.confirmed_Students.remove(user)
     return HttpResponse("{\"message\":\"competed\"}")
 
 def removeClubMember(request: WSGIRequest, club_id: int, sector: str):
