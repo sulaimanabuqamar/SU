@@ -20,9 +20,9 @@
             <button class="toolbarBtn" type="button" onclick="execCommand('underline'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/underline.svg' %}" alt="U"></button>
             <button class="toolbarBtn" type="button" onclick="execCommand('strikethrough'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/strikethrough.svg' %}" alt="S"></button>
             <button class="toolbarBtn" type="button" onclick="document.getElementById('fontcolor').click(); document.getElementById('maineditor').focus(); "><img src="{% static '../media/images/text_color.svg' %}" alt="A"></button>
-            <input type="color" style="width:  0px; border: none; margin:0px; padding: 0px;" id="fontcolor" onchange="document.getElementById('maineditor').focus(); execCommand('foreColor', true, this.value)">
+            <input type="color" style="width:  0px; border: none; margin:0px; padding: 0px;" id="fontcolor" oninput="execCommand('foreColor', true, this.value)">
             <button class="toolbarBtn" type="button" onclick="document.getElementById('backcolor').click(); document.getElementById('maineditor').focus(); "><img src="{% static '../media/images/highlight.svg' %}" alt="H"></button>
-            <input type="color" style="width:  0px; border: none; margin:0px; padding: 0px;" id="backcolor" onchange="document.getElementById('maineditor').focus(); execCommand('backColor', true, this.value)">
+            <input type="color" style="width:  0px; border: none; margin:0px; padding: 0px;" id="backcolor" oninput="execCommand('backColor', true, this.value)">
             <button class="toolbarBtn" type="button" onclick="execCommand('removeFormat'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/clear_format.svg' %}" alt="T"></button>
         </div>
         <p class="textfield bottom" required placeholder="Content" contentEditable="true" id="maineditor" style="width: 600px; height: 200px; padding-top: 10px; margin-top: 0px;"></p>
