@@ -31,7 +31,7 @@ DEBUG = False
 
 ALLOWED_HOSTS = ['ss.amb.sch.ae']
 
-
+CSRF_TRUSTED_ORIGINS=['https://*.ss.amb.sch.ae']
 # Application definition
 
 INSTALLED_APPS = [
