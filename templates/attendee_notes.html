@@ -1,0 +1,15 @@
+{% load static %}
+<style>
+    body {
+        font-family: sans-serif;
+    }
+</style>
+<div style="display: flex; justify-content: center;">
+<table border=1 cellpadding=5   style="width: 100%">
+    {% for attendee in attendees %}
+    <tr>
+        <td>Name: {{ attendee.name }}<br>Time</td>
+    </tr>
+    {% endfor %}
+</table>
+</div>

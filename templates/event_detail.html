@@ -57,6 +57,7 @@
             <p class="tagText">{{ event.author.name }}</p>
         </div>
         <p class="aboutText">{{ event.date }}</p>
+        <p class="aboutText">{{ event.start_time|time:"g:i A" }} - {{ event.end_time|time:"g:i A" }}</p>
         <p class="aboutText">{{ event.location }}</p>
         {% for link in links %}
             <a class="links" href="{{link.link }}" target="_blank">{{ link.name }}</a>, 
@@ -69,10 +70,12 @@
         <a href="/Event/Modify/{{ event.pk }}" ><button class="btn">Edit Event</button></a>
         {% endif %}
         <br>
+        {% if user.is_authenticated %}
         {% if user in event.attending_Students.all %}
         <button class="btn primary" onclick="removeAttendeeFromList('{{user.email}}')">Remove Attendance</button>
         {% else %}
         <button class="btn primary" onclick="addAttendeeToList('{{user.email}}')">Attend Event</button>
+        {% endif %}
         {% endif %}
     </div>
 </div>
