@@ -89,8 +89,8 @@
         <br>
         {% if user.is_admin and user.is_superuser and user.is_staff %}
         <a href="/admin" target="_blank"><button class="btn">Admin Page</button></a><br>
-        <button class="btn" onclick="prepareSystemUpdate();">Prepare For System Update</button><br>
-        <button class="btn" onclick="activateSystemUpdate();">Perform System Update</button>
+        {% comment %} <button class="btn" onclick="prepareSystemUpdate();">Prepare For System Update</button><br>
+        <button class="btn" onclick="activateSystemUpdate();">Perform System Update</button> {% endcomment %}
         {% endif %}
     </div>
 </div>
