@@ -24,10 +24,11 @@ def main():
         ) from exc
 
     try:
-        print("start")
-        server_thread = threading.Thread(target=start)
-        server_thread.daemon = True  # This ensures the thread will close when the main program exits
-        server_thread.start()
+        if 'runserver' in sys.argv:
+            print("start")
+            server_thread = threading.Thread(target=start)
+            server_thread.daemon = True  # This ensures the thread will close when the main program exits
+            server_thread.start()
     except Exception as e:
         print(e)
     execute_from_command_line(sys.argv)

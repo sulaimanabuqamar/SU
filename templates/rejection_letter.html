@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{title}} | Students' Society Event Email</title>
+    <title>{{title}} | Students' Society Admission Email</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
@@ -73,6 +73,10 @@
             align-items: center;
             justify-content: center;
         }
+        .centerer {
+            display: flex;
+            justify-content: center;
+        }
     </style>
 </head>
 <body style="display: flex; flex-direction: column; align-items: center;">
@@ -83,26 +87,29 @@
                 <img class="logo" src="{{logo}}">
             </a>
             <!-- <img style="width: 300px; height: 175;" src="https://raw.githubusercontent.com/hypercreeper/lag-test/main/emailpic.png" > -->
-            <p style="font-weight: bold; font-size: 30px; text-align: center; color: white;">{{title}}</p> 
-            <p style="color: white; font-size: 20px; max-width: 400px;">{{summary}}</p>
-            <p style="color: #949494; font-size: 12px;">Hosted by</p>
-            <p style="color: white; font-size: 14px;">{{author}}</p>
-            <p style="color: #949494; font-size: 12px;">On</p>
-            <p style="color: white; font-size: 14px;">{{date}}</p>
-            <p style="color: white; font-size: 14px;">{{start_time}} - {{end_time}}</p>
+            <p style="font-weight: bold; font-size: 30px; text-align: center; color: white;">Admission to {{name}}</p> 
+            
         </div>
         <!-- <div style="display: flex; justify-content: center; margin-top: -100px;">
             <div class="mbox">
             
             </div>
         </div> -->
-        <div style="display: flex; justify-content: center; padding: 50px;">
-            <p style="color: black; font-size: 20px;">{{text}}</p>
+        <div class="centerer">
+        <div style="color: black; font-size: 20px; text-align: left; width: 500px; margin-top: 50px;">
+            Dear Applicant,<br><br>
+
+Thank you for your interest in joining the {{name}}. After careful consideration of your application, we regret to inform you that we are unable to offer you a place in the club at this time.
+<br><br>
+While we were impressed by your application and the potential you've shown, the selection process was highly competitive. We encourage you to consider applying again in the future should the opportunity arise.
+<br><br>
+Thank you once again for your interest, and we wish you success in your future endeavors.
         </div>
+    </div>
         <div class="light_blue">
             <div style="display: flex; justify-content: space-evenly; width: 100%;">
-                <a class="buttonbox" href="https://ss.amb.sch.ae/Event/Detail/{{event_id}}">
-                  <p class="buttontext">Read More</p>
+                <a class="buttonbox" href="https://ss.amb.sch.ae/Club/Detail/{{club_id}}">
+                  <p class="buttontext">Club Info</p>
                 </a>
                 <!-- <a class="buttonbox" href="https://ss.amb.sch.ae/AttendeesList/Printable/{{event_id}}">
                     <p class="buttontext">View Attendees</p>

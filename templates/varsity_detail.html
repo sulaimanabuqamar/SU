@@ -10,13 +10,18 @@
     <div class="profileRow" style="align-items: start;">
         <div>
             <p class="pageTitle" style="margin-top: 0px;">{{ varsity.name }}</p>
-            <p class="articleDescriptionText">{{ varsity.about }}</p>
+            <div class="articleDescriptionText">{{ varsity.about|safe }}</div>
         </div>
         <div style="display: flex; flex-direction: column;">
         <img src="{{ varsity.logo.url }}" style="border: {{ varsity.color }} 3px solid;" alt="{{ club.name }} Logo" class="articleCover">
-        {% for link in links %}
-            <a class="links" href="{{link.link }}" target="_blank">{{ link.name }}</a>
-        {% endfor %}
+        <div style="width: 300px; text-align: center;">
+            {% for link in links %}
+            <div style=" display: flex; align-items: center;">
+                <img src="{% static "../media/images/link.svg" %}">
+                <a class="links" href="{{link.link }}" target="_blank" style="margin-top: 0px;  margin-left: 10px">{{ link.name }}</a>
+            </div>
+            {% endfor %}
+            </div>
         </div>
     </div>
     <p class="subtitle">Captains</p>

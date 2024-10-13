@@ -78,14 +78,14 @@
         <div class="centerer huns" style="margin-bottom: 20px;">
         <img src="{{ varsity.logo.url }}" alt="Profile Picture" class="articleCover">
         </div>
-        <div class="tagBox" style="background: #5ee329;">
+        <div class="tagBox" style="background: {{varsity.color}};">
             <p class="tagText">Varsity</p>
         </div>
-        <p class="aboutText sidebar">{{ varsity.about }}</p>
+        <p class="aboutText sidebar">{{ varsity|safe }}</p>
         <a href="/profile/Edit/Varsity/{{varsity.pk}}"><button class="btn">Edit Varsity</button></a>
     </div>
 </div>
-<div class="popupBG" hidden id="addPlayerBG" onclick="if(event.srcElement == this) {this.hidden = true}">
+<div class="popupBG" hidden id="addPlayerBG" onclick="if(event.srcElement == this) {closePopup(this.id)}">
     <div class="accountPopupWindow">
         <p class="subtitle" style="text-align: center; margin-bottom: 15px;">Add Player To Varsity</p>
         <input class="textfield" placeholder="Search..." style="margin: 0px; margin-bottom: 20px; width: calc( 100% - 55px ); margin-left: 20px; margin-right: 20px;" id="addPlayerSearch">
@@ -107,7 +107,7 @@
         </div>
     </div>
 </div>
-<div class="popupBG" hidden id="addCoachBG" onclick="if(event.srcElement == this) {this.hidden = true}">
+<div class="popupBG" hidden id="addCoachBG" onclick="if(event.srcElement == this) {closePopup(this.id)}">
     <div class="accountPopupWindow">
         <p class="subtitle" style="text-align: center; margin-bottom: 15px;">Add Coach To Varsity</p>
         <input class="textfield" placeholder="Search..." style="margin: 0px; margin-bottom: 20px; width: calc( 100% - 55px ); margin-left: 20px; margin-right: 20px;" id="addCoachSearch">
@@ -129,7 +129,7 @@
         </div>
     </div>
 </div>
-<div class="popupBG" hidden id="addCaptainBG" onclick="if(event.srcElement == this) {this.hidden = true}">
+<div class="popupBG" hidden id="addCaptainBG" onclick="if(event.srcElement == this) {closePopup(this.id)}">
     <div class="accountPopupWindow">
         <p class="subtitle" style="text-align: center; margin-bottom: 15px;">Add Captain To Varsity</p>
         <input class="textfield" placeholder="Search..." style="margin: 0px; margin-bottom: 20px; width: calc( 100% - 55px ); margin-left: 20px; margin-right: 20px;" id="addCaptainSearch">
@@ -155,16 +155,16 @@
 <script>
     function openMemberPopup(type) {
         if(type == "player") {
-            document.getElementById('addPlayerBG').hidden = false;
+            openPopup('addPlayerBG');
         }
         else if(type == "coach") {
-            document.getElementById('addCoachBG').hidden = false;
+            openPopup('addCoachBG');
         }
         else if(type == "captain") {
-            document.getElementById('addCaptainBG').hidden = false;
+            openPopup('addCaptainBG');
         }
         else if(type == "selectApplicant") {
-            document.getElementById('selectApplicantBG').hidden = false;
+            openPopup('selectApplicantBG');
         }
         
     }

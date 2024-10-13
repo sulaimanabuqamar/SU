@@ -28,10 +28,15 @@
         <div class="tagBox" style="background: {{ news.author.color }};"> 
             <p class="tagText">{{ news.author.name }}</p>
         </div>
-        <p class="aboutText">{{ news.published_date }}</p>
-        {% for link in links %}
-            <a class="links" href="{{link.link }}" target="_blank">{{ link.name }}</a>, 
-        {% endfor %}
+        <p class="aboutText">{{ news.published_date|date:"d M, Y g:i A"  }}</p>
+        <div style="width: 300px; text-align: center;">
+            {% for link in links %}
+            <div style=" display: flex; align-items: center;">
+                <img src="{% static "../media/images/link.svg" %}">
+                <a class="links" href="{{link.link }}" target="_blank" style="margin-top: 0px;  margin-left: 10px">{{ link.name }}</a>
+            </div>
+            {% endfor %}
+            </div>
         <br>
         {% if news.author == user %}
         <a href="/News/Modify/{{ news.pk }}" ><button class="btn">Edit News Post</button></a>

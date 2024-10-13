@@ -19,12 +19,12 @@
         <div class="profileRow">
             <p class="pageSubtitle" style="margin: 0px;">{{event.attending_Students.count}} Attendee{% if event.attending_Students.count != 1 %}s{% endif %}</p>
             {% if event.author in user.associated_clubs.all %}
-            <button class="btn empty" onclick="document.getElementById('addMemberBG').hidden = false;"><img src="{% static '../media/images/joinButton.svg' %}"></button>
+            <button class="btn empty" onclick="openPopup('addMemberBG')"><img src="{% static '../media/images/joinButton.svg' %}"></button>
             {% endif %}
             </div>
             <input class="textfield" placeholder="Search..." style="margin: 0px; width: unset;" id="memberSearch">
             <br>
-            <div class="grid" id="memberField">
+            <div class="grid scroll" id="memberField">
                 {% for member in event.attending_Students.all %}
                 <a href="/Student/Detail/{{member.pk}}" class="profileRow">
                     <div class="profileRow Box" style="border: {% if member in event.confirmed_Students.all %}lime{% else %}red{% endif %} 3px solid; border-radius: 15px; padding: 10px; gap: 10px;">
@@ -59,9 +59,14 @@
         <p class="aboutText">{{ event.date }}</p>
         <p class="aboutText">{{ event.start_time|time:"g:i A" }} - {{ event.end_time|time:"g:i A" }}</p>
         <p class="aboutText">{{ event.location }}</p>
+        <div style="width: 300px; text-align: center;">
         {% for link in links %}
-            <a class="links" href="{{link.link }}" target="_blank">{{ link.name }}</a>, 
+        <div style=" display: flex; align-items: center;">
+            <img src="{% static "../media/images/link.svg" %}">
+            <a class="links" href="{{link.link }}" target="_blank" style="margin-top: 0px;  margin-left: 10px">{{ link.name }}</a>
+        </div>
         {% endfor %}
+        </div>
         <br>
         {% if event.author in user.associated_clubs.all or user.associated_faculty is not None %}
         <a href="/AttendeesList/Printable/{{ event.pk }}" target="_blank"><button class="btn">Printable List of Attendees</button></a><br>
@@ -80,7 +85,7 @@
     </div>
 </div>
 {% if event.author in user.associated_clubs.all %}
-<div class="popupBG" hidden id="addMemberBG" onclick="if(event.srcElement == this) {this.hidden = true}">
+<div class="popupBG" hidden id="addMemberBG" onclick="if(event.srcElement == this) {closePopup(this.id)}">
     <div class="accountPopupWindow">
         <p class="subtitle" style="text-align: center; margin-bottom: 15px;">Add Student To Club</p>
         <input class="textfield" placeholder="Search..." style="margin: 0px; margin-bottom: 20px; width: calc( 100% - 55px ); margin-left: 20px; margin-right: 20px;" id="addMemberSearch">

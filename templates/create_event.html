@@ -19,20 +19,79 @@
             <button class="toolbarBtn" type="button" onclick="execCommand('italic'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/italic.svg' %}" alt="I"></button>
             <button class="toolbarBtn" type="button" onclick="execCommand('underline'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/underline.svg' %}" alt="U"></button>
             <button class="toolbarBtn" type="button" onclick="execCommand('strikethrough'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/strikethrough.svg' %}" alt="S"></button>
+            <button class="toolbarBtn" type="button" onclick="execCommand('fontSize', true, 1); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/decrease_font_size.svg' %}" alt="-"></button>
+            <button class="toolbarBtn" type="button" onclick="execCommand('fontSize', false, 2); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/normal_font_size.svg' %}" alt="="></button>
+            <button class="toolbarBtn" type="button" onclick="execCommand('fontSize', true, 4); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/increase_font_size.svg' %}" alt="+"></button>
+            <button class="toolbarBtn" type="button" onclick="execCommand('justifyLeft'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/justify_left.svg' %}" alt="L"></button>
+            <button class="toolbarBtn" type="button" onclick="execCommand('justifyCenter'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/justify_center.svg' %}" alt="C"></button>
+            <button class="toolbarBtn" type="button" onclick="execCommand('justifyRight'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/justify_right.svg' %}" alt="R"></button>
             <button class="toolbarBtn" type="button" onclick="document.getElementById('fontcolor').click(); document.getElementById('maineditor').focus(); "><img src="{% static '../media/images/text_color.svg' %}" alt="A"></button>
             <input type="color" style="width:  0px; border: none; margin:0px; padding: 0px;" id="fontcolor" oninput="execCommand('foreColor', true, this.value)">
             <button class="toolbarBtn" type="button" onclick="document.getElementById('backcolor').click(); document.getElementById('maineditor').focus(); "><img src="{% static '../media/images/highlight.svg' %}" alt="H"></button>
             <input type="color" style="width:  0px; border: none; margin:0px; padding: 0px;" id="backcolor" oninput="execCommand('backColor', true, this.value)">
             <button class="toolbarBtn" type="button" onclick="execCommand('removeFormat'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/clear_format.svg' %}" alt="T"></button>
+            <button class="toolbarBtn" type="button" onclick="this.children[0].click();"><input type="file" onchange="uploadFile(this.files[0])" accept="*/image" hidden><img src="{% static '../media/images/image.svg' %}" alt="T"></button>
+            <button class="toolbarBtn" type="button" onclick="createLink()"><img src="{% static '../media/images/link.svg' %}" alt="R"></button>
         </div>
-        <p class="textfield bottom" required placeholder="Content" contentEditable="true" id="maineditor" style="width: 600px; height: 200px; padding-top: 10px; margin-top: 0px;"></p>
+        <div class="textfield bottom" required placeholder="Content" contentEditable="true" id="maineditor" style="width: 600px; height: 200px; padding-top: 10px; margin-top: 0px;"></div>
         <textarea class="textfield" hidden required name="content" placeholder="Content" contentEditable="true" style="width: 600px; height: 200px; padding-top: 10px;"></textarea>
         <script>
             setInterval(function() {document.getElementsByName('content')[0].innerHTML = document.getElementById('maineditor').innerHTML;},1);
         </script>
+        <script>
+            function createLink() {
+                var container = window.getSelection().getRangeAt(0);
+                console.log(container);
+                var url = prompt("Enter Link: ");
+                console.log(url)
+                var link = "<a href='"  + url + "' target='_blank'>" + url + "</a>";
+                console.log(link)
+                var str = container.endContainer.parentElement.innerHTML.replace("&nbsp;", " ");
+                var output = [str.slice(0, container.endOffset), link, str.slice(container.endOffset)].join('')
+                console.log(output)
+                container.endContainer.parentElement.innerHTML = output.trim();
+                document.getElementById('maineditor').focus();
+            }
+            function uploadFile(file) {
+                if(file == null) {
+                    console.log(file);
+                    console.log('null');
+                    return;
+                }
+                document.getElementById("loadingBG").hidden = false;
+                let formData = new FormData();
+                formData.append('file', file);
+                fetch('/Upload/Media/About', {
+                    method: 'POST',
+                    body: formData,
+                    })
+                    .then(response => response.text())
+                    .then(response => {
+                        console.log(response);
+                        if(response ==  "Failed to upload file") {
+                            alert("Failed to upload file");
+                            document.getElementById("loadingBG").hidden = true;
+                        }
+                        else {
+                            document.getElementById("loadingBG").hidden = true;
+                            document.getElementById('maineditor').focus();
+                            document.execCommand('insertImage', false, response);
+                            document.getElementById('maineditor').focus();
+                        }
+                    })
+                    .catch(error => {
+                        console.error(error);
+                        document.getElementById("loadingBG").hidden = true;
+                    });
+            }
+        </script>
     </div>
     <input class="textfield" required name="summary" placeholder="Summary" style="width: 600px;">
     <input class="textfield" required name="date" type="date" placeholder="Date Of Event">
+    <div style="display: flex; flex-direction: row; align-items: center;">
+    <input class="textfield" required name="starttime" type="time" placeholder="Start Time Of Event"> - 
+    <input class="textfield" required name="endtime" type="time" placeholder="End Time Of Event">
+    </div>
     <input class="textfield" name="location" placeholder="Location Of Event (optional)">
     <select class="textfield" name="gradefilter">
         <option value="ngr" selected>All Year Levels</option>
@@ -90,7 +149,7 @@
 </div>
 <div style="display: flex; flex-direction:row; margin-left: -10px; margin-top: 30px;">
     <button class="btn" onclick="navigation.back()" type="reset">Cancel Changes</button>
-    <input type="submit" class="btn primary" value="Create Event" onclick="var element = this; setTimeout(function() {element.disabled = true; element.style.backgroundColor = '#aaaaaa'; }, 250); setTimeout(function(){element.disabled = false; element.style.backgroundColor = '#1F355E';}, 10000);">
+    <input type="submit" class="btn primary" value="Create Event" onclick="if(document.getElementsByName('emailstudent').checked || document.getElementsByName('emailhos').checked) { document.getElementsByClassName('loadingText')[0].innerText = 'Sending Emails...'; document.getElementsByClassName('loadingText')[0].hidden = false;  document.getElementById('loadingBG').hidden = false;}    var element = this; setTimeout(function() {element.disabled = true; element.style.backgroundColor = '#aaaaaa'; }, 250); setTimeout(function(){element.disabled = false; element.style.backgroundColor = '#1F355E';}, 10000);">
     </div>
     </div>
     <div style="display: flex; flex-direction: column;">

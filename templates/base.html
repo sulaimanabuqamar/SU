@@ -18,6 +18,7 @@
     {% block  style%}{% endblock %}
 </head>
 <body style="margin: 0px;">
+    <script src="{% static "js/popupHandler.js" %}"></script>
     <script>
         var ids = ["accounttypepopup","clubvarsityloginpopup","finishsetupstudent"];
         function showLoginPopup(id, notdismissable=false) {
@@ -28,7 +29,7 @@
                 console.log("readding")
                 document.getElementsByClassName("popupBG")[0].onclick = function() {
                     if(event.srcElement == this) {
-                        this.hidden = true; 
+                        closePopup(this.id);
                         showLoginPopup('accounttypepopup');}
                     };
             }
@@ -45,7 +46,7 @@
             }
         }
     </script>
-    <div class="popupBG" hidden onclick="console.log(event.srcElement); if(event.srcElement == this) {this.hidden = true; showLoginPopup('accounttypepopup');}">
+    <div class="popupBG" hidden onclick="console.log(event.srcElement); if(event.srcElement == this) {closePopup(this.id); showLoginPopup('accounttypepopup');}">
         <div id="accountPopupWindow" class="accountPopupWindow">
             <p class="subtitle" style="text-align: center; margin-bottom: 15px;">Welcome Back</p>
             <p class="subtext">Sign in to access the student society</p>

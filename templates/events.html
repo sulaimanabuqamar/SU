@@ -9,10 +9,10 @@
 <div class="profileRow">
     <p class="pageTitle">EVENTS</p>
     {% if hasClubs %}
-        <button class="btn empty" onclick="document.getElementById('createEventBG').hidden = false;"><img src="{%static '../media/images/joinButton.svg' %}"></button>
+        <button class="btn empty" onclick="openPopup('createEventBG');"><img src="{%static '../media/images/joinButton.svg' %}"></button>
     {% endif %}
 </div>
-<div class="popupBG" hidden id="createEventBG" onclick="if(event.srcElement == this) {this.hidden = true}">
+<div class="popupBG" hidden id="createEventBG" onclick="if(event.srcElement == this) {closePopup(this.id)}">
     <div class="accountPopupWindow">
         <p class="subtitle" style="text-align: center; margin-bottom: 15px;">Choose Club To Create Event</p>
         <input class="textfield" placeholder="Search..." style="margin: 0px; margin-bottom: 20px; width: calc( 100% - 55px ); margin-left: 20px; margin-right: 20px;" id="createEventSearch">
@@ -43,6 +43,7 @@
             <img class="eventCover" src="{{ event.cover.url }}" alt="Event Cover">
             <p class="text">{{ event.title }}</p>
             <p class="aboutText">{{ event.date }}</p>
+            <p class="aboutText">{{ event.start_time|time:"g:i A" }} - {{ event.end_time|time:"g:i A" }}</p>
             <div class="tagBox" style="background: {{ event.author.color }};">
                 <p class="tagText">{{ event.author.name }}</p>
             </div>
@@ -55,6 +56,7 @@
             <img class="eventCover" src="{{ event.cover.url }}" alt="Event Cover">
             <p class="text">{{ event.title }}</p>
             <p class="aboutText">{{ event.date }}</p>
+            <p class="aboutText">{{ event.start_time|time:"g:i A" }} - {{ event.end_time|time:"g:i A" }}</p>
             <div class="tagBox" style="background: {{ event.author.color }};">
                 <p class="tagText">{{ event.author.name }}</p>
             </div>
@@ -70,6 +72,7 @@
             <img class="eventCover" src="{{ event.cover.url }}" alt="Event Cover">
             <p class="text">{{ event.title }}</p>
             <p class="aboutText">{{ event.date }}</p>
+            <p class="aboutText">{{ event.start_time|time:"g:i A" }} - {{ event.end_time|time:"g:i A" }}</p>
             <div class="tagBox" style="background: {{ event.author.color }};">
                 <p class="tagText">{{ event.author.name }}</p>
             </div>
@@ -82,6 +85,7 @@
             <img class="eventCover" src="{{ event.cover.url }}" alt="Event Cover">
             <p class="text">{{ event.title }}</p>
             <p class="aboutText">{{ event.date }}</p>
+            <p class="aboutText">{{ event.start_time|time:"g:i A" }} - {{ event.end_time|time:"g:i A" }}</p>
             <div class="tagBox" style="background: {{ event.author.color }};">
                 <p class="tagText">{{ event.author.name }}</p>
             </div>
@@ -97,6 +101,7 @@
             <img class="eventCover" src="{{ event.cover.url }}" alt="Event Cover">
             <p class="text">{{ event.title }}</p>
             <p class="aboutText">{{ event.date }}</p>
+            <p class="aboutText">{{ event.start_time|time:"g:i A" }} - {{ event.end_time|time:"g:i A" }}</p>
             <div class="tagBox" style="background: {{ event.author.color }};">
                 <p class="tagText">{{ event.author.name }}</p>
             </div>
@@ -109,6 +114,7 @@
             <img class="eventCover" src="{{ event.cover.url }}" alt="Event Cover">
             <p class="text">{{ event.title }}</p>
             <p class="aboutText">{{ event.date }}</p>
+            <p class="aboutText">{{ event.start_time|time:"g:i A" }} - {{ event.end_time|time:"g:i A" }}</p>
             <div class="tagBox" style="background: {{ event.author.color }};">
                 <p class="tagText">{{ event.author.name }}</p>
             </div>
@@ -124,6 +130,7 @@
             <img class="eventCover" src="{{ event.cover.url }}" alt="Event Cover">
             <p class="text">{{ event.title }}</p>
             <p class="aboutText">{{ event.date }}</p>
+            <p class="aboutText">{{ event.start_time|time:"g:i A" }} - {{ event.end_time|time:"g:i A" }}</p>
             <div class="tagBox" style="background: {{ event.author.color }};">
                 <p class="tagText">{{ event.author.name }}</p>
             </div>
@@ -136,6 +143,7 @@
             <img class="eventCover" src="{{ event.cover.url }}" alt="Event Cover">
             <p class="text">{{ event.title }}</p>
             <p class="aboutText">{{ event.date }}</p>
+            <p class="aboutText">{{ event.start_time|time:"g:i A" }} - {{ event.end_time|time:"g:i A" }}</p>
             <div class="tagBox" style="background: {{ event.author.color }};">
                 <p class="tagText">{{ event.author.name }}</p>
             </div>

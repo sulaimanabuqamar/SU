@@ -4,7 +4,7 @@ from django.http import HttpResponse
 from django.core.handlers.wsgi import WSGIRequest
 from django.contrib.auth import authenticate, login, logout
 from django.views.decorators.csrf import csrf_exempt
-from django.core.mail import send_mail
+from django.core.mail import send_mail, EmailMessage
 from django import template
 from django.core.exceptions import *
 import studentsunion.settings as settings
@@ -55,12 +55,20 @@ def getClubs(user):
 def Home(request, invalid_login = False):
     home_page = HomePage.objects.first()  # Assuming you have one HomePage instance
     highlights = []
-    
+    eventcount = 0
     for event in Event.objects.filter(highlight=True,members_only=False):
-        highlights.append(event)
+        if eventcount >= 2:
+            break
+        else:
+            highlights.append(event)
+            eventcount += 1
+    newscount = 0
     for news in News.objects.filter(approved=True,awaiting_approval=False):
-        highlights.append(news)
-    
+        if newscount >= 6-eventcount:
+            break
+        else:
+            highlights.append(news)
+            newscount += 1
     
     if invalid_login:
         return render(request, "home.html", {'home_page': home_page,"login_failed":"true",'highlights':highlights})
@@ -81,10 +89,10 @@ def Scouts_Detail(request, scouts_id):
         events = Event.objects.filter(author=scouts) 
     except ObjectDoesNotExist:
         return error_404_view(request, None)
-    return render(request, "scouts_detail.html", {'scouts': scouts, 'user': request.user, 'events':events})
+    return render(request, "scouts_detail.html", {'scouts': scouts, 'user': request.user, 'events':events, 'links': scouts.links.all()})
 
 def Events(request):
-    events = Event.objects.all()  
+    events = Event.objects.all().order_by('-published_date')
     return render(request, "events.html", {'hasClubs':hasClubs(request.user),'events': events, 'user': request.user})
 
 def Event_Detail(request, event_id):
@@ -105,7 +113,7 @@ def Event_Detail(request, event_id):
     return render(request, "event_detail.html", {'event': event, 'links': links, 'allUsers': allUsers, 'user': request.user})
 
 def News_View(request):
-    news = News.objects.all()
+    news = News.objects.all().order_by('-published_date')
     if hasattr(request.user, 'associated_student') and request.user.associated_student is not None:
         grlevel = str(request.user.associated_student.year_level)
         return render(request, "news.html", {'news': news, 'gradelevel': grlevel})
@@ -184,7 +192,7 @@ def Student_Detail(request, student_id):
         if user in varsity.members.all():
             varsities.append(varsity)
     
-    return render(request, "student_detail.html", {'user': user, 'headclubs': headclubs, 'headleadership': headleadership, 'clubs': clubs, 'varsitiescaptain': varsitiescaptain, 'varsities':varsities}) 
+    return render(request, "student_detail.html", {'selecteduser': user, 'user': request.user, 'headclubs': headclubs, 'headleadership': headleadership, 'clubs': clubs, 'varsitiescaptain': varsitiescaptain, 'varsities':varsities}) 
 
 def Faculty_Detail(request, faculty_id):
     user = get_object_or_404(User, id=faculty_id)
@@ -356,14 +364,14 @@ def CreateEvent(request:WSGIRequest, club_id):
             with open(filename, 'wb+') as f:
                 for chunk in file.chunks():
                     f.write(chunk)
-            event = Event.objects.create(author=club, significant_event=(request.POST.get("significant") is not None), cover=filename.removeprefix(str(settings.BASE_DIR)).replace("/media", ""), title=request.POST.get("title"), text=request.POST.get("content"), summary=request.POST.get("summary"), date=request.POST.get("date"), location=request.POST.get("location"), color=club, members_only=(request.POST.get("membersonly") is not None), highlight=(request.POST.get("highlight") is not None), group=request.POST.get("gradefilter"), grade=request.POST.get("sectionfilter"))
+            event = Event.objects.create(author=club, significant_event=(request.POST.get("significant") is not None), cover=filename.removeprefix(str(settings.BASE_DIR)).replace("/media", ""), title=request.POST.get("title"), text=request.POST.get("content"), summary=request.POST.get("summary"), date=request.POST.get("date"), start_time=request.POST.get("starttime"), end_time=request.POST.get("endtime"), location=request.POST.get("location"), color=club, members_only=(request.POST.get("membersonly") is not None), highlight=(request.POST.get("highlight") is not None), group=request.POST.get("gradefilter"), grade=request.POST.get("sectionfilter"), published_date=datetime.datetime.now())
         else: 
-            event = Event.objects.create(author=club, significant_event=(request.POST.get("significant") is not None), title=request.POST.get("title"), text=request.POST.get("content"), summary=request.POST.get("summary"), date=request.POST.get("date"), location=request.POST.get("location"), color=club, members_only=(request.POST.get("membersonly") is not None), highlight=(request.POST.get("highlight") is not None), group=request.POST.get("gradefilter"), grade=request.POST.get("sectionfilter"))
+            event = Event.objects.create(author=club, significant_event=(request.POST.get("significant") is not None), title=request.POST.get("title"), text=request.POST.get("content"), summary=request.POST.get("summary"), date=request.POST.get("date"), start_time=request.POST.get("starttime"), end_time=request.POST.get("endtime"), location=request.POST.get("location"), color=club, members_only=(request.POST.get("membersonly") is not None), highlight=(request.POST.get("highlight") is not None), group=request.POST.get("gradefilter"), grade=request.POST.get("sectionfilter"), published_date=datetime.datetime.now())
         linkstr = request.POST.get("links")
         print("(" + linkstr + ")")
         if linkstr is not None and linkstr != "":
             for link in linkstr.split("\n"):
-                linkobj = Links.objects.create(name=link[:link.find("!")], link=link[link.find("!"):])
+                linkobj = Links.objects.create(name=link[:link.find("!")], link=link[link.find("!")+1:])
                 event.links.add(linkobj)
         listofemails = []
         for member in User.objects.all():
@@ -383,6 +391,9 @@ def CreateEvent(request:WSGIRequest, club_id):
                     email = email.replace("{{logo}}",logo) 
                     email = email.replace("{{email}}",request.user.email) 
                     email = email.replace("{{text}}",event.text) 
+                    email = email.replace("{{date}}",event.date) 
+                    email = email.replace("{{start_time}}",event.start_time) 
+                    email = email.replace("{{end_time}}",event.end_time) 
                 send_mail("New Event", "Students' Society", None, listofemails, False, html_message=email)
 
         if request.POST.get("emailhos") is not None:
@@ -402,6 +413,10 @@ def CreateEvent(request:WSGIRequest, club_id):
                     email = email.replace("{{logo}}",logo) 
                     email = email.replace("{{email}}",request.user.email) 
                     email = email.replace("{{text}}",event.text) 
+
+                    email = email.replace("{{date}}",event.date) 
+                    email = email.replace("{{start_time}}",event.start_time) 
+                    email = email.replace("{{end_time}}",event.end_time) 
                 send_mail("New Event", "Students' Society", None, hosemails, False, html_message=email)
         event.save()
         return redirect("/Event/Detail/" + str(event.pk)) 
@@ -436,6 +451,8 @@ def ModifyEvent(request: WSGIRequest, event_id):
         event.location = request.POST.get("location")
         event.group = request.POST.get("gradefilter")
         event.grade = request.POST.get("sectionfilter")
+        event.start_time=request.POST.get("starttime")
+        event.end_time=request.POST.get("endtime")  
         event.members_only = request.POST.get("membersonly") is not None
         event.highlight = request.POST.get("highlight") is not None
         file = request.FILES.get("coverPhoto")
@@ -447,9 +464,10 @@ def ModifyEvent(request: WSGIRequest, event_id):
             event.cover = filename.removeprefix(str(settings.BASE_DIR)).replace("/media", "")
         linkstr = request.POST.get("links")
         print("(" + linkstr + ")")
+        event.links.clear() 
         if linkstr is not None and linkstr != "":
             for link in linkstr.split("\n"):
-                linkobj = Links.objects.create(name=link[:link.find("!")], link=link[link.find("!"):])
+                linkobj = Links.objects.create(name=link[:link.find("!")], link=link[link.find("!")+1:])
                 event.links.add(linkobj)
         listofemails = []
         for member in User.objects.all():
@@ -478,6 +496,10 @@ def ModifyEvent(request: WSGIRequest, event_id):
                     email = email.replace("{{logo}}",logo) 
                     email = email.replace("{{email}}",request.user.email) 
                     email = email.replace("{{text}}",event.text) 
+
+                    email = email.replace("{{date}}",event.date) 
+                    email = email.replace("{{start_time}}",event.start_time) 
+                    email = email.replace("{{end_time}}",event.end_time) 
                 send_mail("Event Details Changed", "Students' Society", None, listofemails, False, html_message=email)
 
         if request.POST.get("emailhos") is not None:
@@ -497,6 +519,10 @@ def ModifyEvent(request: WSGIRequest, event_id):
                     email = email.replace("{{logo}}",logo) 
                     email = email.replace("{{email}}",request.user.email) 
                     email = email.replace("{{text}}",event.text) 
+
+                    email = email.replace("{{date}}",event.date) 
+                    email = email.replace("{{start_time}}",event.start_time) 
+                    email = email.replace("{{end_time}}",event.end_time) 
                 send_mail("Event Details Changed", "Students' Society", None, hosemails, False, html_message=email)
         event.save()
         return redirect("/Event/Detail/" + str(event.pk))
@@ -517,7 +543,7 @@ def CreateNews(request: WSGIRequest):
         print("(" + linkstr + ")")
         if linkstr is not None and linkstr != "": 
             for link in linkstr.split("\n"):
-                linkobj = Links.objects.create(name=link[:link.find("!")], link=link[link.find("!"):])
+                linkobj = Links.objects.create(name=link[:link.find("!")], link=link[link.find("!")+1:]) 
                 event.links.add(linkobj)
         event.save()
         email = ""
@@ -564,6 +590,8 @@ def ModifyNews(request: WSGIRequest, news_id):
         news.group = request.POST.get("gradefilter")
         news.grade = request.POST.get("sectionfilter")
         news.highlight = request.POST.get("highlight") is not None
+        news.approved = False
+        news.awaiting_approval = True
         file = request.FILES.get("coverPhoto")
         if file is not None:
             filename = os.path.join(settings.MEDIA_ROOT,"event_covers", str(random.randint(11111111,999999999)) + file.name)
@@ -576,7 +604,7 @@ def ModifyNews(request: WSGIRequest, news_id):
         news.links.clear()
         if linkstr is not None and linkstr != "":
             for link in linkstr.split("\n"):
-                linkobj = Links.objects.create(name=link[:link.find("!")], link=link[link.find("!"):])
+                linkobj = Links.objects.create(name=link[:link.find("!")], link=link[link.find("!")+1:])
                 news.links.add(linkobj)
         email = ""
         with open(os.path.join(settings.BASE_DIR, "templates", "new_news_email.html"), 'r') as f:
@@ -619,14 +647,14 @@ def addAttendee(request: WSGIRequest):
 def setConfirmed(request: WSGIRequest):
     event = Event.objects.get(id=int(request.GET.get("id")))
     user = User.objects.get(email=request.GET.get("email"))
-    if user != request.user:
+    if user != request.user and event.author not in request.user.associated_clubs.all(): 
         return HttpResponse("<h1>YOU ARE NOT THE LOGGED IN USER, OPERATION FAILED</h1>")
     event.confirmed_Students.add(user)
     return HttpResponse("{\"message\":\"competed\"}")
 def setUnconfirmed(request: WSGIRequest):
     event = Event.objects.get(id=int(request.GET.get("id")))
     user = User.objects.get(email=request.GET.get("email"))
-    if user != request.user:
+    if user != request.user and event.author not in request.user.associated_clubs.all():
         return HttpResponse("<h1>YOU ARE NOT THE LOGGED IN USER, OPERATION FAILED</h1>")
     event.confirmed_Students.remove(user)
     return HttpResponse("{\"message\":\"competed\"}")
@@ -699,7 +727,7 @@ def editProfile(request:WSGIRequest):
                     for chunk in file.chunks():
                         f.write(chunk)
                 request.user.associated_student.profile_picture = filename.removeprefix(str(settings.BASE_DIR)).replace("/media", "")
-            request.user.associated_student.about = request.POST.get("about")
+            request.user.associated_student.about = request.POST.get("content")
             request.user.associated_student.save()
             request.user.save()
         elif userType == "faculty":
@@ -728,12 +756,13 @@ def editVarsity(request:WSGIRequest, varsity_id: int):
         varsity.name = request.POST.get("name")
         varsity.about = request.POST.get("about")
         varsity.color = request.POST.get("color")
+        varsity.about = request.POST.get("content")
         linkstr = request.POST.get("links")
         print("(" + linkstr + ")")
         varsity.links.clear()
         if linkstr is not None and linkstr != "":
             for link in linkstr.split("\n"):
-                linkobj = Links.objects.create(name=link[:link.find("!")], link=link[link.find("!"):])
+                linkobj = Links.objects.create(name=link[:link.find("!")], link=link[link.find("!")+1:])
                 varsity.links.add(linkobj)
         file = request.FILES.get("coverPhoto")
         if file is not None:
@@ -759,12 +788,13 @@ def editClub(request:WSGIRequest, club_id: int):
         club.name = request.POST.get("name")
         club.about = request.POST.get("about")
         club.color = request.POST.get("color")
+        club.about = request.POST.get("content")
         linkstr = request.POST.get("links")
         print("(" + linkstr + ")")
         club.links.clear()
         if linkstr is not None and linkstr != "":
             for link in linkstr.split("\n"):
-                linkobj = Links.objects.create(name=link[:link.find("!")], link=link[link.find("!"):])
+                linkobj = Links.objects.create(name=link[:link.find("!")], link=link[link.find("!")+1:])
                 club.links.add(linkobj)
         file = request.FILES.get("coverPhoto")
         if file is not None:
@@ -777,23 +807,49 @@ def editClub(request:WSGIRequest, club_id: int):
         request.user.save()
         return redirect("/profile/Club/" + str(club.pk))
 
-def clubSendEmails(request: WSGIRequest):
-    club: Club = request.user.associated_clubs
+def clubSendEmails(request: WSGIRequest, club_id):
+    club: Club = Club.objects.get(id=club_id)
+    listofaccepted = []
+    listofrejected = []
     listofemails = []
     for user in User.objects.all():
         if request.POST.get(user.email) is not None:
-            listofemails.append(str(user.email)) 
+            listofemails.append(user) 
+    for user in listofemails: 
+        if user in club.members.all(): 
+            listofaccepted.append(str(user.email)) 
+        else:
+            listofrejected.append(str(user.email))
+    listofheads = []
+    for head in club.heads.all():
+        listofheads.append(str(head.email))
     email = ""
-    with open(os.path.join(settings.BASE_DIR, "templates", "admission_letter.html"), 'r') as f: 
+    with open(os.path.join(settings.BASE_DIR, "templates", "acceptance_letter.html"), 'r') as f: 
         email = f.read()
         email = email.replace("{{name}}",club.name)
         email = email.replace("{{title}}",club.name)
-        email = email.replace("{{event_id}}",str(club.pk)) 
+        email = email.replace("{{club_id}}",str(club.pk)) 
+        email = email.replace("{{addon}}",request.POST.get("content")) 
         email = email.replace("{{logo}}",logo) 
         email = email.replace("{{email}}",request.user.email)
-    send_mail("Club Admission", "Students' Society", None, listofemails, False, html_message=email) 
+    msg = EmailMessage(subject=club.name + " Admission", body=email, from_email=None, to=listofaccepted,cc=listofheads)
+    msg.content_subtype = "html"
+    msg.send()
+
+    email = ""
+    with open(os.path.join(settings.BASE_DIR, "templates", "rejection_letter.html"), 'r') as f: 
+        email = f.read()
+        email = email.replace("{{name}}",club.name)
+        email = email.replace("{{title}}",club.name)
+        email = email.replace("{{club_id}}",str(club.pk)) 
+        email = email.replace("{{logo}}",logo) 
+        email = email.replace("{{email}}",request.user.email)
+    msg = EmailMessage(subject=club.name + " Admission", body=email, from_email=None, to=listofrejected,cc=listofheads)
+    msg.content_subtype = "html"
+    msg.send() 
+    
     # send_mail("New Event", "Students' Society", None, ["mohamad.moukayed@amb.sch.ae"], False, html_message=email)
-    return redirect("/profile")
+    return redirect("/profile/Club/" + str(club.pk))
 
 def error_404_view(request, exception):
    
@@ -830,3 +886,17 @@ def PrepareSystemUpdate(request: WSGIRequest):
         return HttpResponse("{\"message\":\"Current Server Pushed\"}",status=200)
     else:
         return HttpResponse("Not Authorized",status=401)
+    
+@csrf_exempt
+def uploadImage(request:WSGIRequest):
+    file = request.FILES.get("file")
+    fileid = ""
+    if file is not None:
+        fileid = str(random.randint(11111111,999999999)) + file.name
+        filename = os.path.join(settings.MEDIA_ROOT,"editor_images", fileid)
+        with open(filename, 'wb+') as f:
+            for chunk in file.chunks():
+                f.write(chunk)
+        return HttpResponse(settings.MEDIA_URL + filename.removeprefix(str(settings.BASE_DIR)).replace("/media",""))
+    else:
+        return HttpResponse("Failed to upload file")

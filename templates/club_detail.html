@@ -11,14 +11,19 @@
             <div style="display: flex; justify-content: space-between; flex-direction: column; justify-content: flex-start;">
             <p class="pageTitle" style="margin: 0px;">{{ club.name }}</p>
                 <div class="articleDescriptionText">
-                    <p>{{ club.about }}</p>
+                    <p>{{ club|safe }}</p>
                 </div>
             </div>
             <div>
-                <img src="{{ club.logo.url }}" style="border: {{ club.color }} 3px solid;" alt="{{ club.name }} Logo" class="articleCover">
-                {% for link in links %}
-                    <a class="links" href="{{link.link }}" target="_blank">{{ link.name }}</a>
-                {% endfor %}
+                <img src="{{ club.logo.url }}" style="border: {{ club.color }} 3px solid;" alt="{{ club.name }} Logo" class="articleCover"><br><br>
+                <div style="width: 300px; text-align: center;">
+                    {% for link in links %}
+                    <div style=" display: flex; align-items: center;">
+                        <img src="{% static "../media/images/link.svg" %}">
+                        <a class="links" href="{{link.link }}" target="_blank" style="margin-top: 0px;  margin-left: 10px">{{ link.name }}</a>
+                    </div>
+                    {% endfor %}
+                    </div>
             </div>
         </div>
         <p class="subtitle">Heads</p>
@@ -75,6 +80,7 @@
                     <img class="eventCover" src="{{ event.cover.url }}" alt="Event Cover">
                     <p class="text">{{ event.title }}</p>
                     <p class="aboutText">{{ event.date }}</p>
+                    <p class="aboutText">{{ event.start_time|time:"g:i A" }} - {{ event.end_time|time:"g:i A" }}</p>
                     <div class="tagBox" style="background: {{ event.author.color }};">
                         <p class="tagText">{{ event.author.name }}</p>
                     </div>

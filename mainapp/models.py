@@ -146,6 +146,7 @@ class Event(models.Model):
     date = models.DateField()
     start_time = models.TimeField(blank=True, null=True)
     end_time = models.TimeField(blank=True, null=True)
+    published_date = models.DateTimeField(null=True, blank=True)
     location = models.CharField(max_length=150, blank=True)
     color = models.ForeignKey(Club, on_delete=models.CASCADE, related_name='club_color', blank=True, null=True)
     group = models.CharField(max_length=3, choices=GROUP_CHOICES,default="ngr")

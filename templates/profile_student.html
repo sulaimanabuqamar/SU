@@ -75,7 +75,7 @@
         </div>
         <p class="aboutText sidebar">{{ user.associated_student.year_level_title }}</p>
         <p class="aboutText sidebar">Grade {{ user.associated_student.year_level }}{{ user.associated_student.section }}</p>
-        <p class="aboutText sidebar">{{ user.associated_student.about | safe}}</p>
+        <div class="aboutText sidebar">{{ user.associated_student.about | safe}}</div>
         {% elif userType == "faculty" %}
         <div class="centerer huns" style="margin-bottom: 20px;">
         <img src="{{ user.associated_faculty.profile_picture.url }}" alt="Profile Picture" class="articleCover">

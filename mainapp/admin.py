@@ -67,7 +67,7 @@ class VarsityAdmin(admin.ModelAdmin):
     )
 
 class EventAdmin(admin.ModelAdmin):
-    list_display = ('author', 'title', 'text', 'summary', 'members_only', 'highlight', 'group', 'grade')
+    list_display = ('author', 'title', 'published_date', 'summary', 'members_only', 'highlight', 'group', 'grade')
     list_filter = ('members_only', 'highlight')
     search_fields = ('summary',)
 

@@ -24,7 +24,7 @@
                     <img class="eventCover" style=" width: 50px; height: 50px; margin-right: 10px;" src="{{ member.associated_student.profile_picture.url }}" alt="Club Cover">
                     <p class="text">{{ member.name }}</p>
                     <p class="aboutText">{{ member.associated_student.year_level }}{{ member.associated_student.section }}</p>
-                    <button class="btn empty" onclick="removeMember('{{member.email}}', 'Member')"><img src="{%static '../media/images/removeButton.svg' %}"></button>
+                    <button class="btn empty" onclick="event.preventDefault(); removeMember('{{member.email}}', 'Member');"><img src="{%static '../media/images/removeButton.svg' %}"></button>
                 </div>
             </a>
             {% empty %}
@@ -44,7 +44,7 @@
                     <img class="eventCover" style=" width: 50px; height: 50px; margin-right: 10px;" src="{{ head.associated_student.profile_picture.url }}" alt="Club Cover">
                     <p class="text">{{ head.name }}</p>
                     <p class="aboutText">{{ head.associated_student.year_level }}{{ head.associated_student.section }}</p>
-                    <button class="btn empty" onclick="removeMember('{{head.email}}', 'Head')"><img src="{%static '../media/images/removeButton.svg' %}"></button>
+                    <button class="btn empty" onclick="event.preventDefault(); removeMember('{{head.email}}', 'Head');"><img src="{%static '../media/images/removeButton.svg' %}"></button>
                 </div>
             </a>
             {% empty %}
@@ -65,7 +65,7 @@
                     <img class="eventCover" style=" width: 50px; height: 50px; margin-right: 10px;" src="{{ leader.associated_student.profile_picture.url }}" alt="Club Cover">
                     <p class="text">{{ leader.name }}</p>
                     <p class="aboutText">{{ leader.associated_student.year_level }}{{ leader.associated_student.section }}</p>
-                    <button class="btn empty" onclick="removeMember('{{leader.email}}', 'Leadership')"><img src="{%static '../media/images/removeButton.svg' %}"></button>
+                    <button class="btn empty" onclick="event.preventDefault(); removeMember('{{leader.email}}', 'Leadership');"><img src="{%static '../media/images/removeButton.svg' %}"></button>
                 </div>
             </a>
             {% empty %}
@@ -86,7 +86,7 @@
                     <img class="eventCover" style=" width: 50px; height: 50px; margin-right: 10px;" src="{{ advisor.associated_faculty.profile_picture.url }}" alt="Club Cover">
                     <p class="text">{{ advisor.name }}</p>
                     {% comment %} <p class="aboutText">{{ advisor.associated_student.year_level }}{{ advisor.associated_student.section }}</p> {% endcomment %}
-                    <button class="btn empty" onclick="removeMember('{{advisor.email}}', 'Advisor')"><img src="{%static '../media/images/removeButton.svg' %}"></button>
+                    <button class="btn empty" onclick="event.preventDefault(); removeMember('{{advisor.email}}', 'Advisor');"><img src="{%static '../media/images/removeButton.svg' %}"></button>
                 </div>
             </a>
             {% empty %}
@@ -98,20 +98,22 @@
         <div class="centerer huns" style="margin-bottom: 20px;">
         <img src="{{ club.logo.url }}" alt="Profile Picture" class="articleCover">
         </div>
-        <div class="tagBox" style="background: #d7e329;">
+        <div class="tagBox" style="background: {{club.color}};">
             <p class="tagText">Club</p>
         </div>
-        <p class="aboutText sidebar">{{ club.about }}</p>
+        <div class="aboutText sidebar">{{ club.about|safe }}</div>
         <button class="btn" onclick="openMemberPopup('selectApplicant')">Send Admission Emails</button>
         <br>
         <a href="/profile/Edit/Club/{{club.pk}}"><button class="btn">Edit Club</button></a>
     </div>
 </div>
-<div class="popupBG" hidden id="selectApplicantBG" onclick="if(event.srcElement == this) {this.hidden = true}">
-    <div class="accountPopupWindow">
+<div class="popupBG" hidden id="selectApplicantBG" onclick="if(event.srcElement == this) {closePopup(this.id);}">
+    <div class="accountPopupWindow large">
         <p class="subtitle" style="text-align: center; margin-bottom: 15px;">Select Applicants To Send Emails</p>
+        <p class="subtext">Make sure to add members to club before sending emails</p>
+        <p class="subtext">Members of the club will receive acceptance letters and all other selected applicants will receive rejection letters</p>
         <input class="textfield" placeholder="Search..." style="margin: 0px; margin-bottom: 20px; width: calc( 100% - 55px ); margin-left: 20px; margin-right: 20px;" id="selectApplicantSearch">
-        <form action="/Club/SendEmails/" method="POST">
+        <form action="/Club/SendEmails/{{club.pk}}/" method="POST">
         <div class="grid popup" style="margin-bottom: 30px;" id="selectApplicantField">
             {% csrf_token %}
             {% for member in allUsers %}
@@ -131,12 +133,90 @@
             {% endfor %}    
         </div>
         <div style="display: flex; justify-content: center;">
-        <button type="submit" class="btn primary" onclick="openMemberPopup('selectApplicant')">Send Admission Emails</button>
+            <p class="subtext">Enter email body, Note: This will only be shown on acceptance letters not rejected</p>
+        </div>
+        <div style="display: flex; justify-content: center;">
+        <div>
+            <div class="textfieldtoolbar">
+                <button class="toolbarBtn" style="border-top-left-radius: 10px;" type="button" onclick="execCommand('bold'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/bold.svg' %}" alt="B"></button>
+                <button class="toolbarBtn" type="button" onclick="execCommand('italic'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/italic.svg' %}" alt="I"></button>
+                <button class="toolbarBtn" type="button" onclick="execCommand('underline'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/underline.svg' %}" alt="U"></button>
+                <button class="toolbarBtn" type="button" onclick="execCommand('strikethrough'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/strikethrough.svg' %}" alt="S"></button>
+                <button class="toolbarBtn" type="button" onclick="execCommand('fontSize', true, 1); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/decrease_font_size.svg' %}" alt="-"></button>
+                <button class="toolbarBtn" type="button" onclick="execCommand('fontSize', false, 2); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/normal_font_size.svg' %}" alt="="></button>
+                <button class="toolbarBtn" type="button" onclick="execCommand('fontSize', true, 4); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/increase_font_size.svg' %}" alt="+"></button>
+                <button class="toolbarBtn" type="button" onclick="execCommand('justifyLeft'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/justify_left.svg' %}" alt="L"></button>
+                <button class="toolbarBtn" type="button" onclick="execCommand('justifyCenter'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/justify_center.svg' %}" alt="C"></button>
+                <button class="toolbarBtn" type="button" onclick="execCommand('justifyRight'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/justify_right.svg' %}" alt="R"></button>
+                <button class="toolbarBtn" type="button" onclick="document.getElementById('fontcolor').click(); document.getElementById('maineditor').focus(); "><img src="{% static '../media/images/text_color.svg' %}" alt="A"></button>
+                <input type="color" style="width:  0px; border: none; margin:0px; padding: 0px;" id="fontcolor" oninput="execCommand('foreColor', true, this.value)">
+                <button class="toolbarBtn" type="button" onclick="document.getElementById('backcolor').click(); document.getElementById('maineditor').focus(); "><img src="{% static '../media/images/highlight.svg' %}" alt="H"></button>
+                <input type="color" style="width:  0px; border: none; margin:0px; padding: 0px;" id="backcolor" oninput="execCommand('backColor', true, this.value)">
+                <button class="toolbarBtn" type="button" onclick="execCommand('removeFormat'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/clear_format.svg' %}" alt="T"></button>
+                <button class="toolbarBtn" type="button" onclick="this.children[0].click();"><input type="file" onchange="uploadFile(this.files[0])" accept="*/image" hidden><img src="{% static '../media/images/image.svg' %}" alt="T"></button>
+                <button class="toolbarBtn" type="button" onclick="createLink()"><img src="{% static '../media/images/link.svg' %}" alt="R"></button>
+            </div>
+            <div class="textfield bottom" required placeholder="Content" contentEditable="true" id="maineditor" style="width: 600px; height: 200px; padding-top: 10px; margin-top: 0px;"></div>
+            <textarea class="textfield" hidden name="content" placeholder="Content" contentEditable="true" style="width: 600px; height: 200px; padding-top: 10px;"></textarea>
+            <script>
+                setInterval(function() {document.getElementsByName('content')[0].innerHTML = document.getElementById('maineditor').innerHTML;},1);
+            </script>
+            <script>
+                function createLink() {
+                    var container = window.getSelection().getRangeAt(0);
+                    console.log(container);
+                    var url = prompt("Enter Link: ");
+                    console.log(url)
+                    var link = "<a href='"  + url + "' target='_blank'>" + url + "</a>";
+                    console.log(link)
+                    var str = container.endContainer.parentElement.innerHTML.replace("&nbsp;", " ");
+                    var output = [str.slice(0, container.endOffset), link, str.slice(container.endOffset)].join('')
+                    console.log(output)
+                    container.endContainer.parentElement.innerHTML = output.trim();
+                    document.getElementById('maineditor').focus();
+                }
+                function uploadFile(file) {
+                    if(file == null) {
+                        console.log(file);
+                        console.log('null');
+                        return;
+                    }
+                    document.getElementById("loadingBG").hidden = false;
+                    let formData = new FormData();
+                    formData.append('file', file);
+                    fetch('/Upload/Media/About', {
+                        method: 'POST',
+                        body: formData,
+                        })
+                        .then(response => response.text())
+                        .then(response => {
+                            console.log(response);
+                            if(response ==  "Failed to upload file") {
+                                alert("Failed to upload file");
+                                document.getElementById("loadingBG").hidden = true;
+                            }
+                            else {
+                                document.getElementById("loadingBG").hidden = true;
+                                document.getElementById('maineditor').focus();
+                                document.execCommand('insertImage', false, response);
+                                document.getElementById('maineditor').focus();
+                            }
+                        })
+                        .catch(error => {
+                            console.error(error);
+                            document.getElementById("loadingBG").hidden = true;
+                        });
+                }
+            </script>
+        </div>
+    </div>
+        <div style="display: flex; justify-content: center;">
+        <button type="submit" class="btn primary" onclick="closePopup('selectApplicantBG'); document.getElementsByClassName('loadingText')[0].innerText = 'Sending Emails...'; document.getElementsByClassName('loadingText')[0].hidden = false;  document.getElementById('loadingBG').hidden = false;">Send Admission Emails</button>
         </div>
         </form>
     </div>
 </div>
-<div class="popupBG" hidden id="addMemberBG" onclick="if(event.srcElement == this) {this.hidden = true}">
+<div class="popupBG" hidden id="addMemberBG" onclick="if(event.srcElement == this) {closePopup(this.id);}">
     <div class="accountPopupWindow">
         <p class="subtitle" style="text-align: center; margin-bottom: 15px;">Add Student To Club</p>
         <input class="textfield" placeholder="Search..." style="margin: 0px; margin-bottom: 20px; width: calc( 100% - 55px ); margin-left: 20px; margin-right: 20px;" id="addMemberSearch">
@@ -158,7 +238,7 @@
         </div>
     </div>
 </div>
-<div class="popupBG" hidden id="addHeadBG" onclick="if(event.srcElement == this) {this.hidden = true}">
+<div class="popupBG" hidden id="addHeadBG" onclick="if(event.srcElement == this) {closePopup(this.id);}">
     <div class="accountPopupWindow">
         <p class="subtitle" style="text-align: center; margin-bottom: 15px;">Add Head To Club</p>
         <input class="textfield" placeholder="Search..." style="margin: 0px; margin-bottom: 20px; width: calc( 100% - 55px ); margin-left: 20px; margin-right: 20px;" id="addHeadsSearch">
@@ -180,7 +260,7 @@
         </div>
     </div>
 </div>
-<div class="popupBG" hidden id="addAdvisorBG" onclick="if(event.srcElement == this) {this.hidden = true}">
+<div class="popupBG" hidden id="addAdvisorBG" onclick="if(event.srcElement == this) {closePopup(this.id);}">
     <div class="accountPopupWindow">
         <p class="subtitle" style="text-align: center; margin-bottom: 15px;">Add Advisor To Club</p>
         <input class="textfield" placeholder="Search..." style="margin: 0px; margin-bottom: 20px; width: calc( 100% - 55px ); margin-left: 20px; margin-right: 20px;" id="addAdvisorSearch">
@@ -202,7 +282,7 @@
         </div>
     </div>
 </div>
-<div class="popupBG" hidden id="addLeadershipBG" onclick="if(event.srcElement == this) {this.hidden = true}">
+<div class="popupBG" hidden id="addLeadershipBG" onclick="if(event.srcElement == this) {closePopup(this.id);}">
     <div class="accountPopupWindow">
         <p class="subtitle" style="text-align: center; margin-bottom: 15px;">Add Leadership To Club</p>
         <input class="textfield" placeholder="Search..." style="margin: 0px; margin-bottom: 20px; width: calc( 100% - 55px ); margin-left: 20px; margin-right: 20px;" id="addLeadershipSearch">
@@ -228,19 +308,19 @@
 <script>
     function openMemberPopup(type) {
         if(type == "member") {
-            document.getElementById('addMemberBG').hidden = false;
+            openPopup('addMemberBG');
         }
         else if(type == "advisor") {
-            document.getElementById('addAdvisorBG').hidden = false;
+            openPopup('addAdvisorBG');
         }
         else if(type == "leadership") {
-            document.getElementById('addLeadershipBG').hidden = false;
+            openPopup('addLeadershipBG');
         }
         else if(type == "head") {
-            document.getElementById('addHeadBG').hidden = false;
+            openPopup('addHeadBG');
         }
         else if(type == "selectApplicant") {
-            document.getElementById('selectApplicantBG').hidden = false;
+            openPopup('selectApplicantBG');
         }
         
     }

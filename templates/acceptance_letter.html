@@ -73,6 +73,10 @@
             align-items: center;
             justify-content: center;
         }
+        .centerer {
+            display: flex;
+            justify-content: center;
+        }
     </style>
 </head>
 <body style="display: flex; flex-direction: column; align-items: center;">
@@ -84,17 +88,27 @@
             </a>
             <!-- <img style="width: 300px; height: 175;" src="https://raw.githubusercontent.com/hypercreeper/lag-test/main/emailpic.png" > -->
             <p style="font-weight: bold; font-size: 30px; text-align: center; color: white;">Admission to {{name}}</p> 
-            <p style="color: white; font-size: 20px; text-align: center;">Admissions have been released, click the button to below and check if your name is on the list.<br>If it is you are accepted, if not rejected.</p>
+            
         </div>
         <!-- <div style="display: flex; justify-content: center; margin-top: -100px;">
             <div class="mbox">
             
             </div>
         </div> -->
+        <div class="centerer">
+        <div style="color: black; font-size: 20px; text-align: left; width: 500px; margin-top: 50px;">
+            Dear applicant,<br><br>
+Congratulations!
+<br><br>
+On behalf of the {{name}} club, it is with immense pleasure that we announce your acceptance into the {{name}} club!
+<br><br>
+{{addon}}
+        </div>
+    </div>
         <div class="light_blue">
             <div style="display: flex; justify-content: space-evenly; width: 100%;">
-                <a class="buttonbox" href="https://ss.amb.sch.ae/Club/Detail/{{event_id}}">
-                  <p class="buttontext">Club Admissions</p>
+                <a class="buttonbox" href="https://ss.amb.sch.ae/Club/Detail/{{club_id}}">
+                  <p class="buttontext">Club Info</p>
                 </a>
                 <!-- <a class="buttonbox" href="https://ss.amb.sch.ae/AttendeesList/Printable/{{event_id}}">
                     <p class="buttontext">View Attendees</p>

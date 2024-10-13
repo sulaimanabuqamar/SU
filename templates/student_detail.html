@@ -2,23 +2,23 @@
 {% load static %}
 
 {% block style %}
-<title>{{ user.name }} - Details</title>
+<title>{{ selecteduser.name }} - Details</title>
 {% endblock %}
 
 {% block content %}
 <div>
     <div style="display: flex; justify-content: space-between; flex-direction: row; gap: 100px">
             <div style="display: flex; justify-content: space-between; flex-direction: column; justify-content: flex-start;">
-            <p class="pageTitle" style="margin: 0px;">{{ user.name }}</p>
+            <p class="pageTitle" style="margin: 0px;">{{ selecteduser.name }}</p>
                 <div class="articleDescriptionText">
-                    <p>{{ user.associated_student.about|safe }}</p>
+                    <div>{{ selecteduser.associated_student.about|safe }}</div>
                 </div>
             </div>
             <div>
-                <img src="{{ user.associated_student.profile_picture.url }}" style="border: black 3px solid;" alt="{{ user.name }} Logo" class="articleCover">
-                <p class="aboutText sidebar">{{ user.associated_student.year_level_title }}</p>
-                <p class="aboutText sidebar">Grade {{ user.associated_student.year_level }}{{ user.associated_student.section }}</p>
-                <p class="aboutText sidebar">{{ user.email }}</p>
+                <img src="{{ selecteduser.associated_student.profile_picture.url }}" style="border: black 3px solid;" alt="{{ selecteduser.name }} Logo" class="articleCover">
+                <p class="aboutText sidebar">{{ selecteduser.associated_student.year_level_title }}</p>
+                <p class="aboutText sidebar">Grade {{ selecteduser.associated_student.year_level }}{{ selecteduser.associated_student.section }}</p>
+                <p class="aboutText sidebar">{{ selecteduser.email }}</p>
             </div>
         </div>
         <p class="subtitle">Roles</p>
