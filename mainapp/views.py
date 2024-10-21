@@ -364,7 +364,7 @@ def CreateEvent(request:WSGIRequest, club_id):
             with open(filename, 'wb+') as f:
                 for chunk in file.chunks():
                     f.write(chunk)
-            event = Event.objects.create(author=club, significant_event=(request.POST.get("significant") is not None), cover=filename.removeprefix(str(settings.BASE_DIR)).replace("/media", ""), title=request.POST.get("title"), text=request.POST.get("content"), summary=request.POST.get("summary"), date=request.POST.get("date"), start_time=request.POST.get("starttime"), end_time=request.POST.get("endtime"), location=request.POST.get("location"), color=club, members_only=(request.POST.get("membersonly") is not None), highlight=(request.POST.get("highlight") is not None), group=request.POST.get("gradefilter"), grade=request.POST.get("sectionfilter"), published_date=datetime.datetime.now())
+            event = Event.objects.create(author=club, significant_event=(request.POST.get("significant") is not None), cover=filename.replace(str(settings.BASE_DIR), '').replace("/media",""), title=request.POST.get("title"), text=request.POST.get("content"), summary=request.POST.get("summary"), date=request.POST.get("date"), start_time=request.POST.get("starttime"), end_time=request.POST.get("endtime"), location=request.POST.get("location"), color=club, members_only=(request.POST.get("membersonly") is not None), highlight=(request.POST.get("highlight") is not None), group=request.POST.get("gradefilter"), grade=request.POST.get("sectionfilter"), published_date=datetime.datetime.now())
         else: 
             event = Event.objects.create(author=club, significant_event=(request.POST.get("significant") is not None), title=request.POST.get("title"), text=request.POST.get("content"), summary=request.POST.get("summary"), date=request.POST.get("date"), start_time=request.POST.get("starttime"), end_time=request.POST.get("endtime"), location=request.POST.get("location"), color=club, members_only=(request.POST.get("membersonly") is not None), highlight=(request.POST.get("highlight") is not None), group=request.POST.get("gradefilter"), grade=request.POST.get("sectionfilter"), published_date=datetime.datetime.now())
         linkstr = request.POST.get("links")
@@ -461,7 +461,7 @@ def ModifyEvent(request: WSGIRequest, event_id):
             with open(filename, 'wb+') as f:
                 for chunk in file.chunks():
                     f.write(chunk)
-            event.cover = filename.removeprefix(str(settings.BASE_DIR)).replace("/media", "")
+            event.cover = filename.replace(str(settings.BASE_DIR), '').replace("/media","")
         linkstr = request.POST.get("links")
         print("(" + linkstr + ")")
         event.links.clear() 
@@ -536,7 +536,7 @@ def CreateNews(request: WSGIRequest):
             with open(filename, 'wb+') as f:
                 for chunk in file.chunks():
                     f.write(chunk)
-            event = News.objects.create(author=request.user, cover=filename.removeprefix(str(settings.BASE_DIR)).replace("/media", ""), title=request.POST.get("title"), text=request.POST.get("content"), published_date=datetime.datetime.now(), summary=request.POST.get("summary"), highlight=(request.POST.get("highlight") is not None), group=request.POST.get("gradefilter"), grade=request.POST.get("sectionfilter"))  
+            event = News.objects.create(author=request.user, cover=filename.replace(str(settings.BASE_DIR), '').replace("/media",""), title=request.POST.get("title"), text=request.POST.get("content"), published_date=datetime.datetime.now(), summary=request.POST.get("summary"), highlight=(request.POST.get("highlight") is not None), group=request.POST.get("gradefilter"), grade=request.POST.get("sectionfilter"))  
         else: 
             event = News.objects.create(author=request.user, title=request.POST.get("title"), text=request.POST.get("content"), published_date=datetime.datetime.now(), summary=request.POST.get("summary"), highlight=(request.POST.get("highlight") is not None), group=request.POST.get("gradefilter"), grade=request.POST.get("sectionfilter"))  
         linkstr = request.POST.get("links")
@@ -598,7 +598,7 @@ def ModifyNews(request: WSGIRequest, news_id):
             with open(filename, 'wb+') as f:
                 for chunk in file.chunks():
                     f.write(chunk)
-            news.cover = filename.removeprefix(str(settings.BASE_DIR)).replace("/media", "")
+            news.cover = filename.replace(str(settings.BASE_DIR), '').replace("/media","")
         linkstr = request.POST.get("links")
         print("(" + linkstr + ")")
         news.links.clear()
@@ -726,7 +726,7 @@ def editProfile(request:WSGIRequest):
                 with open(filename, 'wb+') as f:
                     for chunk in file.chunks():
                         f.write(chunk)
-                request.user.associated_student.profile_picture = filename.removeprefix(str(settings.BASE_DIR)).replace("/media", "")
+                request.user.associated_student.profile_picture = filename.replace(str(settings.BASE_DIR), '').replace("/media","")
             request.user.associated_student.about = request.POST.get("content")
             request.user.associated_student.save()
             request.user.save()
@@ -737,7 +737,7 @@ def editProfile(request:WSGIRequest):
                 with open(filename, 'wb+') as f:
                     for chunk in file.chunks():
                         f.write(chunk)
-                request.user.associated_faculty.profile_picture = filename.removeprefix(str(settings.BASE_DIR)).replace("/media", "")
+                request.user.associated_faculty.profile_picture = filename.replace(str(settings.BASE_DIR), '').replace("/media","")
             request.user.associated_faculty.save()
             request.user.save()
         return redirect("/profile/User") 
@@ -770,7 +770,7 @@ def editVarsity(request:WSGIRequest, varsity_id: int):
             with open(filename, 'wb+') as f:
                 for chunk in file.chunks():
                     f.write(chunk)
-            varsity.logo = filename.removeprefix(str(settings.BASE_DIR)).replace("/media", "")
+            varsity.logo = filename.replace(str(settings.BASE_DIR), '').replace("/media","")
         varsity.save() 
         request.user.save() 
         return redirect("/profile/Varsity/" + str(varsity.pk))
@@ -802,7 +802,7 @@ def editClub(request:WSGIRequest, club_id: int):
             with open(filename, 'wb+') as f:
                 for chunk in file.chunks():
                     f.write(chunk)
-            club.logo = filename.removeprefix(str(settings.BASE_DIR)).replace("/media", "")
+            club.logo = filename.replace(str(settings.BASE_DIR), '').replace("/media","")
         club.save()  
         request.user.save()
         return redirect("/profile/Club/" + str(club.pk))
