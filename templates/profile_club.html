@@ -153,7 +153,7 @@
                 <button class="toolbarBtn" type="button" onclick="document.getElementById('backcolor').click(); document.getElementById('maineditor').focus(); "><img src="{% static '../media/images/highlight.svg' %}" alt="H"></button>
                 <input type="color" style="width:  0px; border: none; margin:0px; padding: 0px;" id="backcolor" oninput="execCommand('backColor', true, this.value)">
                 <button class="toolbarBtn" type="button" onclick="execCommand('removeFormat'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/clear_format.svg' %}" alt="T"></button>
-                <button class="toolbarBtn" type="button" onclick="this.children[0].click();"><input type="file" onchange="uploadFile(this.files[0])" accept="*/image" hidden><img src="{% static '../media/images/image.svg' %}" alt="T"></button>
+                <button class="toolbarBtn" type="button" onclick="this.children[0].click();"><input type="file" oninput="uploadFile(this.files[0])" accept="*/image" hidden><img src="{% static '../media/images/image.svg' %}" alt="T"></button>
                 <button class="toolbarBtn" type="button" onclick="createLink()"><img src="{% static '../media/images/link.svg' %}" alt="R"></button>
             </div>
             <div class="textfield bottom" required placeholder="Content" contentEditable="true" id="maineditor" style="width: 600px; height: 200px; padding-top: 10px; margin-top: 0px;"></div>
@@ -167,6 +167,7 @@
                     console.log(container);
                     var url = prompt("Enter Link: ");
                     console.log(url)
+                    if(url == null) {return};
                     var link = "<a href='"  + url + "' target='_blank'>" + url + "</a>";
                     console.log(link)
                     var str = container.endContainer.parentElement.innerHTML.replace("&nbsp;", " ");
@@ -181,6 +182,7 @@
                         console.log('null');
                         return;
                     }
+                    if(file.size > 1048576) {alert("File can't be bigger than 1MB"); return;}
                     document.getElementById("loadingBG").hidden = false;
                     let formData = new FormData();
                     formData.append('file', file);

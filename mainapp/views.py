@@ -894,9 +894,10 @@ def uploadImage(request:WSGIRequest):
     if file is not None:
         fileid = str(random.randint(11111111,999999999)) + file.name
         filename = os.path.join(settings.MEDIA_ROOT,"editor_images", fileid)
+        # print(settings.MEDIA_URL + filename.replace(str(settings.BASE_DIR), '').replace("/media",""))  
         with open(filename, 'wb+') as f:
             for chunk in file.chunks():
                 f.write(chunk)
-        return HttpResponse(settings.MEDIA_URL + filename.removeprefix(str(settings.BASE_DIR)).replace("/media",""))
+        return HttpResponse(settings.MEDIA_URL + filename.replace(str(settings.BASE_DIR), '').replace("/media",""))  
     else:
         return HttpResponse("Failed to upload file")

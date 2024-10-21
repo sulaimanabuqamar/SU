@@ -7,12 +7,12 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from .models import *
 
 class UserAdmin(BaseUserAdmin):
-    list_display = ('email', 'name', 'is_admin', 'is_staff')
+    list_display = ('email', 'name', 'is_admin', 'is_staff',  'is_superuser')
     list_filter = ('is_admin', 'is_staff')
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
         ('Personal Info', {'fields': ('name',)}),
-        ('Permissions', {'fields': ('is_admin', 'is_staff', 'is_active')}),
+        ('Permissions', {'fields': ('is_admin', 'is_staff', 'is_active', 'is_superuser')}),
         ('Account Type', {'fields': ('associated_student', 'associated_faculty', 'associated_clubs', 'associated_varsities')}),
     )
     add_fieldsets = (

@@ -46,6 +46,7 @@
                     console.log(container);
                     var url = prompt("Enter Link: ");
                     console.log(url)
+                    if(url == null) {return};
                     var link = "<a href='"  + url + "' target='_blank'>" + url + "</a>";
                     console.log(link)
                     var str = container.endContainer.parentElement.innerHTML.replace("&nbsp;", " ");
@@ -60,6 +61,7 @@
                         console.log('null');
                         return;
                     }
+                    if(file.size > 1048576) {alert("File can't be bigger than 1MB"); return;}
                     document.getElementById("loadingBG").hidden = false;
                     let formData = new FormData();
                     formData.append('file', file);
@@ -122,6 +124,7 @@
                     var container = window.getSelection().getRangeAt(0);
                     console.log(container);
                     var url = prompt("Enter Link: ");
+                    if(url == null) {return};
                     console.log(url)
                     var link = "<a href='"  + url + "' target='_blank'>" + url + "</a>";
                     console.log(link)
@@ -137,6 +140,7 @@
                         console.log('null');
                         return;
                     }
+                    if(file.size > 1048576) {alert("File can't be bigger than 1MB"); return;}
                     document.getElementById("loadingBG").hidden = false;
                     let formData = new FormData();
                     formData.append('file', file);
@@ -199,6 +203,7 @@
                     var container = window.getSelection().getRangeAt(0);
                     console.log(container);
                     var url = prompt("Enter Link: ");
+                    if(url == null) {return};
                     console.log(url)
                     var link = "<a href='"  + url + "' target='_blank'>" + url + "</a>";
                     console.log(link)
@@ -214,6 +219,7 @@
                         console.log('null');
                         return;
                     }
+                    if(file.size > 1048576) {alert("File can't be bigger than 1MB"); return;}
                     document.getElementById("loadingBG").hidden = false;
                     let formData = new FormData();
                     formData.append('file', file);

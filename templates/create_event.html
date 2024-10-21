@@ -40,24 +40,26 @@
         </script>
         <script>
             function createLink() {
-                var container = window.getSelection().getRangeAt(0);
-                console.log(container);
-                var url = prompt("Enter Link: ");
-                console.log(url)
-                var link = "<a href='"  + url + "' target='_blank'>" + url + "</a>";
-                console.log(link)
-                var str = container.endContainer.parentElement.innerHTML.replace("&nbsp;", " ");
-                var output = [str.slice(0, container.endOffset), link, str.slice(container.endOffset)].join('')
-                console.log(output)
-                container.endContainer.parentElement.innerHTML = output.trim();
-                document.getElementById('maineditor').focus();
-            }
+                    var container = window.getSelection().getRangeAt(0);
+                    console.log(container);
+                    var url = prompt("Enter Link: ");
+                    if(url == null) {return};
+                    console.log(url)
+                    var link = "<a href='"  + url + "' target='_blank'>" + url + "</a>";
+                    console.log(link)
+                    var str = container.endContainer.parentElement.innerHTML.replace(" ", " ");
+                    var output = [str.slice(0, container.endOffset), link, str.slice(container.endOffset)].join('')
+                    console.log(output)
+                    container.endContainer.parentElement.innerHTML = output.trim();
+                    document.getElementById('maineditor').focus();
+                }
             function uploadFile(file) {
                 if(file == null) {
                     console.log(file);
                     console.log('null');
                     return;
                 }
+                if(file.size > 1048576) {alert("File can't be bigger than 1MB"); return;}
                 document.getElementById("loadingBG").hidden = false;
                 let formData = new FormData();
                 formData.append('file', file);
