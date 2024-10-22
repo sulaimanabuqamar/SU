@@ -82,9 +82,21 @@
             <p class="tagText">Varsity</p>
         </div>
         <p class="aboutText sidebar">{{ varsity|safe }}</p>
-        <a href="/profile/Edit/Varsity/{{varsity.pk}}"><button class="btn">Edit Varsity</button></a>
+        <a href="/profile/Edit/Varsity/{{varsity.pk}}"><button class="btn">Edit Varsity</button></a><br>
+        <button class="btn" onclick="downloadList()">Download List of Members</button>
     </div>
 </div>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.13.1/xlsx.full.min.js"></script> 
+<script>
+function downloadList() {
+    var listofmembers = [{% for member in varsity.members.all %}{"Name": "{{member.name}}", "Gender": {% if member.associated_student.section == "B" or member.associated_student.section == "E" or member.associated_student.section == "H" or member.associated_student.section == "D" or member.associated_student.section == "J" %}"Male"{% else %}"Female"{% endif %}, "Grade": {{member.associated_student.year_level}}, "Section": "{{member.associated_student.section}}", "Email": "{{member.email}}", "School ID": "{{member.associated_student.student_db_id}}"}{% endfor %}]
+    console.log(listofmembers);
+    var ws = XLSX.utils.json_to_sheet(listofmembers);
+    var wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "People");
+    XLSX.writeFile(wb,"{{club.name}} Members.xlsx");
+}
+</script>
 <div class="popupBG" hidden id="addPlayerBG" onclick="if(event.srcElement == this) {closePopup(this.id)}">
     <div class="accountPopupWindow">
         <p class="subtitle" style="text-align: center; margin-bottom: 15px;">Add Player To Varsity</p>
