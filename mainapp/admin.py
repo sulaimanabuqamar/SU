@@ -70,6 +70,9 @@ class EventAdmin(admin.ModelAdmin):
     list_display = ('author', 'title', 'published_date', 'summary', 'members_only', 'highlight', 'group', 'grade')
     list_filter = ('members_only', 'highlight')
     search_fields = ('summary',)
+class MeetingAdmin(admin.ModelAdmin):
+    list_display = ('pk', 'author', 'title', 'published_date')
+    search_fields = ('summary','title', 'text') 
 
 class NewsAdmin(admin.ModelAdmin):
     list_display = ('author',  'title', 'summary','awaiting_approval', 'approved', 'group', 'grade', 'published_date')
@@ -97,3 +100,4 @@ admin.site.register(Varsity, VarsityAdmin)
 admin.site.register(Event, EventAdmin)
 admin.site.register(Links, LinksAdmin) 
 admin.site.register(News, NewsAdmin)
+admin.site.register(Meeting, MeetingAdmin)

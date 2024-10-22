@@ -165,6 +165,21 @@ class Event(models.Model):
             if self.author and self.author.logo:  # Ensure the author and their logo exist
                 self.cover = self.author.logo  # Set the default cover to the author's logo
         super().save(*args, **kwargs)  # Call the super class's save method
+
+class Meeting(models.Model):
+    author = models.ForeignKey(Club, on_delete=models.CASCADE, related_name='authored_meetings')
+    title = models.CharField(max_length=100)
+    text = models.TextField(blank=True,default="")
+    date = models.DateField()
+    start_time = models.TimeField()
+    end_time = models.TimeField()
+    published_date = models.DateTimeField(null=True, blank=True)
+    location = models.CharField(max_length=150)
+    attending_Members = models.ManyToManyField(User, related_name='meeting_attending_members', blank=True)
+    links = models.ManyToManyField(Links, related_name='emeeting_links', blank=True)
+    def __str__(self) -> str: 
+        return self.title
+    typeitem = "meeting"
         
 class News(models.Model):
     GROUP_CHOICES = [

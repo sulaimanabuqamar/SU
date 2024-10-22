@@ -102,10 +102,10 @@
             <p class="tagText">Club</p>
         </div>
         <div class="aboutText sidebar">{{ club.about|safe }}</div>
-        <button class="btn" onclick="openMemberPopup('selectApplicant')">Send Admission Emails</button>
-        <br>
-        <a href="/profile/Edit/Club/{{club.pk}}"><button class="btn">Edit Club</button></a><br>
-        <button class="btn" onclick="downloadList()">Download List of Members</button>
+        <a href="/profile/Edit/Club/{{club.pk}}"><button class="btn primary">Edit Club</button></a><br>
+        <button class="btn" onclick="openMemberPopup('selectApplicant')">Send Admission Emails</button><br>
+        <button class="btn" onclick="downloadList()">Download List of Members</button><br>
+        <a href="/profile/Edit/Club/{{club.pk}}"><button class="btn">Create Meeting</button></a>
     </div>
 </div>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.13.1/xlsx.full.min.js"></script> 

@@ -1,0 +1,176 @@
+{% extends 'Base.html' %}
+{% load static %}
+
+{% block style %}
+<title>SS - Create Meeting</title>
+{% endblock %}
+
+{% block content %}
+<div>
+    <p class="pageTitle">Create New Meeting</p>
+</div>
+<form method="post" class="profileRow" style="align-items: start;" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div style="display: flex; flex-direction: column;">
+    <input class="textfield" required name="title" placeholder="Title">
+    <div>
+        <div class="textfieldtoolbar">
+            <button class="toolbarBtn" style="border-top-left-radius: 10px;" type="button" onclick="execCommand('bold'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/bold.svg' %}" alt="B"></button>
+            <button class="toolbarBtn" type="button" onclick="execCommand('italic'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/italic.svg' %}" alt="I"></button>
+            <button class="toolbarBtn" type="button" onclick="execCommand('underline'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/underline.svg' %}" alt="U"></button>
+            <button class="toolbarBtn" type="button" onclick="execCommand('strikethrough'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/strikethrough.svg' %}" alt="S"></button>
+            <button class="toolbarBtn" type="button" onclick="execCommand('fontSize', true, 1); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/decrease_font_size.svg' %}" alt="-"></button>
+            <button class="toolbarBtn" type="button" onclick="execCommand('fontSize', false, 2); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/normal_font_size.svg' %}" alt="="></button>
+            <button class="toolbarBtn" type="button" onclick="execCommand('fontSize', true, 4); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/increase_font_size.svg' %}" alt="+"></button>
+            <button class="toolbarBtn" type="button" onclick="execCommand('justifyLeft'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/justify_left.svg' %}" alt="L"></button>
+            <button class="toolbarBtn" type="button" onclick="execCommand('justifyCenter'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/justify_center.svg' %}" alt="C"></button>
+            <button class="toolbarBtn" type="button" onclick="execCommand('justifyRight'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/justify_right.svg' %}" alt="R"></button>
+            <button class="toolbarBtn" type="button" onclick="document.getElementById('fontcolor').click(); document.getElementById('maineditor').focus(); "><img src="{% static '../media/images/text_color.svg' %}" alt="A"></button>
+            <input type="color" style="width:  0px; border: none; margin:0px; padding: 0px;" id="fontcolor" oninput="execCommand('foreColor', true, this.value)">
+            <button class="toolbarBtn" type="button" onclick="document.getElementById('backcolor').click(); document.getElementById('maineditor').focus(); "><img src="{% static '../media/images/highlight.svg' %}" alt="H"></button>
+            <input type="color" style="width:  0px; border: none; margin:0px; padding: 0px;" id="backcolor" oninput="execCommand('backColor', true, this.value)">
+            <button class="toolbarBtn" type="button" onclick="execCommand('removeFormat'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/clear_format.svg' %}" alt="T"></button>
+            <button class="toolbarBtn" type="button" onclick="this.children[0].click();"><input type="file" onchange="uploadFile(this.files[0])" accept="*/image" hidden><img src="{% static '../media/images/image.svg' %}" alt="T"></button>
+            <button class="toolbarBtn" type="button" onclick="createLink()"><img src="{% static '../media/images/link.svg' %}" alt="R"></button>
+        </div>
+        <div class="textfield bottom" required placeholder="Content" contentEditable="true" id="maineditor" style="width: 600px; height: 200px; padding-top: 10px; margin-top: 0px;"></div>
+        <textarea class="textfield" hidden required name="content" placeholder="Content" contentEditable="true" style="width: 600px; height: 200px; padding-top: 10px;"></textarea>
+        <script>
+            setInterval(function() {document.getElementsByName('content')[0].innerHTML = document.getElementById('maineditor').innerHTML;},1);
+        </script>
+        <script>
+            function createLink() {
+                    var container = window.getSelection().getRangeAt(0);
+                    console.log(container);
+                    var url = prompt("Enter Link: ");
+                    if(url == null) {return};
+                    console.log(url)
+                    var link = "<a href='"  + url + "' target='_blank'>" + url + "</a>";
+                    console.log(link)
+                    var str = container.endContainer.parentElement.innerHTML.replace(" ", " ");
+                    var output = [str.slice(0, container.endOffset), link, str.slice(container.endOffset)].join('')
+                    console.log(output)
+                    container.endContainer.parentElement.innerHTML = output.trim();
+                    document.getElementById('maineditor').focus();
+                }
+            function uploadFile(file) {
+                if(file == null) {
+                    console.log(file);
+                    console.log('null');
+                    return;
+                }
+                if(file.size > 1048576) {alert("File can't be bigger than 1MB"); return;}
+                document.getElementById("loadingBG").hidden = false;
+                let formData = new FormData();
+                formData.append('file', file);
+                fetch('/Upload/Media/About', {
+                    method: 'POST',
+                    body: formData,
+                    })
+                    .then(response => response.text())
+                    .then(response => {
+                        console.log(response);
+                        if(response ==  "Failed to upload file") {
+                            alert("Failed to upload file");
+                            document.getElementById("loadingBG").hidden = true;
+                        }
+                        else {
+                            document.getElementById("loadingBG").hidden = true;
+                            document.getElementById('maineditor').focus();
+                            document.execCommand('insertImage', false, response);
+                            document.getElementById('maineditor').focus();
+                        }
+                    })
+                    .catch(error => {
+                        console.error(error);
+                        document.getElementById("loadingBG").hidden = true;
+                    });
+            }
+        </script>
+    </div>
+    <input class="textfield" required name="date" type="date" placeholder="Date Of Meeting">
+    <div style="display: flex; flex-direction: row; align-items: center;">
+    <input class="textfield" required name="starttime" type="time" placeholder="Start Time Of Meeting"> - 
+    <input class="textfield" required name="endtime" type="time" placeholder="End Time Of Meeting">
+    </div>
+    <input class="textfield" name="location" placeholder="Location Of Meeting (optional)">
+    <textarea class="textfield" name="links" placeholder="Links (One link per line, text to show first then ! then link. Ex: Google!https://google.com)" style="width: 600px; height: 100px;"></textarea>
+<div id="attendeefield">
+    <p class="aboutText">Attending Students: </p>
+    <input class="textfield" placeholder="Search..." style="margin: 0px; width: 100%;" id="memberSearch">
+    <div class="container" id="memberGrid">
+        {% for member in allUsers %}
+        {% if member.associated_faculty is None %}
+        <div class="profileRow" style="border: black 3px solid; border-radius: 15px; padding: 10px; gap: 10px; margin-bottom: 10px;">
+            <div style="display: flex; flex-direction: row; align-items: center; gap: 10px;">
+            <img class="eventCover" style=" width: 50px; height: 50px; margin-right: 10px;" src="{{ member.associated_student.profile_picture.url }}" alt="pfp">
+            <p class="text">{{ member.name }}</p>
+            <p class="aboutText">{{ member.associated_student.year_level }}{{ member.associated_student.section }}</p>
+            </div>
+            <input type="checkbox" class="btn empty" name="{{member.email}}" {% getUserAttendingMeeting member.email meeting.id %}>
+        </div>
+        {% else %}
+        <div class="profileRow" style="border: black 3px solid; border-radius: 15px; padding: 10px; gap: 10px; margin-bottom: 10px;">
+            <div style="display: flex; flex-direction: row; align-items: center; gap: 10px;">
+            <img class="eventCover" style=" width: 50px; height: 50px; margin-right: 10px;" src="{{ member.associated_faculty.profile_picture.url }}" alt="pfp">
+            <p class="text">{{ member.name }}</p>
+            </div>
+            <input type="checkbox" class="btn empty" name="{{member.email}}" {% getUserAttendingMeeting member.email meeting.id %}>
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div> 
+    
+</div>
+    <label style="font-family: Inter; margin-left: 10px;"><input name="emailstudent" type="checkbox" > Email Student</label>
+    <label style="font-family: Inter; margin-left: 10px;"><input name="emailhos" type="checkbox" onchange="if(this.checked){document.getElementById('hosemail').hidden = false;} else {document.getElementById('hosemail').hidden = true;}"> Email Faculty</label>
+    <div id="hosemail" hidden>
+    <p class="aboutText" style="margin-left: 10px">Send Email About Meeting To: </p>
+    <div class="container">
+        {% for faculty in faculties %}
+        <div class="profileRow" style="border: black 3px solid; border-radius: 15px; padding: 10px; gap: 10px; margin-bottom: 5px">
+            <p class="text">{{ faculty.name }}</p>
+            <input type="checkbox" class="btn empty" name="{{faculty.email}}">
+        </div>
+        {% endfor %}
+    </div>
+</div>
+<div style="display: flex; flex-direction:row; margin-left: -10px; margin-top: 30px;">
+    <button class="btn" onclick="navigation.back()" type="reset">Cancel Changes</button>
+    <input type="submit" class="btn primary" value="Create Meeting" onclick="if(document.getElementsByName('emailstudent').checked || document.getElementsByName('emailhos').checked) { document.getElementsByClassName('loadingText')[0].innerText = 'Sending Emails...'; document.getElementsByClassName('loadingText')[0].hidden = false;  document.getElementById('loadingBG').hidden = false;}    var element = this; setTimeout(function() {element.disabled = true; element.style.backgroundColor = '#aaaaaa'; }, 250); setTimeout(function(){element.disabled = false; element.style.backgroundColor = '#1F355E';}, 10000);">
+    </div>
+    </div>
+    <div style="display: flex; flex-direction: column;">
+        <script>
+
+    function searchMemberGrid(searchTerm) {
+        var grid = document.getElementById("memberGrid");
+        try{
+        for(var i = 0; i < grid.children.length; i++) {
+            var child = grid.children[i];
+            if(child.children[0].children[1].innerText.toLowerCase().includes(searchTerm.toLowerCase())) {
+                child.style.display = "flex";
+            }
+            else {
+                child.style.display = "none";
+            }
+        }
+    }
+    catch {}
+    }
+
+    setInterval(function() {
+        searchMemberGrid(document.getElementById("memberSearch").value);
+    }, 1);
+    {% comment %} setInterval(function() {
+        if(document.getElementById("memberSearch") == document.activeElement) {
+            document.getElementById("memberGrid").style.display = 'flex';
+        }
+        else {
+            document.getElementById("memberGrid").style.display = 'none';
+        }
+    },1); {% endcomment %}
+        </script>
+    </div>
+</form>
+{% endblock %}

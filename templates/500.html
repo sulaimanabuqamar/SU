@@ -54,9 +54,10 @@
     </div>
     <div class="content {% if request.path == "/" %}centerer hirr{% endif %} "> 
         <p style="font-size: 150px; font-weight: bold; margin-top: 50px; text-align: center; font-family: Inter;">500</p>
-        <p style="font-size: 20px; text-align: center; font-family: Inter;">Oops! An internal server error has occurred, if you were redirected here, press the browser back button and try your action again, otherwise notify one of the SS Officers ASAP about the problem you're having to make sure it doens't affect anyone else! </p>
+        <p style="font-size: 20px; text-align: center; font-family: Inter;">Oops! An internal server error occurred. If you were redirected here, please press the browser’s back button and try again. If the issue persists, notify one of the SS Officers immediately to prevent further impact on others.</p>
+        <p style="font-size: 15px; text-align: center; font-family: Inter;">When contacting an SS Officer, be sure to include the below information to help resolve the issue efficiently.</p>
         <details style="font-family: Inter; text-align: center;">
-            <summary>If you contact an SS Officer provide them with this information to help better assist you.</summary>
+            <summary title="Click to view error info">Click here to view error info.</summary>
             <pre style="background: lightgray; border-radius: 5px; text-align: left; padding: 20px; white-space: pre-wrap;">
 Exception: {{exc}}</pre>
         </details>

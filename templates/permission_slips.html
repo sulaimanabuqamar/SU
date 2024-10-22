@@ -1,0 +1,33 @@
+{% load static %}
+<style>
+    body {
+        font-family: sans-serif;
+    }
+    td {
+        border: 1px dashed black;
+    }
+    .grid {
+        display: grid;
+    grid-gap: 25px;
+    justify-items: center;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    }
+    .bor {
+        border: 1px dashed black;
+        padding: 70px;
+        font-size: 20px;
+    }
+</style>
+<div style="display: flex; justify-content: center;">
+<div class="grid" style="width: 100%">
+    {% for attendee in attendees %}
+    <div class="bor">
+        Name: {{ attendee.name }}<br>
+        Grade: {{ attendee.associated_student.year_level }}{{attendee.associated_student.section}}<br>
+        Location: {{ meeting.location }}<br>
+            Date: {{ meeting.date }}<br>
+        Time: {{ meeting.start_time|time:"g:i A" }} - {{ meeting.end_time|time:"g:i A" }}
+    </div>
+    {% endfor %}
+</div>
+</div>

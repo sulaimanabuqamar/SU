@@ -1,0 +1,89 @@
+{% extends 'Base.html' %}
+{% load static %}
+
+{% block style %}
+<title>SS - Meetings</title>
+{% endblock %}
+
+{% block content %}
+<div class="profileRow">
+    <p class="pageTitle">MEETINGS</p>
+    {% if hasClubs %}
+        <button class="btn empty" onclick="openPopup('createMeetingBG');"><img src="{%static '../media/images/joinButton.svg' %}"></button>
+    {% endif %}
+</div>
+<div class="popupBG" hidden id="createMeetingBG" onclick="if(event.srcElement == this) {closePopup(this.id)}">
+    <div class="accountPopupWindow">
+        <p class="subtitle" style="text-align: center; margin-bottom: 15px;">Choose Club To Create Meeting</p>
+        <input class="textfield" placeholder="Search..." style="margin: 0px; margin-bottom: 20px; width: calc( 100% - 55px ); margin-left: 20px; margin-right: 20px;" id="createMeetingSearch">
+        <div class="grid popup" style="margin-bottom: 30px;" id="createMeetingField">
+            {% for club in user.associated_clubs.all %}
+            <a class="profileRow" href="{% url "create_meeting" club.pk %}">
+                <div class="profileRow" style="border: blue 3px solid; border-radius: 15px; padding: 5px; gap: 10px;">
+                    <img class="eventCover" style=" width: 50px; height: 50px;" src="{{ club.logo.url }}" alt="Club Cover">
+                    <p class="text">{{ club.name }}</p>
+                </div>
+            </a>
+            {% empty %}
+            <p class="text">No Students.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+<div class="grid">
+    {% for meeting in meetings %}
+    <div>
+        <a href="{% url 'meeting_detail' meeting.id %}">
+            <img class="eventCover" src="{{ meeting.author.logo.url }}" alt="Club Logo">
+            <p class="text">{{ meeting.title }}</p>
+            <p class="aboutText">{{ meeting.date }}</p>
+            <p class="aboutText">{{ meeting.start_time|time:"g:i A" }} - {{ meeting.end_time|time:"g:i A" }}</p>
+            <div class="tagBox" style="background: {{ meeting.author.color }};">
+                <p class="tagText">{{ meeting.author.name }}</p>
+            </div>
+        </a>
+    </div>
+    {% empty %}
+    <p class="text">No meetings available.</p>
+    {% endfor %}
+</div>
+
+<script>
+    function searchMemberGrid(searchTerm, grid) {
+        try{
+        for(var i = 0; i < grid.children.length; i++) {
+            var child = grid.children[i];
+            if(child.children[0].children[1].innerText.toLowerCase().includes(searchTerm.toLowerCase())) {
+                child.style.display = "flex";
+            }
+            else {
+                child.style.display = "none";
+            }
+        }
+    }
+    catch(e) {
+        {% comment %} console.error(e); {% endcomment %}
+    }
+    }
+    function searchAddMemberGrid(searchTerm,  grid) {
+        try{
+        for(var i = 0; i < grid.children.length; i++) {
+            var child = grid.children[i];
+            if(child.children[0].children[1].innerText.toLowerCase().includes(searchTerm.toLowerCase())) {
+                child.style.display = "flex";
+            }
+            else {
+                child.style.display = "none";
+            }
+        }
+    }
+    catch{}
+    }
+    setInterval(function() {
+        searchAddMemberGrid(document.getElementById("createMeetingSearch").value, document.getElementById("createMeetingField"));
+    }, 1);
+
+    
+    
+</script>
+{% endblock %}

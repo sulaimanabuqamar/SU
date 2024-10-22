@@ -1,0 +1,149 @@
+{% extends 'Base.html' %}
+{% load static %}
+
+{% block style %}
+<title>{{ meeting.title }} - Meeting Details</title>
+{% endblock %}
+
+{% block content %}
+<div style="display: flex; gap: 100px; justify-content: space-between;">
+    <div style="display: flex; justify-content: space-between; flex-direction: column;">
+        <p class="pageTitle" style="margin: 0px;">{{ meeting.title }}</p>
+        <br>
+        <div class="articleDescriptionText">
+            <p>{{ meeting.text|safe|linebreaks }}</p>
+        </div>
+        <div class="profileRow">
+            <p class="pageSubtitle" style="margin: 0px;">{{meeting.attending_Members.count}} Attendee{% if meeting.attending_Members.count != 1 %}s{% endif %}</p>
+            {% if meeting.author in user.associated_clubs.all %}
+            <button class="btn empty" onclick="openPopup('addMemberBG')"><img src="{% static '../media/images/joinButton.svg' %}"></button>
+            {% endif %}
+            </div>
+            <input class="textfield" placeholder="Search..." style="margin: 0px; width: unset;" id="memberSearch">
+            <br>
+            <div class="grid scroll" id="memberField">
+                {% for member in meeting.attending_Members.all %}
+                <a href="/Student/Detail/{{member.pk}}" class="profileRow">
+                    <div class="profileRow Box" style="border: black 3px solid; border-radius: 15px; padding: 10px; gap: 10px;">
+                        <img class="eventCover" style=" width: 50px; height: 50px; margin-right: 10px;" src="{{ member.associated_student.profile_picture.url }}" alt="Club Cover">
+                        <p class="text">{{ member.name }}</p>
+                        <p class="aboutText">{{ member.associated_student.year_level }}{{ member.associated_student.section }}</p>
+                        {% if meeting.author in user.associated_clubs.all %}
+                        <button class="btn empty" onclick="removeAttendeeFromList('{{member.email}}')"><img src="{%static '../media/images/removeButton.svg' %}"></button>
+                        {% endif %}
+                    </div>
+                </a>
+                {% empty %}
+                <p class="text">No Members.</p>
+                {% endfor %}
+            </div>
+    </div>
+    <div>
+        <div class="centerer" style="height: unset; margin-bottom: 20px;">
+        <img src="{{ meeting.author.logo.url }}" alt="{{ meeting.title }} Cover" class="articleCover">
+        </div>
+        <div class="tagBox" style="background: {{ meeting.author.color }};">
+            <p class="tagText">{{ meeting.author.name }}</p>
+        </div>
+        <p class="aboutText">{{ meeting.date }}</p>
+        <p class="aboutText">{{ meeting.start_time|time:"g:i A" }} - {{ meeting.end_time|time:"g:i A" }}</p>
+        <p class="aboutText">{{ meeting.location }}</p>
+        <div style="width: 300px; text-align: center;">
+        {% for link in links %}
+        <div style=" display: flex; align-items: center;">
+            <img src="{% static "../media/images/link.svg" %}">
+            <a class="links" href="{{link.link }}" target="_blank" style="margin-top: 0px;  margin-left: 10px">{{ link.name }}</a>
+        </div>
+        {% endfor %}
+        </div>
+        <br>
+        {% if meeting.author in user.associated_clubs.all or user.associated_faculty is not None %}
+        <a href="/AttendeesList/Permissions/{{ meeting.pk }}" target="_blank"><button class="btn">Permission Slips</button></a><br>
+        {% endif %}
+        {% if meeting.author in user.associated_clubs.all %}
+        <a href="/Meetings/Modify/{{ meeting.pk }}" ><button class="btn">Edit Meeting</button></a>
+        {% endif %}
+        <br>
+    </div>
+</div>
+{% if meeting.author in user.associated_clubs.all %}
+<div class="popupBG" hidden id="addMemberBG" onclick="if(event.srcElement == this) {closePopup(this.id)}">
+    <div class="accountPopupWindow">
+        <p class="subtitle" style="text-align: center; margin-bottom: 15px;">Add Member To Meeting</p>
+        <input class="textfield" placeholder="Search..." style="margin: 0px; margin-bottom: 20px; width: calc( 100% - 55px ); margin-left: 20px; margin-right: 20px;" id="addMemberSearch">
+        <div class="grid popup" style="margin-bottom: 30px;" id="addMemberField">
+                {% for member in allUsers %}
+                {% if member not in meeting.attending_Members.all %}
+                {% if member.associated_faculty is None %}
+                <div class="profileRow" style="border: blue 3px solid; border-radius: 15px; padding: 5px; gap: 10px;">
+                    <img class="eventCover" style=" width: 50px; height: 50px;" src="{{ member.associated_student.profile_picture.url }}" alt="Club Cover">
+                    <p class="text">{{ member.name }}</p>
+                    <p class="aboutText">{{ member.associated_student.year_level }}{{ member.associated_student.section }}</p>
+                    <button class="btn empty" onclick="addAttendeeToList('{{member.email}}')"><img src="{%static '../media/images/joinButton.svg' %}"></button>
+                </div>
+                {% else %}
+                <div class="profileRow" style="border: blue 3px solid; border-radius: 15px; padding: 5px; gap: 10px;">
+                    <img class="eventCover" style=" width: 50px; height: 50px;" src="{{ member.associated_faculty.profile_picture.url }}" alt="Club Cover">
+                    <p class="text">{{ member.name }}</p>
+                    <button class="btn empty" onclick="addAttendeeToList('{{member.email}}')"><img src="{%static '../media/images/joinButton.svg' %}"></button>
+                </div>
+                {% endif %}
+                {% endif %}
+                {% endfor %}
+        </div>
+    </div>
+</div>
+{% endif %}
+<script>
+    function removeAttendeeFromList(email) {
+        fetch("/Meetings/Remove?id=" + {{meeting.id}} + "&email=" + email)
+        .then(data => data.json())
+        .then(json => {console.log(json); location.reload();});
+    }
+    function addAttendeeToList(email) {
+        fetch("/Meetings/Add?id=" + {{meeting.id}} + "&email=" + email)
+        .then(data => data.json())
+        .then(json => {console.log(json); location.reload();});
+    }
+
+    function searchMemberGrid(searchTerm) {
+        var grid = document.getElementById("memberField");
+        try{
+        for(var i = 0; i < grid.children.length; i++) {
+            var child = grid.children[i];
+            if(child.children[0].children[1].innerText.toLowerCase().includes(searchTerm.toLowerCase())) {
+                child.style.display = "flex";
+            }
+            else {
+                child.style.display = "none";
+            }
+        }
+    }
+    catch {}
+    }
+    function searchAddMemberGrid(searchTerm) {
+        var grid = document.getElementById("addMemberField");
+        try{
+        for(var i = 0; i < grid.children.length; i++) {
+            var child = grid.children[i];
+            if(child.children[1].innerText.toLowerCase().includes(searchTerm.toLowerCase())) {
+                
+                child.style.display = "flex";
+            }
+            else {
+                child.style.display = "none";
+            }
+        }
+    }
+    catch{}
+    }
+    
+    setInterval(function() {
+        searchMemberGrid(document.getElementById("memberSearch").value);
+    }, 1);
+    setInterval(function() {
+        searchAddMemberGrid(document.getElementById("addMemberSearch").value);
+    }, 1);
+    
+</script>
+{% endblock %}

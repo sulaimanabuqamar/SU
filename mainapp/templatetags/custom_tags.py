@@ -12,6 +12,15 @@ def getUserAttending(email, event_id):
     else:
         return ""
 @register.simple_tag
+def getUserAttendingMeeting(email, meeting_id):
+    # return datetime.datetime.now().strftime(format_string)
+    meeting = Meeting.objects.get(id=meeting_id)
+    if User.objects.get(email=email) in meeting.attending_Members.all():
+        return "checked"
+    else:
+        return ""
+
+@register.simple_tag
 def getVacantUsersClub(type, club_id):
     # return datetime.datetime.now().strftime(format_string)
     club = Club.objects.get(id=club_id)

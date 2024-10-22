@@ -30,6 +30,14 @@ def getUserAttending(email, event_id):
         return "checked"
     else:
         return ""
+@register.simple_tag
+def getUserAttendingMeeting(email, meeting_id):
+    # return datetime.datetime.now().strftime(format_string)
+    meeting = Meeting.objects.get(id=meeting_id)
+    if User.objects.get(email=email) in meeting.attending_Members.all():
+        return "checked"
+    else:
+        return ""
 
 def hasClubs(user):
     if hasattr(user, "associated_clubs"):
@@ -90,6 +98,25 @@ def Scouts_Detail(request, scouts_id):
     except ObjectDoesNotExist:
         return error_404_view(request, None)
     return render(request, "scouts_detail.html", {'scouts': scouts, 'user': request.user, 'events':events, 'links': scouts.links.all()})
+
+def Meetings(request: WSGIRequest):
+    meetings = Meeting.objects.all().order_by('-date').order_by('-start_time')
+    meetings_filtered = []
+    for meeting in meetings:
+        print(meeting.attending_Members.all())
+        if request.user in meeting.attending_Members.all():
+            print(request.user.name)
+            meetings_filtered.append(meeting)
+    return render(request, "meetings.html", {'hasClubs':hasClubs(request.user),'meetings': meetings_filtered, 'user': request.user})
+
+def Meeting_Details(request, meeting_id):
+    try:
+        meeting = Meeting.objects.get(id=meeting_id) 
+    except ObjectDoesNotExist:
+        return error_404_view(request, None) 
+    links = meeting.links.all()
+    allUsers = User.objects.all()
+    return render(request, "meeting_detail.html", {'meeting': meeting, 'links': links, 'allUsers': allUsers, 'user': request.user})
 
 def Events(request):
     events = Event.objects.all().order_by('-published_date')
@@ -536,6 +563,151 @@ def ModifyEvent(request: WSGIRequest, event_id):
                 send_mail("Event Details Changed", "Students' Society", None, hosemails, False, html_message=email)
         event.save()
         return redirect("/Event/Detail/" + str(event.pk))
+def CreateMeeting(request:WSGIRequest, club_id):
+    club = Club.objects.get(id=club_id)
+    if request.method == "GET":
+        students = []
+        for user in User.objects.all():
+            students.append(user) 
+        return render(request, "create_meeting.html", {'user': request.user, 'members': students, 'club':club}) 
+    elif request.method == "POST":
+        meeting = Meeting.objects.create(author=club, title=request.POST.get("title"), text=request.POST.get("content"), date=request.POST.get("date"), start_time=request.POST.get("starttime"), end_time=request.POST.get("endtime"), location=request.POST.get("location"), published_date=datetime.datetime.now())
+        linkstr = request.POST.get("links")
+        print("(" + linkstr + ")")
+        if linkstr is not None and linkstr != "":
+            for link in linkstr.split("\n"):
+                linkobj = Links.objects.create(name=link[:link.find("!")], link=link[link.find("!")+1:])
+                meeting.links.add(linkobj)
+        listofemails = []
+        for member in User.objects.all():
+            if request.POST.get(member.email) is not None:
+                meeting.attending_Members.add(member) 
+                listofemails.append(member.email) 
+        if request.POST.get("emailstudent") is not None:
+            print("emailing students")
+            if len(listofemails) > 0:
+                email = ""
+                with open(os.path.join(settings.BASE_DIR, "templates", "students_email.html"), 'r') as f: 
+                    email = f.read()
+                    email = email.replace("{{title}}",meeting.title)
+                    email = email.replace("{{author}}",meeting.author.name)
+                    email = email.replace("{{event_id}}",str(meeting.pk)) 
+                    email = email.replace("{{logo}}",logo)
+                    email = email.replace("{{text}}",meeting.text) 
+                    email = email.replace("{{date}}",meeting.date) 
+                    email = email.replace("{{start_time}}",meeting.start_time) 
+                    email = email.replace("{{end_time}}",meeting.end_time) 
+                send_mail("New Meeting", "Students' Society", None, listofemails, False, html_message=email)
+
+        if request.POST.get("emailhos") is not None:
+            print("emailing hos")
+            hosemails = []
+            for member in User.objects.all():
+                if request.POST.get(member.email) is not None:
+                    hosemails.append(member.email)
+            if len(hosemails) > 0: 
+                email = ""
+                with open(os.path.join(settings.BASE_DIR, "templates", "hos_email.html"), 'r') as f:
+                    email = f.read()
+                    email = email.replace("{{title}}",meeting.title)
+                    email = email.replace("{{summary}}",meeting.summary)
+                    email = email.replace("{{author}}",meeting.author.name)
+                    email = email.replace("{{event_id}}",str(meeting.pk)) 
+                    email = email.replace("{{logo}}",logo) 
+                    email = email.replace("{{email}}",request.user.email) 
+                    email = email.replace("{{text}}",meeting.text) 
+
+                    email = email.replace("{{date}}",meeting.date) 
+                    email = email.replace("{{start_time}}",meeting.start_time) 
+                    email = email.replace("{{end_time}}",meeting.end_time) 
+                send_mail("New Meeting", "Students' Society", None, hosemails, False, html_message=email)
+        meeting.save()
+        return redirect("/Meetings/Detail/" + str(meeting.pk)) 
+def ModifyMeeting(request: WSGIRequest, meeting_id):
+    meeting = Meeting.objects.get(id=meeting_id)
+    if meeting.author not in request.user.associated_clubs.all():
+        return HttpResponse("<h1>YOU ARE NOT THE AUTHOR OF THIS EVENT, OPERATION FAILED</h1>")
+    students = []
+    for user in User.objects.all():
+        students.append(user)
+    links = ""
+    for link in meeting.links.all():
+        links += link.name + "!" + link.link + "\n"
+    links = links[:-1]
+    if request.method == "GET":
+        return render(request, "modify_meeting.html", {'meeting':meeting, 'allUsers': students, 'links': links})
+    elif request.method == "POST":
+        meeting.title = request.POST.get("title")
+        meeting.text = request.POST.get("content")
+        meeting.date = request.POST.get("date")
+        meeting.location = request.POST.get("location")
+        meeting.start_time=request.POST.get("starttime")
+        meeting.end_time=request.POST.get("endtime")
+        linkstr = request.POST.get("links")
+        print("(" + linkstr + ")")
+        meeting.links.clear()
+        if linkstr is not None and linkstr != "":
+            for link in linkstr.split("\n"):
+                linkobj = Links.objects.create(name=link[:link.find("!")], link=link[link.find("!")+1:])
+                meeting.links.add(linkobj)
+        listofemails = []
+        for member in User.objects.all():
+            if request.POST.get(member.email) is not None:
+                meeting.attending_Members.add(member)
+                print("student")
+                print(member)
+                listofemails.append(str(member.email))
+            else:
+                meeting.attending_Members.remove(member)
+                try:
+                    listofemails.remove(str(member.email))
+                except:
+                    pass 
+        print(listofemails)
+        if request.POST.get("emailstudent") is not None:
+            print("emailing students")
+            if len(listofemails) > -1:
+                email = ""
+                with open(os.path.join(settings.BASE_DIR, "templates", "students_email.html"), 'r') as f:
+                    email = f.read()
+                    email = email.replace("{{title}}",meeting.title)
+                    email = email.replace("{{summary}}",meeting.summary)
+                    email = email.replace("{{author}}",meeting.author.name)
+                    email = email.replace("{{event_id}}",str(meeting.pk)) 
+                    email = email.replace("{{logo}}",logo) 
+                    email = email.replace("{{email}}",request.user.email) 
+                    email = email.replace("{{text}}",meeting.text) 
+
+                    email = email.replace("{{date}}",meeting.date) 
+                    email = email.replace("{{start_time}}",meeting.start_time) 
+                    email = email.replace("{{end_time}}",meeting.end_time) 
+                send_mail("Event Details Changed", "Students' Society", None, listofemails, False, html_message=email)
+
+        if request.POST.get("emailhos") is not None:
+            print("emailing hos")
+            hosemails = []
+            for member in User.objects.all():
+                if request.POST.get(member.email) is not None:
+                    hosemails.append(member.email)
+            if len(hosemails) > 0: 
+                email = ""
+                with open(os.path.join(settings.BASE_DIR, "templates", "hos_email.html"), 'r') as f:
+                    email = f.read()
+                    email = email.replace("{{title}}",meeting.title)
+                    email = email.replace("{{summary}}",meeting.summary)
+                    email = email.replace("{{author}}",meeting.author.name)
+                    email = email.replace("{{event_id}}",str(meeting.pk)) 
+                    email = email.replace("{{logo}}",logo) 
+                    email = email.replace("{{email}}",request.user.email) 
+                    email = email.replace("{{text}}",meeting.text) 
+
+                    email = email.replace("{{date}}",meeting.date) 
+                    email = email.replace("{{start_time}}",meeting.start_time) 
+                    email = email.replace("{{end_time}}",meeting.end_time) 
+                send_mail("Meeting Details Changed", "Students' Society", None, hosemails, False, html_message=email)
+        meeting.save()
+        return redirect("/Meetings/Detail/" + str(meeting.pk))
+
 def CreateNews(request: WSGIRequest):
     if request.method == "GET":
         return render(request, "create_news.html", {'user': request.user})
@@ -634,6 +806,10 @@ def ModifyNews(request: WSGIRequest, news_id):
         news.save()
         return redirect("/News/Detail/" + str(news.pk))
 
+def MeetingAttendeePermissionSlips(request: WSGIRequest, meeting_id: int):
+    meeting = Meeting.objects.get(id=meeting_id)
+    return render(request, "permission_slips.html", {'attendees': meeting.attending_Members.all(), 'meeting': meeting})
+
 def AttendeesListPrintable(request: WSGIRequest, event_id: int):
     event = Event.objects.get(id=event_id)
     return render(request, "printable_attendees_list.html", {'attendees': event.attending_Students.all(), 'event': event})
@@ -648,12 +824,29 @@ def removeAttendee(request: WSGIRequest):
     except:
         pass
     return HttpResponse("{\"message\":\"competed\"}")
+def addAttendeeMeeting(request: WSGIRequest):
+    meeting = Meeting.objects.get(id=int(request.GET.get("id")))
+    if meeting.author not in request.user.associated_clubs.all() and request.GET.get("email") != request.user.email:
+        return HttpResponse("<h1>YOU ARE NOT THE AUTHOR OF THIS EVENT, OPERATION FAILED</h1>")
+    meeting.attending_Members.add(User.objects.get(email=request.GET.get("email")))
+    return HttpResponse("{\"message\":\"competed\"}")
+def removeAttendeeMeeting(request: WSGIRequest):
+    meeting = Meeting.objects.get(id=int(request.GET.get("id")))
+    if meeting.author not in request.user.associated_clubs.all() and request.GET.get("email") != request.user.email:
+        return HttpResponse("<h1>YOU ARE NOT THE AUTHOR OF THIS EVENT, OPERATION FAILED</h1>")
+    meeting.attending_Members.remove(User.objects.get(email=request.GET.get("email")))
+    try:
+        meeting.attending_Members.remove(User.objects.get(email=request.GET.get("email")))
+    except:
+        pass
+    return HttpResponse("{\"message\":\"competed\"}")
 def addAttendee(request: WSGIRequest):
     event = Event.objects.get(id=int(request.GET.get("id")))
     if event.author not in request.user.associated_clubs.all() and request.GET.get("email") != request.user.email:
         return HttpResponse("<h1>YOU ARE NOT THE AUTHOR OF THIS EVENT, OPERATION FAILED</h1>")
     event.attending_Students.add(User.objects.get(email=request.GET.get("email")))
     return HttpResponse("{\"message\":\"competed\"}")
+
 def setConfirmed(request: WSGIRequest):
     event = Event.objects.get(id=int(request.GET.get("id")))
     user = User.objects.get(email=request.GET.get("email"))
