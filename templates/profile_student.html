@@ -63,6 +63,38 @@
             <p class="text">No Events Attending.</p>
             {% endfor %}
         </div>
+        {% elif userType == "faculty" %}
+        <p class="pageSubtitle" style="margin: 0px;">Advisor of Clubs</p>
+        <br>
+        <div class="grid">
+            {% for club in clubSlashMembers.clubs %}
+            <div>
+                <a href="{% url 'club_detail' club.id %}">
+                    <img class="eventCover" style="border: {{ club.color }} 3px solid;" src="{{ club.logo.url }}" alt="Club Cover">
+                    <p class="text">{{ club.name }}</p>
+                    <p class="aboutText">{{ club.date }}</p>
+                </a>
+            </div>
+            {% empty %}
+            <p class="text">Not Advisor of Any Clubs.</p>
+            {% endfor %}
+        </div>
+        <br>
+        <p class="pageSubtitle" style="margin: 0px;">Coach of Varsities</p>
+        <br>
+        <div class="grid">
+            {% for varsity in clubSlashMembers.varsities %}
+            <div>
+                <a href="{% url 'varsity_detail' varsity.id %}">
+                    <img class="eventCover" style="border: {{ varsity.color }} 3px solid;" src="{{ varsity.logo.url }}" alt="{{ varsity.name }}">
+                    <p class="text">{{ varsity.name }}</p>
+                </a>
+            </div>
+            {% empty %}
+            <p class="text">Not Coach of Any Varsities.</p>
+            {% endfor %}
+        </div>
+        
         {% endif %}
     </div>
     <div>

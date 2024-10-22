@@ -204,7 +204,7 @@ def Faculty_Detail(request, faculty_id):
     for varsity in Varsity.objects.all():
         if request.user in varsity.coaches.all():
             varsitiescoach.append(varsity)
-    return render(request, "student_detail.html", {'user': user, 'advisorclubs': advisorclubs, 'varsitiescoach': varsitiescoach}) 
+    return render(request, "faculty_detail.html", {'user': user, 'advisorclubs': advisorclubs, 'varsitiescoach': varsitiescoach}) 
 
 def Club_Varsity_login(request: WSGIRequest):
     user = authenticate(request, username=request.POST.get("email"), password=request.POST.get("password"))
@@ -240,7 +240,7 @@ def Student_Faculty_login(request: WSGIRequest):
             user.save()
             authuser = authenticate(username=body["username"],password=body["password"])
             login(request, authuser)
-            if request.user.associated_student is None and request.user.associated_faculty is None and request.user.associated_clubs.count() <= 0 and request.user.associated_varsities.count() <=  0:
+            if request.user.associated_student is None and request.user.associated_faculty is None:
                 if "almawakeb" in body["username"]: 
                     string = ""
                     for i in range(10):
@@ -303,6 +303,16 @@ def UserProfile(request: WSGIRequest):
             clubSlashMembers = {"clubs":getClubs(request.user),"varsities":getVarsities(request.user)}
         elif request.user.associated_faculty is not None:
             userType = "faculty"
+            advisorin = []
+            for club in Club.objects.all():
+                if request.user in club.advisors.all():
+                    advisorin.append(club)
+            coachin = []
+            for varsity in Varsity.objects.all():
+                if request.user in varsity.coaches.all():
+                    coachin.append(varsity)
+            
+            clubSlashMembers = {"clubs": advisorin, "varsities": coachin}
         allUsers = User.objects.all()
         events = []
         for event in Event.objects.all():

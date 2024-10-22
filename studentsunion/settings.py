@@ -129,12 +129,12 @@ EMAIL_USE_TLS = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 # STATIC_URL = "http://localhost:81/static/"
-STATIC_URL = "https://ss.amb.sch.ae:81/static/"
+STATIC_URL = "https://ss.amb.sch.ae/static/"
 # STATIC_ROOT = os.path.join(BASE_DIR, "static")
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
 # MEDIA_URL = 'http://localhost:81/media/'
-MEDIA_URL = 'https://ss.amb.sch.ae:81/media/'
+MEDIA_URL = 'https://ss.amb.sch.ae/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Default primary key field type

@@ -44,12 +44,13 @@
                     document.getElementById(ids[i]).style.display = 'none';
                 }
             }
+            openPopup('accountpopup');
         }
     </script>
-    <div class="popupBG" hidden onclick="console.log(event.srcElement); if(event.srcElement == this) {closePopup(this.id); showLoginPopup('accounttypepopup');}">
+    <div class="popupBG" id="accountpopup" hidden onclick="console.log(event.srcElement); if(event.srcElement == this) {closePopup(this.id); showLoginPopup('accounttypepopup');}">
         <div id="accountPopupWindow" class="accountPopupWindow">
-            <p class="subtitle" style="text-align: center; margin-bottom: 15px;">Welcome Back</p>
-            <p class="subtext">Sign in to access the student society</p>
+            <p class="subtitle" style="text-align: center; margin-bottom: 15px;">Welcome to Student Society</p>
+            <p class="subtext">Complete your student profile</p>
             <div class="centerer" id="accounttypepopup">
                 <button class="btn primary" onclick="signIn()">Student or Faculty</button>
                 <button class="btn" onclick="showLoginPopup('clubvarsityloginpopup');">Club or Varsity</button>

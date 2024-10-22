@@ -36,10 +36,10 @@ class StudentAdmin(admin.ModelAdmin):
     search_fields = ('year_level', 'section')
     # filter_horizontal = ('clubs', 'varsities')
 class FacultyAdmin(admin.ModelAdmin):
-    list_display = ('faculty_db_id',)
+    list_display = ('faculty_db_id', 'profile_picture')
     list_filter = ('faculty_db_id',)
     fieldsets = (
-        (None, {'fields': ('faculty_db_id',)}),
+        (None, {'fields': ('faculty_db_id', 'profile_picture')}), 
     )
     search_fields = ('faculty_db_id',)
 
