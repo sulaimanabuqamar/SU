@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block content %}
-<div style="display: flex; gap: 100px; justify-content: space-between;">
+<div class="pagecontrol">
     <div style="display: flex; justify-content: space-between; flex-direction: column; flex: 1;">
         <p class="pageTitle" style="margin: 0px;">{{ user.name }}</p>
         <br>
@@ -117,10 +117,10 @@
         </div>
         {% endif %}
         <br>
-        <a href="/profile/Edit"><button class="btn">Edit Profile</button></a>
+        <a href="/profile/Edit" class="centercontrol"><button class="btn">Edit Profile</button></a>
         <br>
         {% if user.is_admin and user.is_superuser and user.is_staff %}
-        <a href="/admin" target="_blank"><button class="btn">Admin Page</button></a><br>
+        <a href="/admin" target="_blank" class="centercontrol"><button class="btn">Admin Page</button></a><br>
         {% comment %} <button class="btn" onclick="prepareSystemUpdate();">Prepare For System Update</button><br>
         <button class="btn" onclick="activateSystemUpdate();">Perform System Update</button> {% endcomment %}
         {% endif %}

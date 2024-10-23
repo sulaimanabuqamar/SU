@@ -11,6 +11,7 @@
         gap: 50px;
         align-items: center;
         padding: 30px 0px;
+        padding-top: 150px;
         width: fit-content;
     }
 </style>
@@ -33,8 +34,8 @@
     <button class="btn empty" onclick="nextHighlight()"><img src="{% static '../media/images/rightArrow.svg' %}"></button>
 </div>
 <div class="centerer hirr">
-<p style="color: black; font-size: 90px; font-family: Inter; font-weight: 800; margin: 0px;">WELCOME TO AMBSS</p>
-<div style="width: 100%;display: flex;justify-content: space-around;">
+<p class="homeheader">WELCOME TO AMBSS</p>
+<div class="homepageArange">
     {% if home_page.event_highlight_1 is not None %}
     <a href="{% url 'event_detail' home_page.event_highlight_1.id %}">
         <img class="eventCover" src="{{ home_page.event_highlight_1.cover.url }}" alt="Event Highlight 1">
@@ -60,7 +61,7 @@
 <div style="text-align: left; width: 100%;">
     <p class="hpsubtitle">LATEST NEWS</p>
 </div>
-<div style="width: 100%;display: flex;justify-content: space-around;">
+<div class="homepageArange">
     {% if home_page.news_highlight_1 is not None %}
     <a href="{% url 'news_detail' home_page.news_highlight_1.id %}">
         <img class="newsCover" src="{{ home_page.news_highlight_1.cover.url }}" alt="News Highlight 1">
@@ -86,7 +87,7 @@
 <div style="text-align: left; width: 100%;">
     <p class="hpsubtitle">OFFICERS OF THE SS</p>
 </div> 
-<div style="width: 100%;display: flex;justify-content: space-between;">
+<div class="homepageArange">
     {% if home_page.officer_highlight_1 is not None %}
     <a href="/Student/Detail/{{home_page.officer_highlight_1.pk}}">
         <img class="studentPFP" src="{{ home_page.officer_highlight_1.associated_student.profile_picture.url }}" alt="Officer Highlight 1">

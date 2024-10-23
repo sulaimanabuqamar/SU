@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block content %}
-<div style="display: flex; gap: 100px; justify-content: space-between;">
+<div class="pagecontrol">
     <div style="display: flex; justify-content: space-between; flex-direction: column;">
         <p class="pageTitle" style="margin: 0px;">{{ meeting.title }}</p>
         <br>
@@ -23,6 +23,7 @@
             <br>
             <div class="grid scroll" id="memberField">
                 {% for member in meeting.attending_Members.all %}
+                {% if member.associated_faculty is None %}
                 <a href="/Student/Detail/{{member.pk}}" class="profileRow">
                     <div class="profileRow Box" style="border: black 3px solid; border-radius: 15px; padding: 10px; gap: 10px;">
                         <img class="eventCover" style=" width: 50px; height: 50px; margin-right: 10px;" src="{{ member.associated_student.profile_picture.url }}" alt="Club Cover">
@@ -33,6 +34,18 @@
                         {% endif %}
                     </div>
                 </a>
+                {% else %}
+                <a href="/Faculty/Detail/{{member.pk}}" class="profileRow">
+                    <div class="profileRow Box" style="border: black 3px solid; border-radius: 15px; padding: 10px; gap: 10px;">
+                        <img class="eventCover" style=" width: 50px; height: 50px; margin-right: 10px;" src="{{ member.associated_faculty.profile_picture.url }}" alt="Club Cover">
+                        <p class="text">{{ member.name }}</p>
+                        {% if meeting.author in user.associated_clubs.all %}
+                        <button class="btn empty" onclick="removeAttendeeFromList('{{member.email}}')"><img src="{%static '../media/images/removeButton.svg' %}"></button>
+                        {% endif %}
+                    </div>
+                </a>
+                {% endif %}
+                
                 {% empty %}
                 <p class="text">No Members.</p>
                 {% endfor %}
@@ -58,10 +71,10 @@
         </div>
         <br>
         {% if meeting.author in user.associated_clubs.all or user.associated_faculty is not None %}
-        <a href="/AttendeesList/Permissions/{{ meeting.pk }}" target="_blank"><button class="btn">Permission Slips</button></a><br>
+        <a href="/AttendeesList/Permissions/{{ meeting.pk }}" target="_blank" class="centercontrol"><button class="btn">Permission Slips</button></a><br>
         {% endif %}
         {% if meeting.author in user.associated_clubs.all %}
-        <a href="/Meetings/Modify/{{ meeting.pk }}" ><button class="btn">Edit Meeting</button></a>
+        <a href="/Meetings/Modify/{{ meeting.pk }}"  class="centercontrol"><button class="btn">Edit Meeting</button></a>
         {% endif %}
         <br>
     </div>

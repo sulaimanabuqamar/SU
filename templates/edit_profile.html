@@ -10,7 +10,7 @@
 <div>
     <p class="pageTitle">Edit Profile</p>
 </div>
-<form method="post" class="profileRow" style="align-items: start;" enctype="multipart/form-data">
+<form method="post" class="detailsSide reverse" style="align-items: start;" enctype="multipart/form-data">
     {% csrf_token %}
     <div style="display: flex; flex-direction: column;">
         {% if userType == "student" %}
@@ -20,13 +20,13 @@
                 <button class="toolbarBtn" style="border-top-left-radius: 10px;" type="button" onclick="execCommand('bold'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/bold.svg' %}" alt="B"></button>
                 <button class="toolbarBtn" type="button" onclick="execCommand('italic'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/italic.svg' %}" alt="I"></button>
                 <button class="toolbarBtn" type="button" onclick="execCommand('underline'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/underline.svg' %}" alt="U"></button>
-                <button class="toolbarBtn" type="button" onclick="execCommand('strikethrough'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/strikethrough.svg' %}" alt="S"></button>
-                <button class="toolbarBtn" type="button" onclick="execCommand('fontSize', true, 1); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/decrease_font_size.svg' %}" alt="-"></button>
-                <button class="toolbarBtn" type="button" onclick="execCommand('fontSize', false, 2); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/normal_font_size.svg' %}" alt="="></button>
-                <button class="toolbarBtn" type="button" onclick="execCommand('fontSize', true, 4); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/increase_font_size.svg' %}" alt="+"></button>
-                <button class="toolbarBtn" type="button" onclick="execCommand('justifyLeft'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/justify_left.svg' %}" alt="L"></button>
-                <button class="toolbarBtn" type="button" onclick="execCommand('justifyCenter'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/justify_center.svg' %}" alt="C"></button>
-                <button class="toolbarBtn" type="button" onclick="execCommand('justifyRight'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/justify_right.svg' %}" alt="R"></button>
+                <button class="toolbarBtn toolbarBtnControl" type="button" onclick="execCommand('strikethrough'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/strikethrough.svg' %}" alt="S"></button>
+                <button class="toolbarBtn toolbarBtnControl" type="button" onclick="execCommand('fontSize', true, 1); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/decrease_font_size.svg' %}" alt="-"></button>
+                <button class="toolbarBtn toolbarBtnControl" type="button" onclick="execCommand('fontSize', false, 2); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/normal_font_size.svg' %}" alt="="></button>
+                <button class="toolbarBtn toolbarBtnControl" type="button" onclick="execCommand('fontSize', true, 4); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/increase_font_size.svg' %}" alt="+"></button>
+                <button class="toolbarBtn toolbarBtnControl" type="button" onclick="execCommand('justifyLeft'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/justify_left.svg' %}" alt="L"></button>
+                <button class="toolbarBtn toolbarBtnControl" type="button" onclick="execCommand('justifyCenter'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/justify_center.svg' %}" alt="C"></button>
+                <button class="toolbarBtn toolbarBtnControl" type="button" onclick="execCommand('justifyRight'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/justify_right.svg' %}" alt="R"></button>
                 <button class="toolbarBtn" type="button" onclick="document.getElementById('fontcolor').click(); document.getElementById('maineditor').focus(); "><img src="{% static '../media/images/text_color.svg' %}" alt="A"></button>
                 <input type="color" style="width:  0px; border: none; margin:0px; padding: 0px;" id="fontcolor" oninput="execCommand('foreColor', true, this.value)">
                 <button class="toolbarBtn" type="button" onclick="document.getElementById('backcolor').click(); document.getElementById('maineditor').focus(); "><img src="{% static '../media/images/highlight.svg' %}" alt="H"></button>
@@ -35,8 +35,8 @@
                 <button class="toolbarBtn" type="button" onclick="this.children[0].click();"><input type="file" onchange="uploadFile(this.files[0])" accept="*/image" hidden><img src="{% static '../media/images/image.svg' %}" alt="T"></button>
                 <button class="toolbarBtn" type="button" onclick="createLink()"><img src="{% static '../media/images/link.svg' %}" alt="R"></button>
             </div>
-            <div class="textfield bottom" required placeholder="Content" contentEditable="true" id="maineditor" style="width: 600px; height: 200px; padding-top: 10px; margin-top: 0px;">{{user.associated_student.about|safe}}</div>
-            <textarea class="textfield" hidden required name="content" placeholder="Content" contentEditable="true" style="width: 600px; height: 200px; padding-top: 10px;">{{user.associated_student.about|safe}}</textarea>
+            <div class="textfield bottom large" required placeholder="Content" contentEditable="true" id="maineditor" style=" padding-top: 10px; margin-top: 0px;">{{user.associated_student.about|safe}}</div>
+            <textarea class="textfield" hidden required name="content" placeholder="Content" contentEditable="true" style=" padding-top: 10px;">{{user.associated_student.about|safe}}</textarea>
             <script>
                 setInterval(function() {document.getElementsByName('content')[0].innerHTML = document.getElementById('maineditor').innerHTML;},1);
             </script>
@@ -99,13 +99,13 @@
                 <button class="toolbarBtn" style="border-top-left-radius: 10px;" type="button" onclick="execCommand('bold'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/bold.svg' %}" alt="B"></button>
                 <button class="toolbarBtn" type="button" onclick="execCommand('italic'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/italic.svg' %}" alt="I"></button>
                 <button class="toolbarBtn" type="button" onclick="execCommand('underline'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/underline.svg' %}" alt="U"></button>
-                <button class="toolbarBtn" type="button" onclick="execCommand('strikethrough'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/strikethrough.svg' %}" alt="S"></button>
-                <button class="toolbarBtn" type="button" onclick="execCommand('fontSize', true, 1); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/decrease_font_size.svg' %}" alt="-"></button>
-                <button class="toolbarBtn" type="button" onclick="execCommand('fontSize', false, 2); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/normal_font_size.svg' %}" alt="="></button>
-                <button class="toolbarBtn" type="button" onclick="execCommand('fontSize', true, 4); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/increase_font_size.svg' %}" alt="+"></button>
-                <button class="toolbarBtn" type="button" onclick="execCommand('justifyLeft'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/justify_left.svg' %}" alt="L"></button>
-                <button class="toolbarBtn" type="button" onclick="execCommand('justifyCenter'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/justify_center.svg' %}" alt="C"></button>
-                <button class="toolbarBtn" type="button" onclick="execCommand('justifyRight'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/justify_right.svg' %}" alt="R"></button>
+                <button class="toolbarBtn toolbarBtnControl" type="button" onclick="execCommand('strikethrough'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/strikethrough.svg' %}" alt="S"></button>
+                <button class="toolbarBtn toolbarBtnControl" type="button" onclick="execCommand('fontSize', true, 1); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/decrease_font_size.svg' %}" alt="-"></button>
+                <button class="toolbarBtn toolbarBtnControl" type="button" onclick="execCommand('fontSize', false, 2); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/normal_font_size.svg' %}" alt="="></button>
+                <button class="toolbarBtn toolbarBtnControl" type="button" onclick="execCommand('fontSize', true, 4); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/increase_font_size.svg' %}" alt="+"></button>
+                <button class="toolbarBtn toolbarBtnControl" type="button" onclick="execCommand('justifyLeft'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/justify_left.svg' %}" alt="L"></button>
+                <button class="toolbarBtn toolbarBtnControl" type="button" onclick="execCommand('justifyCenter'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/justify_center.svg' %}" alt="C"></button>
+                <button class="toolbarBtn toolbarBtnControl" type="button" onclick="execCommand('justifyRight'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/justify_right.svg' %}" alt="R"></button>
                 <button class="toolbarBtn" type="button" onclick="document.getElementById('fontcolor').click(); document.getElementById('maineditor').focus(); "><img src="{% static '../media/images/text_color.svg' %}" alt="A"></button>
                 <input type="color" style="width:  0px; border: none; margin:0px; padding: 0px;" id="fontcolor" oninput="execCommand('foreColor', true, this.value)">
                 <button class="toolbarBtn" type="button" onclick="document.getElementById('backcolor').click(); document.getElementById('maineditor').focus(); "><img src="{% static '../media/images/highlight.svg' %}" alt="H"></button>
@@ -114,8 +114,8 @@
                 <button class="toolbarBtn" type="button" onclick="this.children[0].click();"><input type="file" onchange="uploadFile(this.files[0])" accept="*/image" hidden><img src="{% static '../media/images/image.svg' %}" alt="T"></button>
                 <button class="toolbarBtn" type="button" onclick="createLink()"><img src="{% static '../media/images/link.svg' %}" alt="R"></button>
             </div>
-            <div class="textfield bottom" required placeholder="Content" contentEditable="true" id="maineditor" style="width: 600px; height: 200px; padding-top: 10px; margin-top: 0px;">{{club.about|safe}}</div>
-            <textarea class="textfield" hidden required name="content" placeholder="Content" contentEditable="true" style="width: 600px; height: 200px; padding-top: 10px;">{{club.about|safe}}</textarea>
+            <div class="textfield bottom large" required placeholder="Content" contentEditable="true" id="maineditor" style=" padding-top: 10px; margin-top: 0px;">{{club.about|safe}}</div>
+            <textarea class="textfield" hidden required name="content" placeholder="Content" contentEditable="true" style=" padding-top: 10px;">{{club.about|safe}}</textarea>
             <script>
                 setInterval(function() {document.getElementsByName('content')[0].innerHTML = document.getElementById('maineditor').innerHTML;},1);
             </script>
@@ -170,7 +170,7 @@
             </script>
         </div>
         <input class="textfield" type="color" required name="color" placeholder="Color" value="{{club.color}}">
-        <textarea class="textfield" name="links" placeholder="Links (One link per line, text to show first then ! then link. Ex: Google!https://google.com)" style="width: 600px; height: 100px;">{{links}}</textarea>
+        <textarea class="textfield  large slim" name="links" placeholder="Links (One link per line, text to show first then ! then link. Ex: Google!https://google.com)">{{links}}</textarea>
         {% elif userType == "varsity" %}
         <input class="textfield" required name="name" placeholder="Name" value="{{varsity.name}}">
         <div>
@@ -178,13 +178,13 @@
                 <button class="toolbarBtn" style="border-top-left-radius: 10px;" type="button" onclick="execCommand('bold'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/bold.svg' %}" alt="B"></button>
                 <button class="toolbarBtn" type="button" onclick="execCommand('italic'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/italic.svg' %}" alt="I"></button>
                 <button class="toolbarBtn" type="button" onclick="execCommand('underline'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/underline.svg' %}" alt="U"></button>
-                <button class="toolbarBtn" type="button" onclick="execCommand('strikethrough'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/strikethrough.svg' %}" alt="S"></button>
-                <button class="toolbarBtn" type="button" onclick="execCommand('fontSize', true, 1); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/decrease_font_size.svg' %}" alt="-"></button>
-                <button class="toolbarBtn" type="button" onclick="execCommand('fontSize', false, 2); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/normal_font_size.svg' %}" alt="="></button>
-                <button class="toolbarBtn" type="button" onclick="execCommand('fontSize', true, 4); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/increase_font_size.svg' %}" alt="+"></button>
-                <button class="toolbarBtn" type="button" onclick="execCommand('justifyLeft'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/justify_left.svg' %}" alt="L"></button>
-                <button class="toolbarBtn" type="button" onclick="execCommand('justifyCenter'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/justify_center.svg' %}" alt="C"></button>
-                <button class="toolbarBtn" type="button" onclick="execCommand('justifyRight'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/justify_right.svg' %}" alt="R"></button>
+                <button class="toolbarBtn toolbarBtnControl" type="button" onclick="execCommand('strikethrough'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/strikethrough.svg' %}" alt="S"></button>
+                <button class="toolbarBtn toolbarBtnControl" type="button" onclick="execCommand('fontSize', true, 1); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/decrease_font_size.svg' %}" alt="-"></button>
+                <button class="toolbarBtn toolbarBtnControl" type="button" onclick="execCommand('fontSize', false, 2); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/normal_font_size.svg' %}" alt="="></button>
+                <button class="toolbarBtn toolbarBtnControl" type="button" onclick="execCommand('fontSize', true, 4); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/increase_font_size.svg' %}" alt="+"></button>
+                <button class="toolbarBtn toolbarBtnControl" type="button" onclick="execCommand('justifyLeft'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/justify_left.svg' %}" alt="L"></button>
+                <button class="toolbarBtn toolbarBtnControl" type="button" onclick="execCommand('justifyCenter'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/justify_center.svg' %}" alt="C"></button>
+                <button class="toolbarBtn toolbarBtnControl" type="button" onclick="execCommand('justifyRight'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/justify_right.svg' %}" alt="R"></button>
                 <button class="toolbarBtn" type="button" onclick="document.getElementById('fontcolor').click(); document.getElementById('maineditor').focus(); "><img src="{% static '../media/images/text_color.svg' %}" alt="A"></button>
                 <input type="color" style="width:  0px; border: none; margin:0px; padding: 0px;" id="fontcolor" oninput="execCommand('foreColor', true, this.value)">
                 <button class="toolbarBtn" type="button" onclick="document.getElementById('backcolor').click(); document.getElementById('maineditor').focus(); "><img src="{% static '../media/images/highlight.svg' %}" alt="H"></button>
@@ -193,8 +193,8 @@
                 <button class="toolbarBtn" type="button" onclick="this.children[0].click();"><input type="file" onchange="uploadFile(this.files[0])" accept="*/image" hidden><img src="{% static '../media/images/image.svg' %}" alt="T"></button>
                 <button class="toolbarBtn" type="button" onclick="createLink()"><img src="{% static '../media/images/link.svg' %}" alt="R"></button>
             </div>
-            <div class="textfield bottom" required placeholder="Content" contentEditable="true" id="maineditor" style="width: 600px; height: 200px; padding-top: 10px; margin-top: 0px;">{{varsity.about|safe}}</div>
-            <textarea class="textfield" hidden required name="content" placeholder="Content" contentEditable="true" style="width: 600px; height: 200px; padding-top: 10px;">{{varsity.about|safe}}</textarea>
+            <div class="textfield bottom large" required placeholder="Content" contentEditable="true" id="maineditor" style=" padding-top: 10px; margin-top: 0px;">{{varsity.about|safe}}</div>
+            <textarea class="textfield" hidden required name="content" placeholder="Content" contentEditable="true" style=" padding-top: 10px;">{{varsity.about|safe}}</textarea>
             <script>
                 setInterval(function() {document.getElementsByName('content')[0].innerHTML = document.getElementById('maineditor').innerHTML;},1);
             </script>
@@ -249,9 +249,9 @@
             </script>
         </div>
         <input class="textfield" type="color" required name="color" placeholder="Color" value="{{varsity.color}}">
-        <textarea class="textfield" name="links" placeholder="Links (One link per line, text to show first then ! then link. Ex: Google!https://google.com)" style="width: 600px; height: 100px;">{{links|safe}}</textarea>
+        <textarea class="textfield large slim" name="links" placeholder="Links (One link per line, text to show first then ! then link. Ex: Google!https://google.com)" style="height: 100px;">{{links|safe}}</textarea>
         {% endif %}
-        <div style="display: flex; flex-direction:row; margin-left: -10px; margin-top: 30px;">
+        <div class="linkcontrol" style=" margin-left: -10px; margin-top: 30px;">
         <button class="btn" onclick="navigation.back()" type="reset">Cancel Changes</button>
         <input type="submit" class="btn primary" value="Save Changes" onclick="var element = this; setTimeout(function() {element.disabled = true; element.style.backgroundColor = '#aaaaaa'; }, 250); setTimeout(function(){element.disabled = false; element.style.backgroundColor = '#1F355E';}, 10000);">
         </div>

@@ -7,14 +7,14 @@
 
 {% block content %}
 <div>
-    <div style="display: flex; justify-content: space-between; flex-direction: row; gap: 100px">
+    <div class="detailsSide">
             <div style="display: flex; justify-content: space-between; flex-direction: column; justify-content: flex-start;">
             <p class="pageTitle" style="margin: 0px;">{{ scouts.name }}</p>
                 <div class="articleDescriptionText">
                     <div>{{ scouts.about|safe }}</div>
                 </div>
             </div>
-            <div>
+            <div class="linkcontrol">
                 <img src="{{ scouts.logo.url }}" style="border: {{ scouts.color }} 3px solid;" alt="{{ scouts.name }} Logo" class="articleCover">
                 <div style="width: 300px; text-align: center;">
                     {% for link in links %}

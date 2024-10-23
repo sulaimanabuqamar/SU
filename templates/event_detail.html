@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block content %}
-<div style="display: flex; gap: 100px; justify-content: space-between;">
+<div class="pagecontrol">
     <div style="display: flex; justify-content: space-between; flex-direction: column;">
         <p class="pageTitle" style="margin: 0px;">{{ event.title }}</p>
         <br>
@@ -31,7 +31,7 @@
                         <img class="eventCover" style=" width: 50px; height: 50px; margin-right: 10px;" src="{{ member.associated_student.profile_picture.url }}" alt="Club Cover">
                         <p class="text">{{ member.name }}</p>
                         <p class="aboutText">{{ member.associated_student.year_level }}{{ member.associated_student.section }}</p>
-                        <p class="aboutText" style="color: {% if member in event.confirmed_Students.all %}lime{% else %}red{% endif %};">{% if member in event.confirmed_Students.all %}Confirmed{% else %}Not Confirmed{% endif %}</p>
+                        <p class="aboutText confirmedcontrol" style="color: {% if member in event.confirmed_Students.all %}lime{% else %}red{% endif %};">{% if member in event.confirmed_Students.all %}Confirmed{% else %}Not Confirmed{% endif %}</p>
                         {% if member.email == user.email or event.author in user.associated_clubs.all %}
                         {% if member not in event.confirmed_Students.all %}
                         <button class="btn empty" onclick="setAttendeeConfirmed('{{member.email}}')"><img src="{%static '../media/images/confirmButton.svg' %}"></button>
@@ -69,18 +69,10 @@
         </div>
         <br>
         {% if event.author in user.associated_clubs.all or user.associated_faculty is not None %}
-        <a href="/AttendeesList/Printable/{{ event.pk }}" target="_blank"><button class="btn">Printable List of Attendees</button></a><br>
+        <a href="/AttendeesList/Printable/{{ event.pk }}" target="_blank" class="centercontrol"><button class="btn">Printable List of Attendees</button></a><br>
         {% endif %}
         {% if event.author in user.associated_clubs.all %}
-        <a href="/Event/Modify/{{ event.pk }}" ><button class="btn">Edit Event</button></a>
-        {% endif %}
-        <br>
-        {% if user.is_authenticated %}
-        {% if user in event.attending_Students.all %}
-        <button class="btn primary" onclick="removeAttendeeFromList('{{user.email}}')">Remove Attendance</button>
-        {% else %}
-        <button class="btn primary" onclick="addAttendeeToList('{{user.email}}')">Attend Event</button>
-        {% endif %}
+        <a href="/Event/Modify/{{ event.pk }}" class="centercontrol"><button class="btn">Edit Event</button></a>
         {% endif %}
     </div>
 </div>

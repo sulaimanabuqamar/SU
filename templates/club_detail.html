@@ -7,14 +7,14 @@
 
 {% block content %}
 <div>
-    <div style="display: flex; justify-content: space-between; flex-direction: row; gap: 100px">
+    <div class="detailsSide">
             <div style="display: flex; justify-content: space-between; flex-direction: column; justify-content: flex-start;">
             <p class="pageTitle" style="margin: 0px;">{{ club.name }}</p>
                 <div class="articleDescriptionText">
                     <p>{{ club|safe }}</p>
                 </div>
             </div>
-            <div>
+            <div class="linkcontrol">
                 <img src="{{ club.logo.url }}" style="border: {{ club.color }} 3px solid;" alt="{{ club.name }} Logo" class="articleCover"><br><br>
                 <div style="width: 300px; text-align: center;">
                     {% for link in links %}
@@ -23,7 +23,7 @@
                         <a class="links" href="{{link.link }}" target="_blank" style="margin-top: 0px;  margin-left: 10px">{{ link.name }}</a>
                     </div>
                     {% endfor %}
-                    </div>
+                </div>
             </div>
         </div>
         <p class="subtitle">Heads</p>

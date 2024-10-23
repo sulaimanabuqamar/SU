@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block content %}
-<div style="display: flex; gap: 100px; justify-content: space-between;">
+<div class="pagecontrol">
     <div style="display: flex; justify-content: space-between; flex-direction: column; flex: 1;">
         <p class="pageTitle" style="margin: 0px;">{{ club.name }}</p>
         <br>
@@ -102,10 +102,10 @@
             <p class="tagText">Club</p>
         </div>
         <div class="aboutText sidebar">{{ club.about|safe }}</div>
-        <a href="/profile/Edit/Club/{{club.pk}}"><button class="btn primary">Edit Club</button></a><br>
-        <button class="btn" onclick="openMemberPopup('selectApplicant')">Send Admission Emails</button><br>
-        <button class="btn" onclick="downloadList()">Download List of Members</button><br>
-        <a href="/profile/Edit/Club/{{club.pk}}"><button class="btn">Create Meeting</button></a>
+        <a href="/profile/Edit/Club/{{club.pk}}" class="centercontrol"><button class="btn primary">Edit Club</button></a><br>
+        <a class="centercontrol"><button class="btn" onclick="openMemberPopup('selectApplicant')" >Send Admission Emails</button><a/><br>
+        <a class="centercontrol"><button class="btn" onclick="downloadList()">Download List of Members</button></a><br>
+        <a href="/profile/Edit/Club/{{club.pk}}" class="centercontrol"><button class="btn">Create Meeting</button></a>
     </div>
 </div>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.13.1/xlsx.full.min.js"></script> 
@@ -168,8 +168,8 @@ function downloadList() {
                 <button class="toolbarBtn" type="button" onclick="this.children[0].click();"><input type="file" oninput="uploadFile(this.files[0])" accept="*/image" hidden><img src="{% static '../media/images/image.svg' %}" alt="T"></button>
                 <button class="toolbarBtn" type="button" onclick="createLink()"><img src="{% static '../media/images/link.svg' %}" alt="R"></button>
             </div>
-            <div class="textfield bottom" required placeholder="Content" contentEditable="true" id="maineditor" style="width: 600px; height: 200px; padding-top: 10px; margin-top: 0px;"></div>
-            <textarea class="textfield" hidden name="content" placeholder="Content" contentEditable="true" style="width: 600px; height: 200px; padding-top: 10px;"></textarea>
+            <div class="textfield bottom large" required placeholder="Content" contentEditable="true" id="maineditor" style=" padding-top: 10px; margin-top: 0px;"></div>
+            <textarea class="textfield" hidden name="content" placeholder="Content" contentEditable="true" style=" padding-top: 10px;"></textarea>
             <script>
                 setInterval(function() {document.getElementsByName('content')[0].innerHTML = document.getElementById('maineditor').innerHTML;},1);
             </script>
@@ -283,9 +283,8 @@ function downloadList() {
             {% if member not in club.advisors.all and member.associated_faculty is not None %}
             <div class="profileRow">
                 <div class="profileRow" style="border: blue 3px solid; border-radius: 15px; padding: 5px; gap: 10px;">
-                    <img class="eventCover" style=" width: 50px; height: 50px;" src="{{ member.associated_student.profile_picture.url }}" alt="Club Cover">
+                    <img class="eventCover" style=" width: 50px; height: 50px;" src="{{ member.associated_faculty.profile_picture.url }}" alt="Club Cover">
                     <p class="text">{{ member.name }}</p>
-                    <p class="aboutText">{{ member.associated_student.year_level }}{{ member.associated_student.section }}</p>
                     <button class="btn empty" onclick="addMember('{{member.email}}', 'Advisor')"><img src="{%static '../media/images/joinButton.svg' %}"></button>
                 </div>
             </div>

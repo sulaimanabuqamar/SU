@@ -569,7 +569,15 @@ def CreateMeeting(request:WSGIRequest, club_id):
         students = []
         for user in User.objects.all():
             students.append(user) 
-        return render(request, "create_meeting.html", {'user': request.user, 'members': students, 'club':club}) 
+        allusers = []
+        for member in club.members.all():
+            allusers.append(member)
+        for head in club.heads.all():
+            allusers.append(head)
+        for leadership in club.leadership.all():
+            allusers.append(leadership)
+        
+        return render(request, "create_meeting.html", {'user': request.user, 'members': students, 'club':club, 'allUsers': allusers}) 
     elif request.method == "POST":
         meeting = Meeting.objects.create(author=club, title=request.POST.get("title"), text=request.POST.get("content"), date=request.POST.get("date"), start_time=request.POST.get("starttime"), end_time=request.POST.get("endtime"), location=request.POST.get("location"), published_date=datetime.datetime.now())
         linkstr = request.POST.get("links")
@@ -587,7 +595,7 @@ def CreateMeeting(request:WSGIRequest, club_id):
             print("emailing students")
             if len(listofemails) > 0:
                 email = ""
-                with open(os.path.join(settings.BASE_DIR, "templates", "students_email.html"), 'r') as f: 
+                with open(os.path.join(settings.BASE_DIR, "templates", "meeting_email.html"), 'r') as f: 
                     email = f.read()
                     email = email.replace("{{title}}",meeting.title)
                     email = email.replace("{{author}}",meeting.author.name)
@@ -607,7 +615,7 @@ def CreateMeeting(request:WSGIRequest, club_id):
                     hosemails.append(member.email)
             if len(hosemails) > 0: 
                 email = ""
-                with open(os.path.join(settings.BASE_DIR, "templates", "hos_email.html"), 'r') as f:
+                with open(os.path.join(settings.BASE_DIR, "templates", "meeting_email.html"), 'r') as f:
                     email = f.read()
                     email = email.replace("{{title}}",meeting.title)
                     email = email.replace("{{summary}}",meeting.summary)
@@ -668,10 +676,9 @@ def ModifyMeeting(request: WSGIRequest, meeting_id):
             print("emailing students")
             if len(listofemails) > -1:
                 email = ""
-                with open(os.path.join(settings.BASE_DIR, "templates", "students_email.html"), 'r') as f:
+                with open(os.path.join(settings.BASE_DIR, "templates", "meeting_email.html"), 'r') as f:
                     email = f.read()
                     email = email.replace("{{title}}",meeting.title)
-                    email = email.replace("{{summary}}",meeting.summary)
                     email = email.replace("{{author}}",meeting.author.name)
                     email = email.replace("{{event_id}}",str(meeting.pk)) 
                     email = email.replace("{{logo}}",logo) 
@@ -681,7 +688,7 @@ def ModifyMeeting(request: WSGIRequest, meeting_id):
                     email = email.replace("{{date}}",meeting.date) 
                     email = email.replace("{{start_time}}",meeting.start_time) 
                     email = email.replace("{{end_time}}",meeting.end_time) 
-                send_mail("Event Details Changed", "Students' Society", None, listofemails, False, html_message=email)
+                send_mail("Meeting Details Changed", "Students' Society", None, listofemails, False, html_message=email)
 
         if request.POST.get("emailhos") is not None:
             print("emailing hos")
@@ -691,10 +698,9 @@ def ModifyMeeting(request: WSGIRequest, meeting_id):
                     hosemails.append(member.email)
             if len(hosemails) > 0: 
                 email = ""
-                with open(os.path.join(settings.BASE_DIR, "templates", "hos_email.html"), 'r') as f:
+                with open(os.path.join(settings.BASE_DIR, "templates", "meeting_email.html"), 'r') as f:
                     email = f.read()
                     email = email.replace("{{title}}",meeting.title)
-                    email = email.replace("{{summary}}",meeting.summary)
                     email = email.replace("{{author}}",meeting.author.name)
                     email = email.replace("{{event_id}}",str(meeting.pk)) 
                     email = email.replace("{{logo}}",logo) 

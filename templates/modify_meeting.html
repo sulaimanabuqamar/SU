@@ -19,13 +19,13 @@
             <button class="toolbarBtn" style="border-top-left-radius: 10px;" type="button" onclick="execCommand('bold'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/bold.svg' %}" alt="B"></button>
             <button class="toolbarBtn" type="button" onclick="execCommand('italic'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/italic.svg' %}" alt="I"></button>
             <button class="toolbarBtn" type="button" onclick="execCommand('underline'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/underline.svg' %}" alt="U"></button>
-            <button class="toolbarBtn" type="button" onclick="execCommand('strikethrough'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/strikethrough.svg' %}" alt="S"></button>
-            <button class="toolbarBtn" type="button" onclick="execCommand('fontSize', true, 1); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/decrease_font_size.svg' %}" alt="-"></button>
-            <button class="toolbarBtn" type="button" onclick="execCommand('fontSize', false, 2); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/normal_font_size.svg' %}" alt="="></button>
-            <button class="toolbarBtn" type="button" onclick="execCommand('fontSize', true, 4); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/increase_font_size.svg' %}" alt="+"></button>
-            <button class="toolbarBtn" type="button" onclick="execCommand('justifyLeft'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/justify_left.svg' %}" alt="L"></button>
-            <button class="toolbarBtn" type="button" onclick="execCommand('justifyCenter'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/justify_center.svg' %}" alt="C"></button>
-            <button class="toolbarBtn" type="button" onclick="execCommand('justifyRight'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/justify_right.svg' %}" alt="R"></button>
+            <button class="toolbarBtn toolbarBtnControl" type="button" onclick="execCommand('strikethrough'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/strikethrough.svg' %}" alt="S"></button>
+            <button class="toolbarBtn toolbarBtnControl" type="button" onclick="execCommand('fontSize', true, 1); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/decrease_font_size.svg' %}" alt="-"></button>
+            <button class="toolbarBtn toolbarBtnControl" type="button" onclick="execCommand('fontSize', false, 2); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/normal_font_size.svg' %}" alt="="></button>
+            <button class="toolbarBtn toolbarBtnControl" type="button" onclick="execCommand('fontSize', true, 4); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/increase_font_size.svg' %}" alt="+"></button>
+            <button class="toolbarBtn toolbarBtnControl" type="button" onclick="execCommand('justifyLeft'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/justify_left.svg' %}" alt="L"></button>
+            <button class="toolbarBtn toolbarBtnControl" type="button" onclick="execCommand('justifyCenter'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/justify_center.svg' %}" alt="C"></button>
+            <button class="toolbarBtn toolbarBtnControl" type="button" onclick="execCommand('justifyRight'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/justify_right.svg' %}" alt="R"></button>
             <button class="toolbarBtn" type="button" onclick="document.getElementById('fontcolor').click(); document.getElementById('maineditor').focus(); "><img src="{% static '../media/images/text_color.svg' %}" alt="A"></button>
             <input type="color" style="width:  0px; border: none; margin:0px; padding: 0px;" id="fontcolor" oninput="execCommand('foreColor', true, this.value)">
             <button class="toolbarBtn" type="button" onclick="document.getElementById('backcolor').click(); document.getElementById('maineditor').focus(); "><img src="{% static '../media/images/highlight.svg' %}" alt="H"></button>
@@ -34,7 +34,7 @@
             <button class="toolbarBtn" type="button" onclick="this.children[0].click();"><input type="file" onchange="uploadFile(this.files[0])" accept="*/image" hidden><img src="{% static '../media/images/image.svg' %}" alt="T"></button>
             <button class="toolbarBtn" type="button" onclick="createLink()"><img src="{% static '../media/images/link.svg' %}" alt="R"></button>
         </div>
-        <div class="textfield bottom" required placeholder="Content" contentEditable="true" id="maineditor" style="width: 600px; height: 200px; padding-top: 10px; margin-top: 0px;">{{meeting.text|safe}}</div>
+        <div class="textfield bottom large" required placeholder="Content" contentEditable="true" id="maineditor" style=" padding-top: 10px; margin-top: 0px;">{{meeting.text|safe}}</div>
         <textarea class="textfield" hidden required name="content" placeholder="Content" contentEditable="true" style="width: 600px; height: 200px; padding-top: 10px;">{{meeting.text|safe}}</textarea>
         <script>
             setInterval(function() {document.getElementsByName('content')[0].innerHTML = document.getElementById('maineditor').innerHTML;},1);
@@ -90,7 +90,7 @@
         </script>
     </div>
     <input class="textfield" required name="date" type="date" placeholder="Date Of Meeting">
-    <div style="display: flex; flex-direction: row; align-items: center;">
+    <div class="linkcontrol" style=" align-items: start;">
         <input class="textfield" required name="starttime" type="time" placeholder="Start Time Of Meeting"> - 
         <input class="textfield" required name="endtime" type="time" placeholder="End Time Of Meeting">
         </div>
@@ -122,10 +122,10 @@
         document.getElementsByName("starttime")[0].value = toIsoString(startdate).split("T")[1];
         document.getElementsByName("endtime")[0].value = toIsoString(enddate).split("T")[1];
     </script>
-    <textarea class="textfield" name="links" placeholder="Links (One link per line, text to show first then ! then link. Ex: Google!https://google.com)" style="width: 600px; height: 100px;">{{links}}</textarea>
+    <textarea class="textfield  large slim" name="links" placeholder="Links (One link per line, text to show first then ! then link. Ex: Google!https://google.com)">{{links}}</textarea>
 <div id="attendeefield">
     <p class="aboutText">Attending Members: </p>
-    <input class="textfield" placeholder="Search..." style="margin: 0px; width: 100%;" id="memberSearch">
+    <input class="textfield" placeholder="Search..." style="margin: 0px; " id="memberSearch">
     <div class="container" id="memberGrid">
         {% for member in allUsers %}
         {% if member.associated_faculty is None %}
@@ -150,20 +150,8 @@
     </div>
     
 </div>
-    <label style="font-family: Inter; margin-left: 10px;"><input name="emailstudent" type="checkbox" > Email Student</label>
-    <label style="font-family: Inter; margin-left: 10px;"><input name="emailhos" type="checkbox" onchange="if(this.checked){document.getElementById('hosemail').hidden = false;} else {document.getElementById('hosemail').hidden = true;}"> Email Faculty</label>
-    <div id="hosemail" hidden>
-    <p class="aboutText" style="margin-left: 10px">Send Email About Meeting To: </p>
-    <div class="container">
-        {% for faculty in faculties %}
-        <div class="profileRow" style="border: black 3px solid; border-radius: 15px; padding: 10px; gap: 10px; margin-bottom: 5px">
-            <p class="text">{{ faculty.name}}</p>
-            <input type="checkbox" class="btn empty" name="{{faculty.email}}" {% getUserAttendingMeeting faculty.email meeting.id %}>
-        </div>
-        {% endfor %}
-    </div>
-</div>
-<div style="display: flex; flex-direction:row; margin-left: -10px; margin-top: 30px;">
+    <label style="font-family: Inter; margin-left: 10px;"><input name="emailstudent" type="checkbox" > Send Emails</label>
+<div class="linkcontrol" style=" margin-left: -10px; margin-top: 30px;">
     <button class="btn" onclick="navigation.back()" type="reset">Cancel Changes</button>
     <input type="submit" class="btn primary" value="Save Meeting" onclick="if(document.getElementsByName('emailstudent').checked || document.getElementsByName('emailhos').checked) { document.getElementsByClassName('loadingText')[0].innerText = 'Sending Emails...'; document.getElementsByClassName('loadingText')[0].hidden = false;  document.getElementById('loadingBG').hidden = false;}   var element = this; setTimeout(function() {element.disabled = true; element.style.backgroundColor = '#aaaaaa'; }, 250); setTimeout(function(){element.disabled = false; element.style.backgroundColor = '#1F355E';}, 10000);">
 </div>

@@ -101,13 +101,33 @@
         {% comment %} <svg xmlns="http://www.w3.org/2000/svg" class="loadingIcon" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M272-120 64-480l208-360h416l208 360-208 360H272Zm46-80h324l161-280-161-280H318L156-480l162 280Zm162-280Z"/></svg> {% endcomment %}
     </div>
     <div class="navBar">
+        <div class="antiside">
+            <script>
+                var drawerOpen = false;
+                function openDrawer(id) {
+                    drawerOpen = !drawerOpen; 
+                    var navbars = document.getElementsByClassName("navBarMobile");
+                    for(var i = 0; i < navbars.length; i++) {
+                        document.getElementsByClassName('navBarMobile')[i].style.animation = 'mobileLayoutClose forwards ease-in-out 0.3s';
+                    }
+                    if(id != "") {
+                        console.log("fired", id);
+                        document.getElementById(id).style.animation = 'mobileLayoutOpen forwards ease-in-out 0.3s';
+                    }
+                    
+                }
+            </script>
+            <button class="btn empty" onclick="if(drawerOpen) { openDrawer(''); } else { openDrawer('nav'); }">
+                <svg xmlns="http://www.w3.org/2000/svg" height="40px" viewBox="0 -960 960 960" width="40px" fill="#FFFFFF"><path d="M120-240v-66.67h720V-240H120Zm0-206.67v-66.66h720v66.66H120Zm0-206.66V-720h720v66.67H120Z"/></svg>
+            </button>
+        </div>
         <div>
             <a style="display: flex; align-items: center;" href="{% url 'home' %}">
                 <p class="logoText">ALMAWAKEB<br>STUDENTS' SOCIETY</p>
                 <img class="logo" src="{% static '../media/images/ss-white-logo.png' %}" alt="SS Logo">
             </a>
         </div>
-        <div style="display: flex; align-items: center; gap: 30px;">
+        <div class="side">
             <div class="dropdown">
                 <div class="dropbtn navText">What's On</div>
                 <div class="dropdown-content">
@@ -197,7 +217,75 @@
 
         </div>
     </div>
-    <div class="content {% if request.path == "/" %}centerer hirr" style="padding-top:0px;"{% else %}"{% endif %}> 
+    <div class="navBarMobile" style="animation: mobileLayoutClose forwards ease-in-out 0s" id="nav">
+            
+            <a class="mobileItem" onclick="openDrawer('whatsnew')">
+                <p class="navText">What's On</p>
+            </a>
+            <a href="{% url 'clubs' %}" class="mobileItem">
+                <p class="navText">Clubs & Societies</p>
+            </a>
+            <a href="{% url 'varsity' %}" class="mobileItem">
+                <p class="navText">Varsity Teams</p>
+            </a>
+            <a href="{% url 'scouts' %}" class="mobileItem">
+                <p class="navText">Scouts</p>
+            </a>
+            
+            <!-- Popup of signin -->
+            {% if user.is_authenticated %}
+                
+                {% if user.associated_clubs is None and user.associated_varsities is None %}
+                <a href="/profile/User" class="mobileItem"><p class="navText" style="cursor: pointer;">Profile</p></a>
+                {% else %}
+                <a class="mobileItem" onclick="openDrawer('profile')">
+                    <p class="navText">Profile</p>
+                </a>
+                {% endif %}
+            {% else %}
+                <p class="navText" style="cursor: pointer;" onclick="signIn()">Sign In</p>
+                {% comment %} <p class="navText" style="cursor: pointer;" onclick="document.getElementsByClassName('popupBG')[0].hidden = false;">Sign In</p> {% endcomment %}
+            {% endif %}
+    </div>
+    <div class="navBarMobile" style="animation: mobileLayoutClose forwards ease-in-out 0s" id="profile">
+        <a href="/profile/User" class="mobileItem">
+            <p class="navText" style="margin: 0px;">{{ user.name }}</p>
+        </a>
+        {% for club in user.associated_clubs.all %}
+        <a href="/profile/Club/{{club.pk}}" class="mobileItem">
+            <p class="navText" style="margin: 0px;">{{ club.name }}</p>
+        </a>
+        {% endfor %}
+        {% for varsity in user.associated_varsities.all %}
+        <a href="/profile/Varsity/{{varsity.pk}}" class="mobileItem">
+            <p class="navText" style="margin: 0px;">{{ varsity.name }}</p>
+        </a>
+        {% endfor %}
+        {% if "profile" in url %}
+        <a onclick="signOut(); openDrawer('');" class="mobileItem">
+            <p class="navText" style="margin: 0px;">Sign Out</p>
+        </a>
+        {% endif %}
+        <a onclick="openDrawer('nav')" class="mobileItem">
+            <p class="navText" style="margin: 0px;">Back</p>
+        </a>
+    </div>
+    <div class="navBarMobile" style="animation: mobileLayoutClose forwards ease-in-out 0s" id="whatsnew">
+        <a href="{% url 'events' %}" class="mobileItem">
+            <p class="navText" style="margin: 0px;">Events</p>
+        </a>
+        <a href="{% url 'news' %}" class="mobileItem">
+            <p class="navText" style="margin: 0px;">News</p>
+        </a>
+        <a href="{% url 'meetings' %}" class="mobileItem">
+            <p class="navText" style="margin: 0px;">Meetings</p>
+        </a>
+        <a onclick="openDrawer('nav')" class="mobileItem">
+            <p class="navText" style="margin: 0px;">Back</p>
+        </a>
+            
+    </div>
+    <div class="content {% if request.path == "/" %}centerer hirr" style="padding-top:70px;"{% else %}"{% endif %}> 
         {% block content %}{% endblock %}
     </div>
     <div class="footer">
@@ -208,9 +296,30 @@
 </html>
 
 <script>
+let details = navigator.userAgent; 
+let regexp = /android|iphone|kindle|ipad/i; 
+let isMobileDevice = regexp.test(details); 
+  setInterval(function() {
+  isMobileDevice = regexp.test(details); 
+  }, 1);
     document.addEventListener('DOMContentLoaded', function() {
         var dropdown = document.getElementsByClassName('dropbtn');
         for(var i = 0; i < dropdown.length; i++) {
+        if(isMobileDevice) {
+            dropdown[i].onclick = function(event) {
+                var dropdownContent = this.nextElementSibling;
+                this.checked = !this.checked
+                if(this.checked) {
+                this.dropdown = dropdownContent;
+                dropdownContent.style.display = "block";
+                }
+                else {
+                var dropdownContent = this.dropdown;
+                dropdownContent.style.display = "none";
+                }
+            }
+        }
+            else {
             dropdown[i].onmouseover = function(event) {
                 var dropdownContent = this.nextElementSibling;
                 dropdownContent.style.display = "block";
@@ -219,7 +328,7 @@
                     dropdownContent.style.display = "none";
                 }
             }
-            
+        }
         }
     });
 </script>

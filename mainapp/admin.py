@@ -8,7 +8,6 @@ from .models import *
 
 class UserAdmin(BaseUserAdmin):
     list_display = ('email', 'name', 'is_admin', 'is_staff',  'is_superuser')
-    list_filter = ('is_admin', 'is_staff')
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
         ('Personal Info', {'fields': ('name',)}),
@@ -30,10 +29,10 @@ class StudentAdmin(admin.ModelAdmin):
     list_filter = ('year_level', 'section')
     fieldsets = (
         (None, {'fields': ('student_db_id',)}),
-        (None, {'fields': ('year_level', 'section', 'profile_picture', 'about')}),
+        (None, {'fields': ('year_level', 'section', 'profile_picture', 'about', 'year_level_title')}),
         # ('Memberships', {'fields': ('clubs', 'varsities')}),
     )
-    search_fields = ('year_level', 'section')
+    search_fields = ('year_level', 'section', 'student_db_id')
     # filter_horizontal = ('clubs', 'varsities')
 class FacultyAdmin(admin.ModelAdmin):
     list_display = ('faculty_db_id', 'profile_picture')
@@ -51,6 +50,7 @@ class ClubAdmin(admin.ModelAdmin):
     fieldsets = (
         (None, {'fields': ('name', 'about', 'logo', 'color', 'links')}),
         ('Membership', {'fields': ('heads', 'leadership', 'members', 'advisors')}),
+        ('Events', {'fields': ('events', )}),
     )
 
 class VarsityAdmin(admin.ModelAdmin):
@@ -63,25 +63,22 @@ class VarsityAdmin(admin.ModelAdmin):
         ('Captains', {'fields': ('captains',)}),
         ('Players', {'fields': ('members',)}), 
         ('Coaches', {'fields': ('coaches',)}),
+        ('Events (DO NOT USE)', {'fields': ('events',)}),
 
     )
 
 class EventAdmin(admin.ModelAdmin):
-    list_display = ('author', 'title', 'published_date', 'summary', 'members_only', 'highlight', 'group', 'grade')
+    list_display = ('title', 'author', 'published_date', 'summary', 'members_only', 'highlight', 'group', 'grade')
     list_filter = ('members_only', 'highlight')
     search_fields = ('summary',)
 class MeetingAdmin(admin.ModelAdmin):
-    list_display = ('pk', 'author', 'title', 'published_date')
+    list_display = ('title', 'author', 'pk', 'published_date')
     search_fields = ('summary','title', 'text') 
 
 class NewsAdmin(admin.ModelAdmin):
-    list_display = ('author',  'title', 'summary','awaiting_approval', 'approved', 'group', 'grade', 'published_date')
+    list_display = ('title',  'author', 'summary','awaiting_approval', 'approved', 'group', 'grade', 'published_date')
     list_filter = ('highlight', 'group', 'grade')
     search_fields = ('summary',)
-    fieldsets = (
-        (None, {'fields': ('author', 'cover', 'title', 'text', 'summary', 'highlight', 'published_date', 'links')}),
-        ('Visibility', {'fields': ('group', 'grade','approved','awaiting_approval','denied_reason')}), 
-    )
     
 class HomepageAdmin(admin.ModelAdmin):
     fields = ['event_highlight_1', 'event_highlight_2', 'event_highlight_3', 'news_highlight_1', 'news_highlight_2', 'news_highlight_3', 'officer_highlight_1', 'officer_highlight_2', 'officer_highlight_3', 'officer_highlight_4','carousel_scroll_duration']

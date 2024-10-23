@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block content %}
-<div style="display: flex; gap: 100px; justify-content: space-between;">
+<div class="pagecontrol">
     <div style="display: flex; justify-content: space-between; flex-direction: column; flex: 1;">
         <p class="pageTitle" style="margin: 0px;">{{ club.name }}</p>
         <br>
@@ -42,9 +42,8 @@
                 {% for player in varsity.coaches.all %}
                 <div class="profileRow">
                     <div class="profileRow Box" style="border: blue 3px solid; border-radius: 15px; padding: 10px; gap: 10px;">
-                        <img class="eventCover" style=" width: 50px; height: 50px; margin-right: 10px;" src="{{ player.associated_student.profile_picture.url }}" alt="Club Cover">
+                        <img class="eventCover" style=" width: 50px; height: 50px; margin-right: 10px;" src="{{ player.associated_faculty.profile_picture.url }}" alt="Club Cover">
                         <p class="text">{{ player.name }}</p>
-                        <p class="aboutText">{{ player.associated_student.year_level }}{{ player.associated_student.section }}</p>
                         <button class="btn empty" onclick="removeMember('{{player.email}}', 'Coach')"><img src="{%static '../media/images/removeButton.svg' %}"></button>
                     </div>
                 </div>
@@ -82,8 +81,8 @@
             <p class="tagText">Varsity</p>
         </div>
         <p class="aboutText sidebar">{{ varsity|safe }}</p>
-        <a href="/profile/Edit/Varsity/{{varsity.pk}}"><button class="btn">Edit Varsity</button></a><br>
-        <button class="btn" onclick="downloadList()">Download List of Members</button>
+        <a href="/profile/Edit/Varsity/{{varsity.pk}}" class="centercontrol"><button class="btn">Edit Varsity</button></a><br>
+        <a class="centercontrol"><button class="btn" onclick="downloadList()">Download List of Members</button></a>
     </div>
 </div>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.13.1/xlsx.full.min.js"></script> 
@@ -128,9 +127,8 @@ function downloadList() {
             {% if member not in varsity.coaches.all and member.associated_faculty is not None %}
             <div class="profileRow">
                 <div class="profileRow" style="border: blue 3px solid; border-radius: 15px; padding: 5px; gap: 10px;">
-                    <img class="eventCover" style=" width: 50px; height: 50px;" src="{{ member.associated_student.profile_picture.url }}" alt="Club Cover">
+                    <img class="eventCover" style=" width: 50px; height: 50px;" src="{{ member.associated_faculty.profile_picture.url }}" alt="Club Cover">
                     <p class="text">{{ member.name }}</p>
-                    <p class="aboutText">{{ member.associated_student.year_level }}{{ member.associated_student.section }}</p>
                     <button class="btn empty" onclick="addMember('{{member.email}}', 'Coach')"><img src="{%static '../media/images/joinButton.svg' %}"></button>
                 </div>
             </div>
