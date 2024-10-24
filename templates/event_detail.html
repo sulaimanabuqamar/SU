@@ -6,6 +6,7 @@
 {% endblock %}
 
 {% block content %}
+{% if user.associated_student is not None and event.author.type == user.associated_student.gender or user.associated_faculty is not None or user.is_superuser %}
 <div class="pagecontrol">
     <div style="display: flex; justify-content: space-between; flex-direction: column;">
         <p class="pageTitle" style="margin: 0px;">{{ event.title }}</p>
@@ -159,4 +160,8 @@ function setAttendeeNotConfirmed(email) {
     }, 1);
     
 </script>
+{% else %}
+<p style="font-size: 70px; font-weight: bold; margin-top: 50px; text-align: center; font-family: Inter;">This Event Is Not Available For Your Section.</p>
+    <p style="font-size: 20px; text-align: center; font-family: Inter;">Oops! The event you’re looking for is not available for your section. If you were redirected here, please use your browser’s back button and try again. If the issue persists, kindly report it to one of the SS Officers for assistance.</p>
+{% endif %}
 {% endblock %}

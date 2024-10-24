@@ -11,6 +11,7 @@
 </div>
 <div class="grid">
     {% for club in clubs %}
+    {% if user.associated_student is not None and club.type == user.associated_student.gender or user.associated_faculty is not None or user.is_superuser %}
     <div>
         <a href="{% url 'club_detail' club.id %}">
             <img class="eventCover" style="border: {{ club.color }} 3px solid;" src="{{ club.logo.url }}" alt="Club Cover">
@@ -18,6 +19,7 @@
             <p class="aboutText">{{ club.date }}</p>
         </a>
     </div>
+    {% endif %}
     {% empty %}
     <p class="text">No clubs available.</p>
     {% endfor %}

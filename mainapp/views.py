@@ -162,7 +162,7 @@ def Clubs(request):
     for club in sorted_clubs:
         if "Scouts" not in club.about:
             filtered_clubs.append(club)
-    return render(request, "clubs.html", {'clubs': filtered_clubs}) 
+    return render(request, "clubs.html", {'clubs': filtered_clubs, 'user': request.user}) 
 
 def Club_Detail(request, club_id):
     club = get_object_or_404(Club, id=club_id) 

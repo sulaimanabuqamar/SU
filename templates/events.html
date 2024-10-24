@@ -32,7 +32,7 @@
 </div>
 <div class="grid">
     {% for event in events %}
-
+    {% if user.associated_student is not None and event.author.type == user.associated_student.gender or user.associated_faculty is not None or user.is_superuser %}
 
 
     {% if event.group == "ngr" and event.grade == "nosec" %}
@@ -149,6 +149,7 @@
             </div>
         </a>
     </div>
+    {% endif %}
     {% endif %}
     {% endif %}
     {% endif %}

@@ -81,6 +81,7 @@ class Student(models.Model):
     profile_picture = models.ImageField(upload_to='profiles/', null=True, blank=True, default='default-pfp.png')
     about = models.TextField(blank=True,null=True)
     year_level_title = models.CharField(max_length=10, blank=True)
+    gender = models.CharField(max_length=10,choices=[('male', 'Male'), ('female','Female')], default='male')
     def save(self, *args, **kwargs):
         # super().save(*args, **kwargs)
         print(self.year_level)
@@ -95,8 +96,11 @@ class Student(models.Model):
             self.year_level_title = "Senior"
         else:
             print("error not hs")
-            self.year_level_title = "Underage" 
-        print(self.year_level_title)
+            self.year_level_title = "Underage"
+        if self.section == 'B' or self.section == 'E' or self.section == 'H' or self.section == 'D' or self.section == 'J':
+            self.gender = 'male'
+        else:
+            self.gender = 'female'
         
         return super().save(*args, **kwargs)
 class Faculty(models.Model):
@@ -110,6 +114,7 @@ class Club(models.Model):
     members = models.ManyToManyField(User, related_name='membership_clubs', blank=True)
     advisors = models.ManyToManyField(User, related_name='advisor_clubs', blank=True)
     events = models.ManyToManyField('Event', related_name='events', blank=True)
+    type = models.CharField(choices=[('male', "Boys Only"),('female','Girls Only'), ('mixed', 'Mixed Club')], default='mixed', max_length=6)
     about = models.TextField()
     logo = models.ImageField(upload_to='clubs_logos/')
     color = models.CharField(max_length=7)  # Hex color code

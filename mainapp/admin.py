@@ -29,7 +29,7 @@ class StudentAdmin(admin.ModelAdmin):
     list_filter = ('year_level', 'section')
     fieldsets = (
         (None, {'fields': ('student_db_id',)}),
-        (None, {'fields': ('year_level', 'section', 'profile_picture', 'about', 'year_level_title')}),
+        (None, {'fields': ('year_level', 'section', 'profile_picture', 'about', 'year_level_title', 'gender')}),
         # ('Memberships', {'fields': ('clubs', 'varsities')}),
     )
     search_fields = ('year_level', 'section', 'student_db_id')
@@ -48,7 +48,7 @@ class ClubAdmin(admin.ModelAdmin):
     filter_horizontal = ('heads', 'leadership', 'members', 'advisors', 'events')  # Use a horizontal filter for many-to-many fields
 
     fieldsets = (
-        (None, {'fields': ('name', 'about', 'logo', 'color', 'links')}),
+        (None, {'fields': ('name', 'about', 'logo', 'color', 'links', 'type')}),
         ('Membership', {'fields': ('heads', 'leadership', 'members', 'advisors')}),
         ('Events', {'fields': ('events', )}),
     )
