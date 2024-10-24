@@ -1,19 +1,18 @@
 ## Important
 Make sure that the port 81 is also able to be run on ss.amb.sch.ae, this server is important to allow the main server to get static and media files.
 
-Make sure that the server is currently set to the `data` branch. Make sure to run `git checkout data` to switch to the `data` branch.
-This makes sure that the server can automatically update.
+Anything related to git checkout and the software update system has been disabled and can be disregarded, there is only 1 git branch and that is `main`
 # Switching from Debug enabled to disabled
 1. In `settings.py` change `Debug` to `False`
 2. In `settings.py` comment out `STATIC_URL = "http://localhost:81/static/"`
-And uncomment `# STATIC_URL = "https://ss.amb.sch.ae:81/static/"`
+And uncomment `# STATIC_URL = "https://ss.amb.sch.ae/static/"`
 3. In `settings.py` comment out `MEDIA_URL = 'http://localhost:81/media/'`
-And uncomment `# MEDIA_URL = 'https://ss.amb.sch.ae:81/media/'`
+And uncomment `# MEDIA_URL = 'https://ss.amb.sch.ae/media/'`
 ## To switch back to Debug enabled do the opposite for the steps above
 
 # Creating Clubs/Varsities/Scouts
 ## Creating Clubs
-- Complete all the information fields such as the name, about, logo, color, and links (optional)
+- Complete all the information fields such as the name, about, logo, color, type, and links (optional)
 - You can optionally also add the students/faculty to your club at creation time but it is recommended to be done from the normal site instead of the admin page
 
 > IMPORTANT: Make sure that you add the club to the appropriate users' associated_clubs field to ensure that they have access to modify the club
@@ -23,6 +22,8 @@ And uncomment `# MEDIA_URL = 'https://ss.amb.sch.ae:81/media/'`
 The process for creating varsities is the same as clubs, except use the dedicated varsities section for this task, also the scouts classification does not apply here so if needed you can capitalize the word `Scouts`
 ## Creating Scouts
 To create a scouts, you must create a new club like normal but you MUST add the word `Scouts` (capitalization matters!) anywhere in the about section, you can disguise it in the about text, Example: `The x Scouts consists of our Senior Members aswell as our Juniors`
+### Important Info About Creating Clubs/Varsities/Scouts
+Only clubs have the segregation filter where u can have clubs specific to the girls section, vice versa, and mixed.
 
 # Declaring accounts as Admin (When assigning relevant people and SS officers)
 To declare a user as an admin for any reason, you must set the following to true:
@@ -56,12 +57,13 @@ AMIC Website!https://amic.amb.sch.ae
 ```
 Result: [AMIC Member Applications](https://docs.google.com/forms), [AMIC Website](https://amic.amb.sch.ae)
 
-# Updating The Server Post Production
+# Updating The Server Post Production [DEPRACATED, PLEASE DISREGARD]
 To Update the server, follow these steps:
 1. Go to the profile page and press on the **prepare** system update button
 2. Then on your code, pull the code from the `data` branch and make your changes
 3. Push your changes to the `prod` branch
 4. Go to the profile page and press on the **perform** system update button and it should automatically update and finish
+
 
 #  Common Issues and their solutions
 ## 1. "I Can't Access my profile page!" or "There is nothing in my profile page!"
@@ -82,10 +84,11 @@ Check if the news post is still pending approval or denied and inform the user a
 
 # GitHub Branches, Pushing Code, and More (ADMINS/DEVS ONLY)
 ## Branches and Their Uses
-The GitHub repo has 3 branches: `main`, `prod`, and `data`. The `main` branch is used for the pre-release code, this code should usually be the most unstable and only used when a bug fix is being worked on for the main site or a new feature, etc. The `prod` branch is used for the production ready code, this is the code that is gonna go on the production server, it is usually the most stable and error free and should not be edited on. This is also the branch that the server will the system update from. The `data` branch is used only for the live server, this branch is where the server dumps its version of the code for bugfixes or whenever you have a new feature you want to work on, its used get the current save data from the server as it is.
+~~The GitHub repo has 3 branches: `main`, `prod`, and `data`. The `main` branch is used for the pre-release code, this code should usually be the most unstable and only used when a bug fix is being worked on for the main site or a new feature, etc. The `prod` branch is used for the production ready code, this is the code that is gonna go on the production server, it is usually the most stable and error free and should not be edited on. This is also the branch that the server will the system update from. The `data` branch is used only for the live server, this branch is where the server dumps its version of the code for bugfixes or whenever you have a new feature you want to work on, its used get the current save data from the server as it is.~~
 
-## Pushing Code
+The GitHub repo has only one branch called `main` which is used to put the normal latest code
+## Pushing Code [DEPRACATED, PLEASE DISREGARD]
 The first thing you must do is prepare for a system update by pressing the prepare for system update button in the profile page, it will dump the server code on the `data` branch which then you pull and merge to the `main` branch to start working on the bug fix, if you took a long time to implement the feature/fix, do the prepare for system update process again and merge with `main` to sync then push your changes to `prod` once its ready, bug-checked and ready for production. Once the push is complete, go to the profile page and press on the perform system update button to start updating, the server will pull the latest code from the `prod` branch and automatically reboot to apply. 
 
-## Pushing Code To The Live Server
+## Pushing Code To The Live Server [DEPRACATED, PLEASE DISREGARD]
 If you are tasked with pushing the code to the server for the first time but you don't know which branch you must pull from, pull from the `prod` branch then use the command `git checkout data` to switch to the `data` branch to be able to receive updates. 
