@@ -220,7 +220,7 @@ div.aboutText.sidebar {
     width: 100%;
     height: 100%;
     background: rgba(0, 0, 0, 0.5);
-    z-index:4;
+    z-index:22;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -294,7 +294,7 @@ width: 45px;
     left: calc( 50% - 200px ); */
     width: 400px;
     border-radius: 30px;
-    z-index:5;
+    z-index:23;
     background-color: white;
     padding: 20px
 }
@@ -558,6 +558,7 @@ div {
     font-family: Inter; 
     font-weight: 800; 
     margin: 0px;
+    text-align: left;
 }
 .homepageArange {
     width: 100%;
@@ -621,8 +622,9 @@ div {
         align-items: center;
     }
     .highlightContent {
-        gap: 20px;
+        gap: 10px;
         padding-left: 5px;
+        flex-direction: column-reverse;
     }
     .highlightImage {
         width: 150px;
@@ -630,9 +632,14 @@ div {
     }
     .highlightTitle {
         font-size: 30px;
+        margin: 0px;
+        text-align: center;
     }
     .highlightSubtitle {
-        font-size: 20px;
+        font-size: 16px;
+        margin: 0px;
+        margin-top: 10px;
+        text-align: center;
     }
     .homeheader {
         font-size: 35px;

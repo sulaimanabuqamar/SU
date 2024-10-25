@@ -22,6 +22,7 @@
     <button class="btn empty" onclick="previousHighlight()"><img src="{% static '../media/images/leftArrow.svg' %}"></button>
     <div class="highlightOverflow">
         {% for event in highlights %}
+        {% if user.associated_student is not None and club.type == user.associated_student.gender or user.associated_faculty is not None or user.is_superuser %}
         <a class="highlightContent" href="/{% if event.typeitem == "event" %}Event{% elif event.typeitem == "news" %}News{% endif %}/Detail/{{event.pk}}">
             <div>
                 <p class="highlightTitle">{{event.title}}</p>
@@ -29,6 +30,7 @@
             </div>
             <img class="highlightImage" src="{{ event.cover.url }}" style="border: 2px solid {{ event.color.color }};" alt="Event Highlight">
         </a>
+        {% endif %}
         {% endfor %}
     </div>
     <button class="btn empty" onclick="nextHighlight()"><img src="{% static '../media/images/rightArrow.svg' %}"></button>
@@ -58,7 +60,7 @@
     </a>
     {% endif %}
 </div>
-<div style="text-align: left; width: 100%;">
+<div class="homeheader" style="width: 100%;">
     <p class="hpsubtitle">LATEST NEWS</p>
 </div>
 <div class="homepageArange">
@@ -84,7 +86,7 @@
     </a>
     {% endif %}
 </div>
-<div style="text-align: left; width: 100%;">
+<div class="homeheader" style="width: 100%;">
     <p class="hpsubtitle">OFFICERS OF THE SS</p>
 </div> 
 <div class="homepageArange">
