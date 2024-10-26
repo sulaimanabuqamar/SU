@@ -490,6 +490,7 @@ def ModifyEvent(request: WSGIRequest, event_id):
         event.grade = request.POST.get("sectionfilter")
         event.start_time=request.POST.get("starttime")
         event.end_time=request.POST.get("endtime")  
+        event.published_date = datetime.datetime.now()
         event.members_only = request.POST.get("membersonly") is not None
         event.highlight = request.POST.get("highlight") is not None
         file = request.FILES.get("coverPhoto")
@@ -651,6 +652,7 @@ def ModifyMeeting(request: WSGIRequest, meeting_id):
         meeting.location = request.POST.get("location")
         meeting.start_time=request.POST.get("starttime")
         meeting.end_time=request.POST.get("endtime")
+        meeting.published_date = datetime.datetime.now()
         linkstr = request.POST.get("links")
         print("(" + linkstr + ")")
         meeting.links.clear()
@@ -777,6 +779,7 @@ def ModifyNews(request: WSGIRequest, news_id):
         news.summary = request.POST.get("summary")
         news.group = request.POST.get("gradefilter")
         news.grade = request.POST.get("sectionfilter")
+        news.published_date = datetime.datetime.now()
         news.highlight = request.POST.get("highlight") is not None
         news.approved = False
         news.awaiting_approval = True
