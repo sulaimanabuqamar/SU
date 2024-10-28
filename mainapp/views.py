@@ -100,11 +100,11 @@ def Scouts_Detail(request, scouts_id):
     return render(request, "scouts_detail.html", {'scouts': scouts, 'user': request.user, 'events':events, 'links': scouts.links.all()})
 
 def Meetings(request: WSGIRequest):
-    meetings = Meeting.objects.all().order_by('-date').order_by('-start_time')
+    meetings = Meeting.objects.all().order_by('-date')
     meetings_filtered = []
     for meeting in meetings:
         print(meeting.attending_Members.all())
-        if request.user in meeting.attending_Members.all():
+        if request.user in meeting.attending_Members.all() or meeting.author in request.user.associated_clubs.all():
             print(request.user.name)
             meetings_filtered.append(meeting)
     return render(request, "meetings.html", {'hasClubs':hasClubs(request.user),'meetings': meetings_filtered, 'user': request.user})
@@ -401,9 +401,9 @@ def CreateEvent(request:WSGIRequest, club_id):
             with open(filename, 'wb+') as f:
                 for chunk in file.chunks():
                     f.write(chunk)
-            event = Event.objects.create(author=club, significant_event=(request.POST.get("significant") is not None), cover=filename.replace(str(settings.BASE_DIR), '').replace("/media",""), title=request.POST.get("title"), text=request.POST.get("content"), summary=request.POST.get("summary"), date=request.POST.get("date"), start_time=request.POST.get("starttime"), end_time=request.POST.get("endtime"), location=request.POST.get("location"), color=club, members_only=(request.POST.get("membersonly") is not None), highlight=(request.POST.get("highlight") is not None), group=request.POST.get("gradefilter"), grade=request.POST.get("sectionfilter"), published_date=datetime.datetime.now())
+            event = Event.objects.create(author=club, significant_event=(request.POST.get("significant") is not None), cover=filename.replace(str(settings.BASE_DIR), '').replace("/media",""), title=request.POST.get("title"), text=request.POST.get("content"), summary=request.POST.get("summary"), date=request.POST.get("date"), start_time=request.POST.get("starttime"), end_time=request.POST.get("endtime"), location=request.POST.get("location"), color=club, members_only=(request.POST.get("membersonly") is not None), highlight=(request.POST.get("highlight") is not None), group=request.POST.get("gradefilter"), grade=request.POST.get("sectionfilter"), published_date=datetime.datetime.now(), draft=request.POST.get("draft") is not None)
         else: 
-            event = Event.objects.create(author=club, significant_event=(request.POST.get("significant") is not None), title=request.POST.get("title"), text=request.POST.get("content"), summary=request.POST.get("summary"), date=request.POST.get("date"), start_time=request.POST.get("starttime"), end_time=request.POST.get("endtime"), location=request.POST.get("location"), color=club, members_only=(request.POST.get("membersonly") is not None), highlight=(request.POST.get("highlight") is not None), group=request.POST.get("gradefilter"), grade=request.POST.get("sectionfilter"), published_date=datetime.datetime.now())
+            event = Event.objects.create(author=club, significant_event=(request.POST.get("significant") is not None), title=request.POST.get("title"), text=request.POST.get("content"), summary=request.POST.get("summary"), date=request.POST.get("date"), start_time=request.POST.get("starttime"), end_time=request.POST.get("endtime"), location=request.POST.get("location"), color=club, members_only=(request.POST.get("membersonly") is not None), highlight=(request.POST.get("highlight") is not None), group=request.POST.get("gradefilter"), grade=request.POST.get("sectionfilter"), published_date=datetime.datetime.now(), draft=request.POST.get("draft") is not None)
         linkstr = request.POST.get("links")
         print("(" + linkstr + ")")
         if linkstr is not None and linkstr != "":
@@ -493,6 +493,7 @@ def ModifyEvent(request: WSGIRequest, event_id):
         event.published_date = datetime.datetime.now()
         event.members_only = request.POST.get("membersonly") is not None
         event.highlight = request.POST.get("highlight") is not None
+        event.draft = request.POST.get("draft") is not None
         file = request.FILES.get("coverPhoto")
         if file is not None:
             filename = os.path.join(settings.MEDIA_ROOT,"event_covers", str(random.randint(11111111,999999999)) + file.name)
@@ -564,6 +565,16 @@ def ModifyEvent(request: WSGIRequest, event_id):
                 send_mail("Event Details Changed", "Students' Society", None, hosemails, False, html_message=email)
         event.save()
         return redirect("/Event/Detail/" + str(event.pk))
+def DraftEvent(request: WSGIRequest,club_id, event_id):
+    print("draft", club_id, event_id)
+    value = request.POST.copy()
+    value["draft"] = "true"
+    request.POST = value
+    for event in Event.objects.all():
+        if event_id == event.pk:
+            print("found")
+            return ModifyEvent(request, event_id)
+    return CreateEvent(request, club_id)
 def CreateMeeting(request:WSGIRequest, club_id):
     club = Club.objects.get(id=club_id)
     if request.method == "GET":
@@ -580,7 +591,7 @@ def CreateMeeting(request:WSGIRequest, club_id):
         
         return render(request, "create_meeting.html", {'user': request.user, 'members': students, 'club':club, 'allUsers': allusers}) 
     elif request.method == "POST":
-        meeting = Meeting.objects.create(author=club, title=request.POST.get("title"), text=request.POST.get("content"), date=request.POST.get("date"), start_time=request.POST.get("starttime"), end_time=request.POST.get("endtime"), location=request.POST.get("location"), published_date=datetime.datetime.now())
+        meeting = Meeting.objects.create(author=club, title=request.POST.get("title"), text=request.POST.get("content"), date=request.POST.get("date"), start_time=request.POST.get("starttime"), end_time=request.POST.get("endtime"), location=request.POST.get("location"), published_date=datetime.datetime.now(), draft=request.POST.get("draft") is not None)
         linkstr = request.POST.get("links")
         print("(" + linkstr + ")")
         if linkstr is not None and linkstr != "":
@@ -653,6 +664,7 @@ def ModifyMeeting(request: WSGIRequest, meeting_id):
         meeting.start_time=request.POST.get("starttime")
         meeting.end_time=request.POST.get("endtime")
         meeting.published_date = datetime.datetime.now()
+        meeting.draft = request.POST.get("draft") is not None
         linkstr = request.POST.get("links")
         print("(" + linkstr + ")")
         meeting.links.clear()
@@ -715,7 +727,15 @@ def ModifyMeeting(request: WSGIRequest, meeting_id):
                 send_mail("Meeting Details Changed", "Students' Society", None, hosemails, False, html_message=email)
         meeting.save()
         return redirect("/Meetings/Detail/" + str(meeting.pk))
-
+def DraftMeeting(request: WSGIRequest,club_id, meeting_id):
+    print("draft") 
+    value = request.POST.copy()
+    value["draft"] = "true"
+    request.POST = value
+    for meeting in Meeting.objects.all():
+        if meeting_id == meeting.pk:
+            return ModifyMeeting(request, meeting_id)
+    return CreateMeeting(request, club_id)
 def CreateNews(request: WSGIRequest):
     if request.method == "GET":
         return render(request, "create_news.html", {'user': request.user})
@@ -726,9 +746,9 @@ def CreateNews(request: WSGIRequest):
             with open(filename, 'wb+') as f:
                 for chunk in file.chunks():
                     f.write(chunk)
-            event = News.objects.create(author=request.user, cover=filename.replace(str(settings.BASE_DIR), '').replace("/media",""), title=request.POST.get("title"), text=request.POST.get("content"), published_date=datetime.datetime.now(), summary=request.POST.get("summary"), highlight=(request.POST.get("highlight") is not None), group=request.POST.get("gradefilter"), grade=request.POST.get("sectionfilter"))  
+            event = News.objects.create(author=request.user, cover=filename.replace(str(settings.BASE_DIR), '').replace("/media",""), title=request.POST.get("title"), text=request.POST.get("content"), published_date=datetime.datetime.now(), summary=request.POST.get("summary"), highlight=(request.POST.get("highlight") is not None), group=request.POST.get("gradefilter"), grade=request.POST.get("sectionfilter"), draft=request.POST.get("draft") is not None)  
         else: 
-            event = News.objects.create(author=request.user, title=request.POST.get("title"), text=request.POST.get("content"), published_date=datetime.datetime.now(), summary=request.POST.get("summary"), highlight=(request.POST.get("highlight") is not None), group=request.POST.get("gradefilter"), grade=request.POST.get("sectionfilter"))  
+            event = News.objects.create(author=request.user, title=request.POST.get("title"), text=request.POST.get("content"), published_date=datetime.datetime.now(), summary=request.POST.get("summary"), highlight=(request.POST.get("highlight") is not None), group=request.POST.get("gradefilter"), grade=request.POST.get("sectionfilter"), draft=request.POST.get("draft") is not None)  
         linkstr = request.POST.get("links")
         print("(" + linkstr + ")")
         if linkstr is not None and linkstr != "": 
@@ -783,6 +803,7 @@ def ModifyNews(request: WSGIRequest, news_id):
         news.highlight = request.POST.get("highlight") is not None
         news.approved = False
         news.awaiting_approval = True
+        news.draft = request.POST.get("draft") is not None
         file = request.FILES.get("coverPhoto")
         if file is not None:
             filename = os.path.join(settings.MEDIA_ROOT,"event_covers", str(random.randint(11111111,999999999)) + file.name)
@@ -814,7 +835,15 @@ def ModifyNews(request: WSGIRequest, news_id):
         send_mail("News Post Awaiting Approval", "Students' Society", None, officers, False, html_message=email)
         news.save()
         return redirect("/News/Detail/" + str(news.pk))
-
+def DraftNews(request: WSGIRequest, news_id):
+    print("draft") 
+    value = request.POST.copy()
+    value["draft"] = "true"
+    request.POST = value
+    for news in News.objects.all():
+        if news_id == news.pk:
+            return ModifyNews(request, news_id)
+    return CreateNews(request)
 def MeetingAttendeePermissionSlips(request: WSGIRequest, meeting_id: int):
     meeting = Meeting.objects.get(id=meeting_id)
     return render(request, "permission_slips.html", {'attendees': meeting.attending_Members.all(), 'meeting': meeting})

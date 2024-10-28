@@ -32,6 +32,7 @@
 </div>
 <div class="grid">
     {% for event in events %}
+    {% if event.draft == False %}
     {% if user.associated_student is not None and event.author.type == user.associated_student.gender or user.associated_faculty is not None or user.is_superuser %}
 
 
@@ -151,6 +152,22 @@
     </div>
     {% endif %}
     {% endif %}
+    {% endif %}
+    {% endif %}
+    {% else %}
+    {% if event.author in user.associated_clubs.all %}
+    <div>
+        <a href="{% url 'event_detail' event.id %}">
+            <img class="eventCover" src="{{ event.cover.url }}" alt="Event Cover" style="opacity: 0.6;">
+            <p class="text">{{ event.title }}</p>
+            <p class="aboutText">{{ event.date }}</p>
+            <p class="aboutText">{{ event.start_time|time:"g:i A" }} - {{ event.end_time|time:"g:i A" }}</p>
+            <p class="aboutText" style="color: orange;">Draft</p>
+            <div class="tagBox" style="background: {{ event.author.color }};">
+                <p class="tagText">{{ event.author.name }}</p>
+            </div>
+        </a>
+    </div>
     {% endif %}
     {% endif %}
     {% empty %}

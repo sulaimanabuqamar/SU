@@ -10,7 +10,7 @@
 <div>
     <p class="pageTitle">Modify Meeting</p>
 </div>
-<form method="post" class="profileRow" style="align-items: start;" enctype="multipart/form-data">
+<form method="post" class="profileRow" id="mainform" style="align-items: start;" enctype="multipart/form-data">
     {% csrf_token %}
     <div style="display: flex; flex-direction: column;">
     <input class="textfield" required name="title" placeholder="Title" value="{{meeting.title}}">
@@ -153,6 +153,7 @@
     <label style="font-family: Inter; margin-left: 10px;"><input name="emailstudent" type="checkbox" > Send Emails</label>
 <div class="linkcontrol" style=" margin-left: -10px; margin-top: 30px;">
     <button class="btn" onclick="navigation.back()" type="reset">Cancel Changes</button>
+    <button type="button" class="btn"  onclick="document.getElementById('mainform').action = '/Meetings/Draft/{{meeting.author.pk}}/{{meeting.pk}}/'; document.getElementById('mainform').submit(); var element = this; setTimeout(function() {element.disabled = true; element.style.backgroundColor = '#aaaaaa'; }, 250); setTimeout(function(){element.disabled = false; element.style.backgroundColor = 'white';}, 10000);">Save to Drafts</button><br>
     <input type="submit" class="btn primary" value="Save Meeting" onclick="if(document.getElementsByName('emailstudent').checked) { document.getElementsByClassName('loadingText')[0].innerText = 'Sending Emails...'; document.getElementsByClassName('loadingText')[0].hidden = false;  document.getElementById('loadingBG').hidden = false;}   var element = this; setTimeout(function() {element.disabled = true; element.style.backgroundColor = '#aaaaaa'; }, 250); setTimeout(function(){element.disabled = false; element.style.backgroundColor = '#1F355E';}, 10000);">
 </div>
     </div>

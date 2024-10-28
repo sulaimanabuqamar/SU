@@ -10,7 +10,7 @@
 <div>
     <p class="pageTitle">Modify Event</p>
 </div>
-<form method="post" class="detailsSide reverse" style="align-items: start;" enctype="multipart/form-data">
+<form method="post" class="detailsSide reverse" id="mainform" style="align-items: start;" enctype="multipart/form-data">
     {% csrf_token %}
     <div style="display: flex; flex-direction: column;">
     <p class="subtext" id="wrongcred" hidden style="color: red">Incorrect Username or Password</p>
@@ -183,7 +183,8 @@
 </div>
 <div class="linkcontrol" style="margin-left: -10px; margin-top: 30px;">
     <button class="btn" onclick="navigation.back()" type="reset">Cancel Changes</button>
-    <input type="submit" class="btn primary" value="Save Event" onclick="if(document.getElementsByName('emailstudent').checked || document.getElementsByName('emailhos').checked) { document.getElementsByClassName('loadingText')[0].innerText = 'Sending Emails...'; document.getElementsByClassName('loadingText')[0].hidden = false;  document.getElementById('loadingBG').hidden = false;}   var element = this; setTimeout(function() {element.disabled = true; element.style.backgroundColor = '#aaaaaa'; }, 250); setTimeout(function(){element.disabled = false; element.style.backgroundColor = '#1F355E';}, 10000);">
+    <button type="button" class="btn"  onclick="document.getElementById('mainform').action = '/Event/Draft/{{event.author.pk}}/{{event.pk}}/'; document.getElementById('mainform').submit(); var element = this; setTimeout(function() {element.disabled = true; element.style.backgroundColor = '#aaaaaa'; }, 250); setTimeout(function(){element.disabled = false; element.style.backgroundColor = 'white';}, 10000);">Save to Drafts</button><br>
+    <input type="submit" id="submit" class="btn primary" value="Save Event" onclick="if(document.getElementsByName('emailstudent').checked || document.getElementsByName('emailhos').checked) { document.getElementsByClassName('loadingText')[0].innerText = 'Sending Emails...'; document.getElementsByClassName('loadingText')[0].hidden = false;  document.getElementById('loadingBG').hidden = false;}   var element = this; setTimeout(function() {element.disabled = true; element.style.backgroundColor = '#aaaaaa'; }, 250); setTimeout(function(){element.disabled = false; element.style.backgroundColor = '#1F355E';}, 10000);">
 </div>
     </div>
     <div style="display: flex; flex-direction: column;">

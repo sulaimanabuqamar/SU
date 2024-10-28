@@ -6,11 +6,13 @@
 {% endblock %}
 
 {% block content %}
+{% if news.draft == False %}
 {% if news.awaiting_approval %}
 <div class="warning"><p style="font-family: Inter; font-size: 20px; color: unset;">⚠️ Post awaiting approval</p></div>
 {% else %}
 {% if not news.approved %}
 <div class="error"><p style="font-family: Inter; font-size: 20px; color: unset;">⚠️ Post Denied</p><p style="font-family: Inter; font-size: 15px; color: unset;">{{ news.denied_reason }}</p></div>
+{% endif %}
 {% endif %}
 {% endif %}
 <div  class="pagecontrol">

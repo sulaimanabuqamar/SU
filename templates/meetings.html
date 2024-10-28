@@ -32,6 +32,7 @@
 </div>
 <div class="grid">
     {% for meeting in meetings %}
+    {% if meeting.draft == False %}
     <div>
         <a href="{% url 'meeting_detail' meeting.id %}">
             <img class="eventCover" src="{{ meeting.author.logo.url }}" alt="Club Logo">
@@ -43,6 +44,20 @@
             </div>
         </a>
     </div>
+    {% else %}
+    <div>
+        <a href="{% url 'meeting_detail' meeting.id %}">
+            <img class="eventCover" src="{{ meeting.author.logo.url }}" alt="Club Logo" style="opacity: 0.6;">
+            <p class="text">{{ meeting.title }}</p>
+            <p class="aboutText">{{ meeting.date }}</p>
+            <p class="aboutText">{{ meeting.start_time|time:"g:i A" }} - {{ meeting.end_time|time:"g:i A" }}</p>
+            <p class="aboutText" style="color: orange;">Draft</p>
+            <div class="tagBox" style="background: {{ meeting.author.color }};">
+                <p class="tagText">{{ meeting.author.name }}</p>
+            </div>
+        </a>
+    </div>
+    {% endif %}
     {% empty %}
     <p class="text">No meetings available.</p>
     {% endfor %}

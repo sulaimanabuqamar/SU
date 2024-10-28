@@ -10,7 +10,7 @@
 <div>
     <p class="pageTitle">Edit Profile</p>
 </div>
-<form method="post" class="detailsSide reverse" style="align-items: start;" enctype="multipart/form-data">
+<form method="post" class="detailsSide reverse" id="mainform" style="align-items: start;" enctype="multipart/form-data">
     {% csrf_token %}
     <div style="display: flex; flex-direction: column;">
         {% if userType == "student" %}

@@ -68,15 +68,15 @@ class VarsityAdmin(admin.ModelAdmin):
     )
 
 class EventAdmin(admin.ModelAdmin):
-    list_display = ('title', 'author', 'published_date', 'summary', 'members_only', 'highlight', 'group', 'grade')
+    list_display = ('title', 'author', 'published_date', 'summary', 'members_only', 'highlight', 'group', 'grade', 'draft')
     list_filter = ('members_only', 'highlight')
     search_fields = ('summary',)
 class MeetingAdmin(admin.ModelAdmin):
-    list_display = ('title', 'author', 'pk', 'published_date')
+    list_display = ('title', 'author', 'pk', 'published_date','date','start_time','end_time', 'draft')
     search_fields = ('summary','title', 'text') 
 
 class NewsAdmin(admin.ModelAdmin):
-    list_display = ('title',  'author', 'summary','awaiting_approval', 'approved', 'group', 'grade', 'published_date')
+    list_display = ('title',  'author', 'summary','awaiting_approval', 'approved', 'group', 'grade', 'published_date', 'draft')
     list_filter = ('highlight', 'group', 'grade')
     search_fields = ('summary',)
     

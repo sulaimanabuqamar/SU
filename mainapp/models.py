@@ -158,6 +158,7 @@ class Event(models.Model):
     grade = models.CharField(max_length=5, choices=GRADE_CHOICES,default="nosec")
     members_only = models.BooleanField(default=False)
     highlight = models.BooleanField(default=False)
+    draft = models.BooleanField(default=False)
     significant_event = models.BooleanField(default=False)
     attending_Students = models.ManyToManyField(User, related_name='attending_students', blank=True)
     confirmed_Students = models.ManyToManyField(User, related_name='confirm_students', blank=True)
@@ -180,6 +181,7 @@ class Meeting(models.Model):
     end_time = models.TimeField()
     published_date = models.DateTimeField(null=True, blank=True)
     location = models.CharField(max_length=150)
+    draft = models.BooleanField(default=False)
     attending_Members = models.ManyToManyField(User, related_name='meeting_attending_members', blank=True)
     links = models.ManyToManyField(Links, related_name='emeeting_links', blank=True)
     def __str__(self) -> str: 
@@ -218,6 +220,7 @@ class News(models.Model):
     highlight = models.BooleanField(default=False)
     approved = models.BooleanField(default=False)
     awaiting_approval = models.BooleanField(default=True)
+    draft = models.BooleanField(default=False)
     denied_reason = models.CharField(max_length=150, blank=True, null=True)
     links = models.ManyToManyField(Links, related_name='news_links', blank=True)
     typeitem = "news"
