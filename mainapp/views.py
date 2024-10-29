@@ -431,7 +431,8 @@ def CreateEvent(request:WSGIRequest, club_id):
                     email = email.replace("{{date}}",event.date) 
                     email = email.replace("{{start_time}}",event.start_time) 
                     email = email.replace("{{end_time}}",event.end_time) 
-                send_mail("New Event", "Students' Society", None, listofemails, False, html_message=email)
+                if event.draft == False:
+                    send_mail("New Event", "Students' Society", None, listofemails, False, html_message=email)
 
         if request.POST.get("emailhos") is not None:
             print("emailing hos")
@@ -454,7 +455,8 @@ def CreateEvent(request:WSGIRequest, club_id):
                     email = email.replace("{{date}}",event.date) 
                     email = email.replace("{{start_time}}",event.start_time) 
                     email = email.replace("{{end_time}}",event.end_time) 
-                send_mail("New Event", "Students' Society", None, hosemails, False, html_message=email)
+                if event.draft == False:
+                    send_mail("New Event", "Students' Society", None, hosemails, False, html_message=email)
         event.save()
         return redirect("/Event/Detail/" + str(event.pk)) 
 def ModifyEvent(request: WSGIRequest, event_id):
@@ -539,7 +541,8 @@ def ModifyEvent(request: WSGIRequest, event_id):
                     email = email.replace("{{date}}",event.date) 
                     email = email.replace("{{start_time}}",event.start_time) 
                     email = email.replace("{{end_time}}",event.end_time) 
-                send_mail("Event Details Changed", "Students' Society", None, listofemails, False, html_message=email)
+                if event.draft == False:
+                    send_mail("Event Details Changed", "Students' Society", None, listofemails, False, html_message=email)
 
         if request.POST.get("emailhos") is not None:
             print("emailing hos")
@@ -562,7 +565,8 @@ def ModifyEvent(request: WSGIRequest, event_id):
                     email = email.replace("{{date}}",event.date) 
                     email = email.replace("{{start_time}}",event.start_time) 
                     email = email.replace("{{end_time}}",event.end_time) 
-                send_mail("Event Details Changed", "Students' Society", None, hosemails, False, html_message=email)
+                if event.draft == False:
+                    send_mail("Event Details Changed", "Students' Society", None, hosemails, False, html_message=email)
         event.save()
         return redirect("/Event/Detail/" + str(event.pk))
 def DraftEvent(request: WSGIRequest,club_id, event_id):
@@ -617,7 +621,8 @@ def CreateMeeting(request:WSGIRequest, club_id):
                     email = email.replace("{{date}}",meeting.date) 
                     email = email.replace("{{start_time}}",meeting.start_time) 
                     email = email.replace("{{end_time}}",meeting.end_time) 
-                send_mail("New Meeting", "Students' Society", None, listofemails, False, html_message=email)
+                if meeting.draft == False:
+                    send_mail("New Meeting", "Students' Society", None, listofemails, False, html_message=email)
 
         if request.POST.get("emailhos") is not None:
             print("emailing hos")
@@ -640,7 +645,8 @@ def CreateMeeting(request:WSGIRequest, club_id):
                     email = email.replace("{{date}}",meeting.date) 
                     email = email.replace("{{start_time}}",meeting.start_time) 
                     email = email.replace("{{end_time}}",meeting.end_time) 
-                send_mail("New Meeting", "Students' Society", None, hosemails, False, html_message=email)
+                if meeting.draft == False:
+                    send_mail("New Meeting", "Students' Society", None, hosemails, False, html_message=email)
         meeting.save()
         return redirect("/Meetings/Detail/" + str(meeting.pk)) 
 def ModifyMeeting(request: WSGIRequest, meeting_id):
@@ -702,7 +708,8 @@ def ModifyMeeting(request: WSGIRequest, meeting_id):
                     email = email.replace("{{date}}",meeting.date) 
                     email = email.replace("{{start_time}}",meeting.start_time) 
                     email = email.replace("{{end_time}}",meeting.end_time) 
-                send_mail("Meeting Details Changed", "Students' Society", None, listofemails, False, html_message=email)
+                if meeting.draft == False:
+                    send_mail("Meeting Details Changed", "Students' Society", None, listofemails, False, html_message=email)
 
         if request.POST.get("emailhos") is not None:
             print("emailing hos")
@@ -724,7 +731,8 @@ def ModifyMeeting(request: WSGIRequest, meeting_id):
                     email = email.replace("{{date}}",meeting.date) 
                     email = email.replace("{{start_time}}",meeting.start_time) 
                     email = email.replace("{{end_time}}",meeting.end_time) 
-                send_mail("Meeting Details Changed", "Students' Society", None, hosemails, False, html_message=email)
+                if meeting.draft == False:
+                    send_mail("Meeting Details Changed", "Students' Society", None, hosemails, False, html_message=email)
         meeting.save()
         return redirect("/Meetings/Detail/" + str(meeting.pk))
 def DraftMeeting(request: WSGIRequest,club_id, meeting_id):
@@ -770,7 +778,8 @@ def CreateNews(request: WSGIRequest):
         for user in User.objects.all():
             if user.is_admin:
                 officers.append(str(user.email))
-        send_mail("News Post Awaiting Approval", "Students' Society", None, officers, False, html_message=email)
+        if event.draft == False:
+            send_mail("News Post Awaiting Approval", "Students' Society", None, officers, False, html_message=email)
         return redirect("/News/Detail/" + str(event.pk)) 
 
 def ModifyNews(request: WSGIRequest, news_id):
@@ -832,7 +841,8 @@ def ModifyNews(request: WSGIRequest, news_id):
         for user in User.objects.all():
             if user.is_admin:
                 officers.append(str(user.email))
-        send_mail("News Post Awaiting Approval", "Students' Society", None, officers, False, html_message=email)
+        if news.draft == False:
+            send_mail("News Post Awaiting Approval", "Students' Society", None, officers, False, html_message=email)
         news.save()
         return redirect("/News/Detail/" + str(news.pk))
 def DraftNews(request: WSGIRequest, news_id):
