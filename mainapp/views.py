@@ -5,6 +5,7 @@ from django.core.handlers.wsgi import WSGIRequest
 from django.contrib.auth import authenticate, login, logout
 from django.views.decorators.csrf import csrf_exempt
 from django.core.mail import send_mail, EmailMessage
+from django.contrib.auth.models import AnonymousUser
 from django import template
 from django.core.exceptions import *
 import studentsunion.settings as settings
@@ -56,7 +57,7 @@ def getVarsities(user):
 def getClubs(user):
     clubs = []
     for club in Club.objects.all():
-        if user in club.members.all():
+        if user in club.members.all() or user in club.heads.all() or user in club.leadership.all() or user in club.advisors.all(): 
             clubs.append(club)
     return clubs
 
@@ -120,7 +121,21 @@ def Meeting_Details(request, meeting_id):
 
 def Events(request):
     events = Event.objects.all().order_by('-published_date')
-    return render(request, "events.html", {'hasClubs':hasClubs(request.user),'events': events, 'user': request.user})
+    user: User = request.user
+    filtered_events = []
+    if not user.is_anonymous:
+        for event in events:
+            if not user.is_superuser and user.associated_faculty is None:
+                if user.associated_student is not None and user.associated_student.gender == event.author.type or event.author.type == "mixed":
+                    if (event.group == "ngr" and event.grade == "nosec" ) or (event.group == "ngr" and event.grade == user.associated_student.section) or (event.group == str(user.associated_student.year_level) and event.grade == "nosec") or (event.group == str(user.associated_student.year_level) and event.grade == user.associated_student.section):
+                        filtered_events.append(event)
+            elif user.associated_faculty is not None or user.is_superuser:
+                filtered_events.append(event)
+    else:
+        for event in events:
+            if event.author.type == "mixed" and event.group == "ngr" and event.grade == "nosec":
+                filtered_events.append(event)
+    return render(request, "events.html", {'hasClubs':hasClubs(request.user),'events': filtered_events, 'user': request.user})
 
 def Event_Detail(request, event_id):
     try:
@@ -169,16 +184,16 @@ def Club_Detail(request, club_id):
     events = Event.objects.filter(author=club) 
     heads = club.heads.all()  
     leadership = club.leadership.all()  
-    members = club.members.all()  
+    members = club.members.all()
     advisors = club.advisors.all()
-    links = club.links.all() 
+    links = club.links.all()
 
     return render(request, "club_detail.html", {
         'club': club,
         'events': events,
         'heads': heads, 
         'leadership': leadership,
-        'members': members, 
+        'members': members.order_by('name'),  
         'advisors': advisors,
         'links': links,
         
@@ -892,9 +907,10 @@ def addAttendee(request: WSGIRequest):
     event = Event.objects.get(id=int(request.GET.get("id")))
     if event.author not in request.user.associated_clubs.all() and request.GET.get("email") != request.user.email:
         return HttpResponse("<h1>YOU ARE NOT THE AUTHOR OF THIS EVENT, OPERATION FAILED</h1>")
-    event.attending_Students.add(User.objects.get(email=request.GET.get("email")))
+    for user in User.objects.all():
+        if request.GET.get(user.email) is not None:
+            event.attending_Students.add(user)
     return HttpResponse("{\"message\":\"competed\"}")
-
 def setConfirmed(request: WSGIRequest):
     event = Event.objects.get(id=int(request.GET.get("id")))
     user = User.objects.get(email=request.GET.get("email"))
@@ -929,14 +945,16 @@ def addClubMember(request: WSGIRequest, club_id: int, sector: str):
     club: Club = Club.objects.get(id=club_id)
     if club not in request.user.associated_clubs.all():
         return HttpResponse("<h1>YOU ARE NOT A CLUB, OPERATION FAILED</h1>")
-    if sector == "Member":
-        club.members.add(User.objects.get(email=request.GET.get("email")))
-    elif sector == "Head":
-        club.heads.add(User.objects.get(email=request.GET.get("email")))
-    elif sector == "Advisor":
-        club.advisors.add(User.objects.get(email=request.GET.get("email")))
-    elif sector == "Leadership":
-        club.leadership.add(User.objects.get(email=request.GET.get("email")))
+    for user in User.objects.all():
+        if request.GET.get(user.email) is not None:
+            if sector == "Member":
+                club.members.add(user)
+            elif sector == "Head":
+                club.heads.add(user)
+            elif sector == "Advisor":
+                club.advisors.add(user)
+            elif sector == "Leadership":
+                club.leadership.add(user)
     
     return HttpResponse("{\"message\":\"competed\"}")
 
@@ -956,12 +974,14 @@ def addVarsityPlayer(request: WSGIRequest, varsity_id: int, sector: str):
     varsity: Varsity = Varsity.objects.get(id=varsity_id)
     if varsity not in request.user.associated_varsities.all():
         return HttpResponse("<h1>YOU ARE NOT A VARSITY, OPERATION FAILED</h1>")
-    if sector == "Member":
-        varsity.members.add(User.objects.get(email=request.GET.get("email")))
-    elif sector == "Captain":
-        varsity.captains.add(User.objects.get(email=request.GET.get("email")))
-    elif sector == "Coach":
-        varsity.coaches.add(User.objects.get(email=request.GET.get("email")))
+    for user in User.objects.all():
+        if request.GET.get(user.email) is not None:
+            if sector == "Member":
+                varsity.members.add(user)
+            elif sector == "Captain":
+                varsity.captains.add(user)
+            elif sector == "Coach":
+                varsity.coaches.add(user)
     varsity.save()
     return HttpResponse("{\"message\":\"competed\"}")
 

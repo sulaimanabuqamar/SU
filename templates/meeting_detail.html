@@ -52,12 +52,14 @@
             </div>
     </div>
     <div>
+        <a href="/Club/Detail/{{meeting.author.pk}}">
         <div class="centerer" style="height: unset; margin-bottom: 20px;">
         <img src="{{ meeting.author.logo.url }}" alt="{{ meeting.title }} Cover" class="articleCover">
         </div>
         <div class="tagBox" style="background: {{ meeting.author.color }};">
             <p class="tagText">{{ meeting.author.name }}</p>
         </div>
+        </a>
         <p class="aboutText">{{ meeting.date }}</p>
         <p class="aboutText">{{ meeting.start_time|time:"g:i A" }} - {{ meeting.end_time|time:"g:i A" }}</p>
         <p class="aboutText">{{ meeting.location }}</p>
@@ -88,14 +90,14 @@
                 {% for member in allUsers %}
                 {% if member not in meeting.attending_Members.all %}
                 {% if member.associated_faculty is None %}
-                <div class="profileRow" style="border: blue 3px solid; border-radius: 15px; padding: 5px; gap: 10px;">
+                <div class="profileRow popupBox" style="border: blue 3px solid; border-radius: 15px; padding: 5px; gap: 10px;">
                     <img class="eventCover" style=" width: 50px; height: 50px;" src="{{ member.associated_student.profile_picture.url }}" alt="Club Cover">
                     <p class="text">{{ member.name }}</p>
                     <p class="aboutText">{{ member.associated_student.year_level }}{{ member.associated_student.section }}</p>
                     <button class="btn empty" onclick="addAttendeeToList('{{member.email}}')"><img src="{%static '../media/images/joinButton.svg' %}"></button>
                 </div>
                 {% else %}
-                <div class="profileRow" style="border: blue 3px solid; border-radius: 15px; padding: 5px; gap: 10px;">
+                <div class="profileRow popupBox" style="border: blue 3px solid; border-radius: 15px; padding: 5px; gap: 10px;">
                     <img class="eventCover" style=" width: 50px; height: 50px;" src="{{ member.associated_faculty.profile_picture.url }}" alt="Club Cover">
                     <p class="text">{{ member.name }}</p>
                     <button class="btn empty" onclick="addAttendeeToList('{{member.email}}')"><img src="{%static '../media/images/joinButton.svg' %}"></button>

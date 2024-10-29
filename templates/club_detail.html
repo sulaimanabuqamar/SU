@@ -6,13 +6,13 @@
 {% endblock %}
 
 {% block content %}
-{% if user.associated_student is not None and club.type == user.associated_student.gender or user.associated_faculty is not None or user.is_superuser %}
+{% if user.associated_student is not None and club.type == user.associated_student.gender or club.type == "mixed" or user.associated_faculty is not None or user.is_superuser %}
 <div>
     <div class="detailsSide">
             <div style="display: flex; justify-content: space-between; flex-direction: column; justify-content: flex-start;">
             <p class="pageTitle" style="margin: 0px;">{{ club.name }}</p>
                 <div class="articleDescriptionText">
-                    <p>{{ club.about|safe }}</p>
+                    <p>{{ club.about|default_if_none:""|safe }}</p>
                 </div>
             </div>
             <div class="linkcontrol">
@@ -40,6 +40,7 @@
             <p class="text">No heads available.</p>
             {% endfor %}
         </div>
+        {% if leadership.count > 0 %}
         <p class="subtitle">Leadership</p>
         <div class="studentGrid">
             {% for leader in leadership %}  <!-- Changed variable name for clarity -->
@@ -53,6 +54,7 @@
             <p class="text">No leadership available.</p>
             {% endfor %}
         </div>
+        {% endif %}
         <p class="subtitle">Members</p>
         <div class="studentGrid">
             {% for member in members %}

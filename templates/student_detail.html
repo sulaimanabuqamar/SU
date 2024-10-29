@@ -11,7 +11,7 @@
             <div style="display: flex; justify-content: space-between; flex-direction: column; justify-content: flex-start;">
             <p class="pageTitle" style="margin: 0px;">{{ selecteduser.name }}</p>
                 <div class="articleDescriptionText">
-                    <div>{{ selecteduser.associated_student.about|safe }}</div>
+                    <div>{{ selecteduser.associated_student.about|default_if_none:""|safe }}</div>
                 </div>
             </div>
             <div>
@@ -21,7 +21,7 @@
                 <p class="aboutText sidebar">{{ selecteduser.email }}</p>
             </div>
         </div>
-        <p class="subtitle">Roles</p>
+        <p class="subtitle">Extracurriculars</p>
         <div class="studentGrid">
             {% for club in headclubs %}
             <div>

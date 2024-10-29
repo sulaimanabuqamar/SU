@@ -101,17 +101,18 @@
         <div class="tagBox" style="background: {{club.color}};">
             <p class="tagText">Club</p>
         </div>
-        <div class="aboutText sidebar">{{ club.about|safe }}</div>
+        <div class="aboutText sidebar">{{ club.about|default_if_none:""|safe }}</div>
         <a href="/profile/Edit/Club/{{club.pk}}" class="centercontrol"><button class="btn primary">Edit Club</button></a><br>
         <a class="centercontrol"><button class="btn" onclick="openMemberPopup('selectApplicant')" >Send Admission Emails</button><a/><br>
         <a class="centercontrol"><button class="btn" onclick="downloadList()">Download List of Members</button></a><br>
+        <a href="{% url "create_event" club.pk %}" class="centercontrol"><button class="btn">Create Event</button></a><br>
         <a href="{% url "create_meeting" club.pk %}" class="centercontrol"><button class="btn">Create Meeting</button></a>
     </div>
 </div>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.13.1/xlsx.full.min.js"></script> 
 <script>
 function downloadList() {
-    var listofmembers = [{% for member in club.members.all %}{"Name": "{{member.name}}", "Gender": {% if member.associated_student.section == "B" or member.associated_student.section == "E" or member.associated_student.section == "H" or member.associated_student.section == "D" or member.associated_student.section == "J" %}"Male"{% else %}"Female"{% endif %}, "Grade": {{member.associated_student.year_level}}, "Section": "{{member.associated_student.section}}", "Email": "{{member.email}}", "School ID": "{{member.associated_student.student_db_id}}"}{% endfor %}]
+    var listofmembers = [{% for member in club.members.all %}{"Name": "{{member.name}}", "Gender": "{{member.associated_student.gender}}", "Grade": {{member.associated_student.year_level}}, "Section": "{{member.associated_student.section}}", "Email": "{{member.email}}", "School ID": "{{member.associated_student.student_db_id}}"},{% endfor %}]
     console.log(listofmembers);
     var ws = XLSX.utils.json_to_sheet(listofmembers);
     var wb = XLSX.utils.book_new();
@@ -131,7 +132,7 @@ function downloadList() {
             {% for member in allUsers %}
             {% if member.associated_student is not None %}
             <div class="profileRow">
-                <div class="profileRow" style="border: blue 3px solid; border-radius: 15px; padding: 5px; gap: 10px;">
+                <div class="profileRow popupBox" style="border: blue 3px solid; border-radius: 15px; padding: 5px; gap: 10px;">
                     <img class="eventCover" style=" width: 50px; height: 50px;" src="{{ member.associated_student.profile_picture.url }}" alt="Club Cover">
                     <p class="text">{{ member.name }}</p>
                     <p class="aboutText">{{ member.associated_student.year_level }}{{ member.associated_student.section }}</p>
@@ -234,22 +235,30 @@ function downloadList() {
     <div class="accountPopupWindow">
         <p class="subtitle" style="text-align: center; margin-bottom: 15px;">Add Student To Club</p>
         <input class="textfield" placeholder="Search..." style="margin: 0px; margin-bottom: 20px; width: calc( 100% - 55px ); margin-left: 20px; margin-right: 20px;" id="addMemberSearch">
-        <div class="grid popup" style="margin-bottom: 30px;" id="addMemberField">
-            {% for member in allUsers %}
-            {% if member not in club.members.all and member.associated_student is not None %}
-            <div class="profileRow">
-                <div class="profileRow" style="border: blue 3px solid; border-radius: 15px; padding: 5px; gap: 10px;">
-                    <img class="eventCover" style=" width: 50px; height: 50px;" src="{{ member.associated_student.profile_picture.url }}" alt="Club Cover">
-                    <p class="text">{{ member.name }}</p>
-                    <p class="aboutText">{{ member.associated_student.year_level }}{{ member.associated_student.section }}</p>
-                    <button class="btn empty" onclick="addMember('{{member.email}}', 'Member')"><img src="{%static '../media/images/joinButton.svg' %}"></button>
+        <iframe name="hiddenFrame" width="0" height="0" border="0" style="display: none;"></iframe>
+        <form action="/Club/Add/{{club.pk}}/Member" target="hiddenFrame" method="GET" onsubmit="setTimeout(function() {location.reload();}, 500);">
+            {% csrf_token %}
+            <div class="grid popup" style="margin-bottom: 30px;" id="addMemberField">
+                {% for member in allUsers %}
+                {% if member not in club.members.all and member.associated_student is not None %}
+                <div class="profileRow">
+                    <div class="profileRow popupBox" style="border: blue 3px solid; border-radius: 15px; padding: 5px; gap: 10px;">
+                        <img class="eventCover" style=" width: 50px; height: 50px;" src="{{ member.associated_student.profile_picture.url }}" alt="Club Cover">
+                        <p class="text">{{ member.name }}</p>
+                        <p class="aboutText">{{ member.associated_student.year_level }}{{ member.associated_student.section }}</p>
+                        {% comment %} <button class="btn empty" onclick="addMember('{{member.email}}', 'Member')"><img src="{%static '../media/images/joinButton.svg' %}"></button> {% endcomment %}
+                        <input type="checkbox" name="{{member.email}}">
+                    </div>
                 </div>
+                {% endif %}
+                {% empty %}
+                <p class="text">No Students.</p>
+                {% endfor %}    
             </div>
-            {% endif %}
-            {% empty %}
-            <p class="text">No Students.</p>
-            {% endfor %}
-        </div>
+            <div style="display: flex; justify-content: center;">
+            <button type="submit" class="btn primary" onclick="closePopup('addMemberBG');">Add Attendees</button>
+            </div>
+        </form>
     </div>
 </div>
 <div class="popupBG" hidden id="addHeadBG" onclick="if(event.srcElement == this) {closePopup(this.id);}">
@@ -260,7 +269,7 @@ function downloadList() {
             {% for member in allUsers %}
             {% if member not in club.heads.all and member.associated_student is not None %}
             <div class="profileRow">
-                <div class="profileRow" style="border: blue 3px solid; border-radius: 15px; padding: 5px; gap: 10px;">
+                <div class="profileRow popupBox" style="border: blue 3px solid; border-radius: 15px; padding: 5px; gap: 10px;">
                     <img class="eventCover" style=" width: 50px; height: 50px;" src="{{ member.associated_student.profile_picture.url }}" alt="Club Cover">
                     <p class="text">{{ member.name }}</p>
                     <p class="aboutText">{{ member.associated_student.year_level }}{{ member.associated_student.section }}</p>
@@ -282,7 +291,7 @@ function downloadList() {
             {% for member in allUsers %}
             {% if member not in club.advisors.all and member.associated_faculty is not None %}
             <div class="profileRow">
-                <div class="profileRow" style="border: blue 3px solid; border-radius: 15px; padding: 5px; gap: 10px;">
+                <div class="profileRow popupBox" style="border: blue 3px solid; border-radius: 15px; padding: 5px; gap: 10px;">
                     <img class="eventCover" style=" width: 50px; height: 50px;" src="{{ member.associated_faculty.profile_picture.url }}" alt="Club Cover">
                     <p class="text">{{ member.name }}</p>
                     <button class="btn empty" onclick="addMember('{{member.email}}', 'Advisor')"><img src="{%static '../media/images/joinButton.svg' %}"></button>
@@ -303,7 +312,7 @@ function downloadList() {
             {% for member in allUsers %}
             {% if member not in club.leadership.all and member.associated_student is not None %}
             <div class="profileRow">
-                <div class="profileRow" style="border: blue 3px solid; border-radius: 15px; padding: 5px; gap: 10px;">
+                <div class="profileRow popupBox" style="border: blue 3px solid; border-radius: 15px; padding: 5px; gap: 10px;">
                     <img class="eventCover" style=" width: 50px; height: 50px;" src="{{ member.associated_student.profile_picture.url }}" alt="Club Cover">
                     <p class="text">{{ member.name }}</p>
                     <p class="aboutText">{{ member.associated_student.year_level }}{{ member.associated_student.section }}</p>
@@ -344,7 +353,7 @@ function downloadList() {
         .then(json => {console.log(json); location.reload();});
     }
     function addMember(email, sector) {
-        fetch("/Club/Add/{{club.pk}}/" + sector + "?email=" + email)
+        fetch("/Club/Add/{{club.pk}}/" + sector + "?" + email + "=on")
         .then(data => data.json())
         .then(json => {console.log(json); location.reload();});
     }

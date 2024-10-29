@@ -19,7 +19,7 @@
         <div class="grid popup" style="margin-bottom: 30px;" id="createMeetingField">
             {% for club in user.associated_clubs.all %}
             <a class="profileRow" href="{% url "create_meeting" club.pk %}">
-                <div class="profileRow" style="border: blue 3px solid; border-radius: 15px; padding: 5px; gap: 10px;">
+                <div class="profileRow popupBox" style="border: blue 3px solid; border-radius: 15px; padding: 5px; gap: 10px;">
                     <img class="eventCover" style=" width: 50px; height: 50px;" src="{{ club.logo.url }}" alt="Club Cover">
                     <p class="text">{{ club.name }}</p>
                 </div>

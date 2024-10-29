@@ -7,7 +7,7 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from .models import *
 
 class UserAdmin(BaseUserAdmin):
-    list_display = ('email', 'name', 'is_admin', 'is_staff',  'is_superuser')
+    list_display = ('email', 'name', 'is_admin', 'associated_student',  'is_superuser') 
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
         ('Personal Info', {'fields': ('name',)}),

@@ -24,12 +24,14 @@
         </div>
     </div>
     <div>
+        <a href="/Student/Detail/{{news.author.pk}}">
         <div class="centerer" style="height: unset; margin-bottom:10px;">
         <img src="{{ news.cover.url }}" alt="{{ news.title }} Cover" class="articleCover">
         </div>
         <div class="tagBox" style="background: {{ news.author.color }};"> 
             <p class="tagText">{{ news.author.name }}</p>
         </div>
+    </a>
         <p class="aboutText">{{ news.published_date|date:"d M, Y g:i A"  }}</p>
         <div style="width: 300px; text-align: center;">
             {% for link in links %}

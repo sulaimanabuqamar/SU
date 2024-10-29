@@ -90,7 +90,7 @@
             }
         </script>
     </div>
-    <input class="textfield large slim" required name="summary" placeholder="Summary" style="height: 36px;" value="{{news.summary}}">
+    <input class="textfield large slim" required name="summary" maxlength="100" placeholder="Summary" style="height: 36px;" value="{{news.summary}}">
     <textarea class="textfield  large slim" name="links" placeholder="Links (One link per line, text to show first then ! then link. Ex: Google!https://google.com)">{{links}}</textarea>
     <select class="textfield" name="gradefilter">
         <option value="ngr" selected>All Year Levels</option>

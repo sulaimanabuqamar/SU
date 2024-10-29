@@ -10,7 +10,7 @@
     <div class="detailsSide" style="">
         <div>
             <p class="pageTitle" style="margin-top: 0px;">{{ varsity.name }}</p>
-            <div class="articleDescriptionText">{{ varsity.about|safe }}</div>
+            <div class="articleDescriptionText">{{ varsity.about|default_if_none:""|safe }}</div>
         </div>
         <div class="linkcontrol">
         <img src="{{ varsity.logo.url }}" style="border: {{ varsity.color }} 3px solid;" alt="{{ club.name }} Logo" class="articleCover">

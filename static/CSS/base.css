@@ -123,15 +123,19 @@ div.aboutText.sidebar {
     display: grid;
     grid-gap: 25px;
     justify-items: center;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
 }
 .grid.popup {
     max-height: 400px;
+    width: unset;
     overflow-y: scroll;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 .grid.scroll {
     max-height: 300px;
-    width: 500px;
+    width: 700px;
     overflow-y: auto;
 }
 
@@ -144,7 +148,8 @@ div.aboutText.sidebar {
 
 .eventCover {
     width: 300px; 
-    height: 300px
+    height: 300px;
+    object-fit: cover;
 }
 
 .newsCover {
@@ -191,6 +196,7 @@ div.aboutText.sidebar {
 .articleCover {
     width: 225px; 
     height: 225px;
+    object-fit: cover;
 }
 
 .articleDescriptionText {
@@ -425,9 +431,12 @@ width: 45px;
     justify-content: space-between;
     align-items: center;
 }
-
+.profileRow.Box {
+    width: 450px;
+    height: 60px;
+}
 .Box {
-    width: 370px;
+    width: 350px;
     height: 60px;
 }
 font {
@@ -612,6 +621,9 @@ div {
 .toolbarBtnControl {
 
 }
+.popupBox {
+    width: 330px;
+}
 @media only screen and (max-width: 1000px) {
     .side {
         display: none;
@@ -697,14 +709,26 @@ div {
     .profileRow {
         margin-bottom: 20px;
     }
+    .profileRow.Box {
+        display: flex;
+        flex-direction: column;
+        width: 200px;
+        height: 270px;
+        gap: 0px;
+    }
     .Box {
         width: 285px;
         height: 60px;
     }
     .grid.scroll {
         max-height: 300px;
-        width: 310px;
+        width: unset;
         overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+    }
+    .grid {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     }
     .confirmedcontrol {
         display: none;

@@ -11,7 +11,7 @@
             <div style="display: flex; justify-content: space-between; flex-direction: column; justify-content: flex-start;">
             <p class="pageTitle" style="margin: 0px;">{{ scouts.name }}</p>
                 <div class="articleDescriptionText">
-                    <div>{{ scouts.about|safe }}</div>
+                    <div>{{ scouts.about|default_if_none:""|safe }}</div>
                 </div>
             </div>
             <div class="linkcontrol">

@@ -51,12 +51,14 @@
             </div>
     </div>
     <div>
+        <a href="/Club/Detail/{{event.author.pk}}">
         <div class="centerer" style="height: unset; margin-bottom: 20px;">
         <img src="{{ event.cover.url }}" alt="{{ event.title }} Cover" class="articleCover">
         </div>
         <div class="tagBox" style="background: {{ event.author.color }};">
             <p class="tagText">{{ event.author.name }}</p>
         </div>
+        </a>
         <p class="aboutText">{{ event.date }}</p>
         <p class="aboutText">{{ event.start_time|time:"g:i A" }} - {{ event.end_time|time:"g:i A" }}</p>
         <p class="aboutText">{{ event.location }}</p>
@@ -80,22 +82,33 @@
 {% if event.author in user.associated_clubs.all %}
 <div class="popupBG" hidden id="addMemberBG" onclick="if(event.srcElement == this) {closePopup(this.id)}">
     <div class="accountPopupWindow">
-        <p class="subtitle" style="text-align: center; margin-bottom: 15px;">Add Student To Club</p>
+        <p class="subtitle" style="text-align: center; margin-bottom: 15px;">Add Attendee To Event</p>
         <input class="textfield" placeholder="Search..." style="margin: 0px; margin-bottom: 20px; width: calc( 100% - 55px ); margin-left: 20px; margin-right: 20px;" id="addMemberSearch">
-        <div class="grid popup" style="margin-bottom: 30px;" id="addMemberField">
-            {% for member in allUsers %}
-            <div class="profileRow">
-                <div class="profileRow" style="border: blue 3px solid; border-radius: 15px; padding: 5px; gap: 10px;">
-                    <img class="eventCover" style=" width: 50px; height: 50px;" src="{{ member.associated_student.profile_picture.url }}" alt="Club Cover">
-                    <p class="text">{{ member.name }}</p>
-                    <p class="aboutText">{{ member.associated_student.year_level }}{{ member.associated_student.section }}</p>
-                    <button class="btn empty" onclick="addAttendeeToList('{{member.email}}')"><img src="{%static '../media/images/joinButton.svg' %}"></button>
+        <iframe name="hiddenFrame" width="0" height="0" border="0" style="display: none;"></iframe>
+        <form action="/Event/Add" target="hiddenFrame" method="GET" onsubmit="setTimeout(function() {location.reload();}, 500);">
+            {% csrf_token %}
+            <input type="hidden" name="id" value="{{event.pk}}">
+            <div class="grid popup" style="margin-bottom: 30px;" id="addMemberField">
+                {% for member in allUsers %}
+                {% if member.associated_student is not None %}
+                <div class="profileRow">
+                    <div class="profileRow popupBox" style="border: blue 3px solid; border-radius: 15px; padding: 5px; gap: 10px;">
+                        <img class="eventCover" style=" width: 50px; height: 50px;" src="{{ member.associated_student.profile_picture.url }}" alt="Club Cover">
+                        <p class="text">{{ member.name }}</p>
+                        <p class="aboutText">{{ member.associated_student.year_level }}{{ member.associated_student.section }}</p>
+                        {% comment %} <button class="btn empty" onclick="addMember('{{member.email}}', 'Member')"><img src="{%static '../media/images/joinButton.svg' %}"></button> {% endcomment %}
+                        <input type="checkbox" name="{{member.email}}">
+                    </div>
                 </div>
+                {% endif %}
+                {% empty %}
+                <p class="text">No Students.</p>
+                {% endfor %}    
             </div>
-            {% empty %}
-            <p class="text">No Students.</p>
-            {% endfor %}
-        </div>
+            <div style="display: flex; justify-content: center;">
+            <button type="submit" class="btn primary" onclick="closePopup('addMemberBG');">Add Attendees</button>
+            </div>
+        </form>
     </div>
 </div>
 {% endif %}
@@ -106,7 +119,7 @@
         .then(json => {console.log(json); location.reload();});
     }
     function addAttendeeToList(email) {
-        fetch("/Event/Add?id=" + {{event.id}} + "&email=" + email)
+        fetch("/Event/Add?id=" + {{event.id}} + "&" + email + "=on")
         .then(data => data.json())
         .then(json => {console.log(json); location.reload();});
     }

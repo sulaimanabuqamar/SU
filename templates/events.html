@@ -19,7 +19,7 @@
         <div class="grid popup" style="margin-bottom: 30px;" id="createEventField">
             {% for club in user.associated_clubs.all %}
             <a class="profileRow" href="{% url "create_event" club.pk %}">
-                <div class="profileRow" style="border: blue 3px solid; border-radius: 15px; padding: 5px; gap: 10px;">
+                <div class="profileRow popupBox" style="border: blue 3px solid; border-radius: 15px; padding: 5px; gap: 10px;">
                     <img class="eventCover" style=" width: 50px; height: 50px;" src="{{ club.logo.url }}" alt="Club Cover">
                     <p class="text">{{ club.name }}</p>
                 </div>
@@ -32,13 +32,8 @@
 </div>
 <div class="grid">
     {% for event in events %}
-    {% if event.draft == False %}
-    {% if user.associated_student is not None and event.author.type == user.associated_student.gender or user.associated_faculty is not None or user.is_superuser %}
-
-
-    {% if event.group == "ngr" and event.grade == "nosec" %}
-    
-    {% if not event.members_only %}
+    {% if not event.draft %}
+    {% if not event.members_only or user.is_superuser %}
     <div>
         <a href="{% url 'event_detail' event.id %}">
             <img class="eventCover" src="{{ event.cover.url }}" alt="Event Cover">
@@ -63,95 +58,6 @@
             </div>
         </a>
     </div>
-    {% endif %}
-    {% endif %}
-    {% elif event.group == "ngr" and event.grade == user.associated_student.section %}
-    
-    {% if not event.members_only %}
-    <div>
-        <a href="{% url 'event_detail' event.id %}">
-            <img class="eventCover" src="{{ event.cover.url }}" alt="Event Cover">
-            <p class="text">{{ event.title }}</p>
-            <p class="aboutText">{{ event.date }}</p>
-            <p class="aboutText">{{ event.start_time|time:"g:i A" }} - {{ event.end_time|time:"g:i A" }}</p>
-            <div class="tagBox" style="background: {{ event.author.color }};">
-                <p class="tagText">{{ event.author.name }}</p>
-            </div>
-        </a>
-    </div>
-    {% else %}
-    {% if user in event.author.members.all %}
-    <div>
-        <a href="{% url 'event_detail' event.id %}">
-            <img class="eventCover" src="{{ event.cover.url }}" alt="Event Cover">
-            <p class="text">{{ event.title }}</p>
-            <p class="aboutText">{{ event.date }}</p>
-            <p class="aboutText">{{ event.start_time|time:"g:i A" }} - {{ event.end_time|time:"g:i A" }}</p>
-            <div class="tagBox" style="background: {{ event.author.color }};">
-                <p class="tagText">{{ event.author.name }}</p>
-            </div>
-        </a>
-    </div>
-    {% endif %}
-    {% endif %}
-    {% elif event.group == gradelevel and event.grade == "nosec" %}
-    
-    {% if not event.members_only %}
-    <div>
-        <a href="{% url 'event_detail' event.id %}">
-            <img class="eventCover" src="{{ event.cover.url }}" alt="Event Cover">
-            <p class="text">{{ event.title }}</p>
-            <p class="aboutText">{{ event.date }}</p>
-            <p class="aboutText">{{ event.start_time|time:"g:i A" }} - {{ event.end_time|time:"g:i A" }}</p>
-            <div class="tagBox" style="background: {{ event.author.color }};">
-                <p class="tagText">{{ event.author.name }}</p>
-            </div>
-        </a>
-    </div>
-    {% else %}
-    {% if user in event.author.members.all %}
-    <div>
-        <a href="{% url 'event_detail' event.id %}">
-            <img class="eventCover" src="{{ event.cover.url }}" alt="Event Cover">
-            <p class="text">{{ event.title }}</p>
-            <p class="aboutText">{{ event.date }}</p>
-            <p class="aboutText">{{ event.start_time|time:"g:i A" }} - {{ event.end_time|time:"g:i A" }}</p>
-            <div class="tagBox" style="background: {{ event.author.color }};">
-                <p class="tagText">{{ event.author.name }}</p>
-            </div>
-        </a>
-    </div>
-    {% endif %}
-    {% endif %}
-    {% elif event.group == gradelevel and event.grade == user.associated_student.section %}
-    
-    {% if not event.members_only %}
-    <div>
-        <a href="{% url 'event_detail' event.id %}">
-            <img class="eventCover" src="{{ event.cover.url }}" alt="Event Cover">
-            <p class="text">{{ event.title }}</p>
-            <p class="aboutText">{{ event.date }}</p>
-            <p class="aboutText">{{ event.start_time|time:"g:i A" }} - {{ event.end_time|time:"g:i A" }}</p>
-            <div class="tagBox" style="background: {{ event.author.color }};">
-                <p class="tagText">{{ event.author.name }}</p>
-            </div>
-        </a>
-    </div>
-    {% else %}
-    {% if user in event.author.members.all %}
-    <div>
-        <a href="{% url 'event_detail' event.id %}">
-            <img class="eventCover" src="{{ event.cover.url }}" alt="Event Cover">
-            <p class="text">{{ event.title }}</p>
-            <p class="aboutText">{{ event.date }}</p>
-            <p class="aboutText">{{ event.start_time|time:"g:i A" }} - {{ event.end_time|time:"g:i A" }}</p>
-            <div class="tagBox" style="background: {{ event.author.color }};">
-                <p class="tagText">{{ event.author.name }}</p>
-            </div>
-        </a>
-    </div>
-    {% endif %}
-    {% endif %}
     {% endif %}
     {% endif %}
     {% else %}
