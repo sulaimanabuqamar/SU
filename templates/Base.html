@@ -98,7 +98,7 @@
     <div class="popupBG" id="aboutPopup" hidden onclick="console.log(event.srcElement); if(event.srcElement == this) {closePopup(this.id);}">
         <div id="accountPopupWindow" class="accountPopupWindow">
             <p class="subtitle" style="text-align: center; margin-bottom: 15px;">Student Society Website</p>
-            <p class="subtext">Version 2.28</p>
+            <p class="subtext">Version 2.29</p>
             <p class="subtext">Developed by Mohamad Moukayed and Sulaiman Abuqamar</p>
             <p class="subtext">Send us an email at studentsociety.amsi@gmail.com</p>
             <div class="centerer horr"><button class="btn primary" onclick="closePopup('aboutPopup');">Close</button></div>
@@ -258,16 +258,16 @@
     </div>
     <div class="navBarMobile" style="animation: mobileLayoutClose forwards ease-in-out 0s" id="profile">
         <a href="/profile/User" class="mobileItem">
-            <p class="navText" style="margin: 0px;">{{ user.name }}</p>
+            <p class="navText" style="margin: 0px; text-align: center;">{{ user.name }}</p>
         </a>
         {% for club in user.associated_clubs.all %}
         <a href="/profile/Club/{{club.pk}}" class="mobileItem">
-            <p class="navText" style="margin: 0px;">{{ club.name }}</p>
+            <p class="navText" style="margin: 0px; text-align: center;">{{ club.name }}</p>
         </a>
         {% endfor %}
         {% for varsity in user.associated_varsities.all %}
         <a href="/profile/Varsity/{{varsity.pk}}" class="mobileItem">
-            <p class="navText" style="margin: 0px;">{{ varsity.name }}</p>
+            <p class="navText" style="margin: 0px; text-align: center;">{{ varsity.name }}</p>
         </a>
         {% endfor %}
         {% if "profile" in url %}
