@@ -26,7 +26,7 @@ class UserAdmin(BaseUserAdmin):
 
 class StudentAdmin(admin.ModelAdmin):
     list_display = ('student_db_id', 'year_level', 'section')
-    list_filter = ('year_level', 'section')
+    list_filter = ('year_level', 'section', 'gender')
     fieldsets = (
         (None, {'fields': ('student_db_id',)}),
         (None, {'fields': ('year_level', 'section', 'profile_picture', 'about', 'year_level_title', 'gender')}),

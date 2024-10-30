@@ -26,7 +26,7 @@
                 {% if member.associated_faculty is None %}
                 <a href="/Student/Detail/{{member.pk}}" class="profileRow">
                     <div class="profileRow Box" style="border: black 3px solid; border-radius: 15px; padding: 10px; gap: 10px;">
-                        <img class="eventCover" style=" width: 50px; height: 50px; margin-right: 10px;" src="{{ member.associated_student.profile_picture.url }}" alt="Club Cover">
+                        <img class="eventCover" style=" width: 50px; height: 50px; border-radius: 50%; object-fit: cover; margin-right: 10px;" src="{{ member.associated_student.profile_picture.url }}" alt="Club Cover">
                         <p class="text">{{ member.name }}</p>
                         <p class="aboutText">{{ member.associated_student.year_level }}{{ member.associated_student.section }}</p>
                         {% if meeting.author in user.associated_clubs.all %}
@@ -37,7 +37,7 @@
                 {% else %}
                 <a href="/Faculty/Detail/{{member.pk}}" class="profileRow">
                     <div class="profileRow Box" style="border: black 3px solid; border-radius: 15px; padding: 10px; gap: 10px;">
-                        <img class="eventCover" style=" width: 50px; height: 50px; margin-right: 10px;" src="{{ member.associated_faculty.profile_picture.url }}" alt="Club Cover">
+                        <img class="eventCover" style=" width: 50px; height: 50px; border-radius: 50%; object-fit: cover; margin-right: 10px;" src="{{ member.associated_faculty.profile_picture.url }}" alt="Club Cover">
                         <p class="text">{{ member.name }}</p>
                         {% if meeting.author in user.associated_clubs.all %}
                         <button class="btn empty" onclick="removeAttendeeFromList('{{member.email}}')"><img src="{%static '../media/images/removeButton.svg' %}"></button>
@@ -91,14 +91,14 @@
                 {% if member not in meeting.attending_Members.all %}
                 {% if member.associated_faculty is None %}
                 <div class="profileRow popupBox" style="border: blue 3px solid; border-radius: 15px; padding: 5px; gap: 10px;">
-                    <img class="eventCover" style=" width: 50px; height: 50px;" src="{{ member.associated_student.profile_picture.url }}" alt="Club Cover">
+                    <img class="eventCover" style=" width: 50px; height: 50px; border-radius: 50%; object-fit: cover;" src="{{ member.associated_student.profile_picture.url }}" alt="Club Cover">
                     <p class="text">{{ member.name }}</p>
                     <p class="aboutText">{{ member.associated_student.year_level }}{{ member.associated_student.section }}</p>
                     <button class="btn empty" onclick="addAttendeeToList('{{member.email}}')"><img src="{%static '../media/images/joinButton.svg' %}"></button>
                 </div>
                 {% else %}
                 <div class="profileRow popupBox" style="border: blue 3px solid; border-radius: 15px; padding: 5px; gap: 10px;">
-                    <img class="eventCover" style=" width: 50px; height: 50px;" src="{{ member.associated_faculty.profile_picture.url }}" alt="Club Cover">
+                    <img class="eventCover" style=" width: 50px; height: 50px; border-radius: 50%; object-fit: cover;" src="{{ member.associated_faculty.profile_picture.url }}" alt="Club Cover">
                     <p class="text">{{ member.name }}</p>
                     <button class="btn empty" onclick="addAttendeeToList('{{member.email}}')"><img src="{%static '../media/images/joinButton.svg' %}"></button>
                 </div>

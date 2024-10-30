@@ -131,7 +131,7 @@
         {% if member.associated_faculty is None %}
         <div class="profileRow" style="border: black 3px solid; border-radius: 15px; padding: 10px; gap: 10px; margin-bottom: 10px;">
             <div style="display: flex; flex-direction: row; align-items: center; gap: 10px;">
-            <img class="eventCover" style=" width: 50px; height: 50px; margin-right: 10px;" src="{{ member.associated_student.profile_picture.url }}" alt="pfp">
+            <img class="eventCover" style=" width: 50px; height: 50px; border-radius: 50%; object-fit: cover; margin-right: 10px;" src="{{ member.associated_student.profile_picture.url }}" alt="pfp">
             <p class="text">{{ member.name }}</p>
             <p class="aboutText">{{ member.associated_student.year_level }}{{ member.associated_student.section }}</p>
             </div>
@@ -140,7 +140,7 @@
         {% else %}
         <div class="profileRow" style="border: black 3px solid; border-radius: 15px; padding: 10px; gap: 10px; margin-bottom: 10px;">
             <div style="display: flex; flex-direction: row; align-items: center; gap: 10px;">
-            <img class="eventCover" style=" width: 50px; height: 50px; margin-right: 10px;" src="{{ member.associated_faculty.profile_picture.url }}" alt="pfp">
+            <img class="eventCover" style=" width: 50px; height: 50px; border-radius: 50%; object-fit: cover; margin-right: 10px;" src="{{ member.associated_faculty.profile_picture.url }}" alt="pfp">
             <p class="text">{{ member.name }}</p>
             </div>
             <input type="checkbox" class="btn empty" name="{{member.email}}" {% getUserAttendingMeeting member.email meeting.id %}>
