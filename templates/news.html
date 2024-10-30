@@ -16,7 +16,7 @@
 </div>
 <div class="grid">
     {% for news in news %}
-    {% if news.approved %}
+    {% if news.approved and not user.is_superuser %}
     {% if news.group == "ngr" and news.grade == "nosec" %}
     <div>
         <a href="{% url 'news_detail' news.id %}">
@@ -50,6 +50,14 @@
         </a>
     </div>
     {% endif %}
+    {% elif news.approved and user.is_superuser %}
+    <div>
+        <a href="{% url 'news_detail' news.id %}">
+            <img class="newsCover" src="{{ news.cover.url }}" alt="News Cover">
+            <p class="text">{{ news.title }}</p>
+            <p class="aboutText">{{ news.published_date|date:"N j, Y" }}</p>
+        </a>
+    </div>
     {% elif news.draft and news.author == user %}
     <div>
         <a href="{% url 'news_detail' news.id %}">
@@ -60,7 +68,7 @@
         </a>
     </div>
     {% else %}
-    {% if news.author == user %}
+    {% if news.author == user or user.is_superuser%}
     <div>
         <a href="{% url 'news_detail' news.id %}">
             <img class="newsCover" src="{{ news.cover.url }}" alt="News Cover" style="opacity: 0.6">
