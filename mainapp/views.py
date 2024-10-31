@@ -65,7 +65,12 @@ def Home(request, invalid_login = False):
     home_page = HomePage.objects.first()  # Assuming you have one HomePage instance
     highlights = []
     eventcount = 0
-    for event in Event.objects.filter(highlight=True,members_only=False):
+    eventprefilter = []
+    for event in Event.objects.filter(highlight=True):
+        if event.members_only:
+            if request.user in event.author.members.all():
+                eventprefilter.append(event)
+    for event in eventprefilter:
         if eventcount >= 2:
             break
         else:
