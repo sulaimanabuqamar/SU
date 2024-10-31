@@ -25,7 +25,7 @@ class UserAdmin(BaseUserAdmin):
     filter_horizontal = ()
 
 class StudentAdmin(admin.ModelAdmin):
-    list_display = ('student_db_id', 'year_level', 'section', 'profile_picture')
+    list_display = ('student_db_id', 'year_level_title', 'year_level', 'section', 'gender', 'profile_picture')
     list_filter = ('year_level', 'section', 'gender')
     fieldsets = (
         (None, {'fields': ('student_db_id',)}),
