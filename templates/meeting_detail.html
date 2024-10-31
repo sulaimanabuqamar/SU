@@ -21,7 +21,7 @@
             </div>
             <input class="textfield" placeholder="Search..." style="margin: 0px; width: unset;" id="memberSearch">
             <br>
-            <div class="grid scroll" id="memberField">
+            <div class="memberGrid scroll" id="memberField">
                 {% for member in meeting.attending_Members.all %}
                 {% if member.associated_faculty is None %}
                 <a href="/Student/Detail/{{member.pk}}" class="profileRow">

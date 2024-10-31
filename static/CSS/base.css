@@ -119,11 +119,19 @@ div.aboutText.sidebar {
     padding-top: 20px;
     padding-bottom: 20px;
 }
-.grid {
+.memberGrid {
     display: grid;
     grid-gap: 25px;
     justify-items: center;
     grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+    max-height: 500px;
+    overflow-y: scroll;
+}
+.grid {
+    display: grid;
+    grid-gap: 25px;
+    justify-items: center;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
 }
 .grid.popup {
     max-height: 400px;
@@ -135,7 +143,6 @@ div.aboutText.sidebar {
 }
 .grid.scroll {
     max-height: 300px;
-    width: 700px;
     overflow-y: auto;
 }
 
@@ -149,7 +156,6 @@ div.aboutText.sidebar {
 .eventCover {
     width: 300px; 
     height: 300px;
-    object-fit: cover;
 }
 
 .newsCover {
@@ -196,7 +202,6 @@ div.aboutText.sidebar {
 .articleCover {
     width: 225px; 
     height: 225px;
-    object-fit: cover;
 }
 
 .articleDescriptionText {

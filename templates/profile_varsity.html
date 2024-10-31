@@ -17,7 +17,7 @@
         </div>
         <input class="textfield" placeholder="Search..." style="margin: 0px; width: unset;" id="playerSearch">
         <br>
-        <div class="grid" id="playerField">
+        <div class="memberGrid" id="playerField">
             {% for player in varsity.members.all %}
             <div class="profileRow">
                 <div class="profileRow Box" style="border: blue 3px solid; border-radius: 15px; padding: 10px; gap: 10px;">
@@ -39,7 +39,7 @@
                 </div>
                 <input class="textfield" placeholder="Search..." style="margin: 0px; width: unset;" id="captainSearch">
                 <br>
-                <div class="grid" id="captainField">
+                <div class="memberGrid" id="captainField">
                     {% for player in varsity.captains.all %}
                     <div class="profileRow">
                         <div class="profileRow Box" style="border: blue 3px solid; border-radius: 15px; padding: 10px; gap: 10px;">
@@ -60,7 +60,7 @@
                     </div>
                     <input class="textfield" placeholder="Search..." style="margin: 0px; width: unset;" id="coachSearch">
                     <br>
-                    <div class="grid" id="coachField">
+                    <div class="memberGrid" id="coachField">
                         {% for player in varsity.coaches.all %}
                         <div class="profileRow">
                             <div class="profileRow Box" style="border: blue 3px solid; border-radius: 15px; padding: 10px; gap: 10px;">

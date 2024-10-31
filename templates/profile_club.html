@@ -17,7 +17,7 @@
         </div>
         <input class="textfield" placeholder="Search..." style="margin: 0px; width: unset;" id="memberSearch">
         <br>
-        <div class="grid" id="memberField">
+        <div class="memberGrid" id="memberField">
             {% for member in club.members.all %}
             <a href="/Student/Detail/{{member.pk}}"  class="profileRow">
                 <div class="profileRow Box" style="border: {{ member.color }} 3px solid; border-radius: 15px; padding: 10px; gap: 10px;">
@@ -37,7 +37,7 @@
         </div>
         <input class="textfield" placeholder="Search..." style="margin: 0px; width: unset;" id="headSearch">
         <br>
-        <div class="grid" id="headField">
+        <div class="memberGrid" id="headField">
             {% for head in club.heads.all %}
             <a href="/Student/Detail/{{head.pk}}"  class="profileRow">
                 <div class="profileRow Box" style="border: {{ head.color }} 3px solid; border-radius: 15px; padding: 10px; gap: 10px;">
@@ -58,7 +58,7 @@
         </div>
         <input class="textfield" placeholder="Search..." style="margin: 0px; width: unset;" id="leaderSearch">
         <br>
-        <div class="grid" id="leaderField">
+        <div class="memberGrid" id="leaderField">
             {% for leader in club.leadership.all %}
             <a href="/Student/Detail/{{leader.pk}}"  class="profileRow">
                 <div class="profileRow Box" style="border: {{ leader.color }} 3px solid; border-radius: 15px; padding: 10px; gap: 10px;">
@@ -79,7 +79,7 @@
         </div>
         <input class="textfield" placeholder="Search..." style="margin: 0px; width: unset;" id="advisorSearch">
         <br>
-        <div class="grid" id="advisorField">
+        <div class="memberGrid" id="advisorField">
             {% for advisor in club.advisors.all %}
             <a href="/Faculty/Detail/{{advisor.pk}}" class="profileRow">
                 <div class="profileRow Box" style="border: {{ advisor.color }} 3px solid; border-radius: 15px; padding: 10px; gap: 10px;">

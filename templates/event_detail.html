@@ -25,7 +25,7 @@
             </div>
             <input class="textfield" placeholder="Search..." style="margin: 0px; width: unset;" id="memberSearch">
             <br>
-            <div class="grid scroll" id="memberField">
+            <div class="memberGrid scroll" id="memberField">
                 {% for member in event.attending_Students.all %}
                 <a href="/Student/Detail/{{member.pk}}" class="profileRow">
                     <div class="profileRow Box" style="border: {% if member in event.confirmed_Students.all %}lime{% else %}red{% endif %} 3px solid; border-radius: 15px; padding: 10px; gap: 10px;">
