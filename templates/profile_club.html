@@ -127,7 +127,7 @@ function downloadList() {
         <p class="subtext">Members of the club will receive acceptance letters and all other selected applicants will receive rejection letters</p>
         <input class="textfield" placeholder="Search..." style="margin: 0px; margin-bottom: 20px; width: calc( 100% - 55px ); margin-left: 20px; margin-right: 20px;" id="selectApplicantSearch">
         <form action="/Club/SendEmails/{{club.pk}}/" method="POST">
-        <div class="grid popup" style="margin-bottom: 30px;" id="selectApplicantField">
+        <div class="grid popup" style="margin-bottom: 30px; max-height: 200px;" id="selectApplicantField">
             {% csrf_token %}
             {% for member in allUsers %}
             {% if member.associated_student is not None %}
@@ -154,13 +154,13 @@ function downloadList() {
                 <button class="toolbarBtn" style="border-top-left-radius: 10px;" type="button" onclick="execCommand('bold'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/bold.svg' %}" alt="B"></button>
                 <button class="toolbarBtn" type="button" onclick="execCommand('italic'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/italic.svg' %}" alt="I"></button>
                 <button class="toolbarBtn" type="button" onclick="execCommand('underline'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/underline.svg' %}" alt="U"></button>
-                <button class="toolbarBtn" type="button" onclick="execCommand('strikethrough'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/strikethrough.svg' %}" alt="S"></button>
-                <button class="toolbarBtn" type="button" onclick="execCommand('fontSize', true, 1); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/decrease_font_size.svg' %}" alt="-"></button>
-                <button class="toolbarBtn" type="button" onclick="execCommand('fontSize', false, 2); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/normal_font_size.svg' %}" alt="="></button>
-                <button class="toolbarBtn" type="button" onclick="execCommand('fontSize', true, 4); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/increase_font_size.svg' %}" alt="+"></button>
-                <button class="toolbarBtn" type="button" onclick="execCommand('justifyLeft'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/justify_left.svg' %}" alt="L"></button>
-                <button class="toolbarBtn" type="button" onclick="execCommand('justifyCenter'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/justify_center.svg' %}" alt="C"></button>
-                <button class="toolbarBtn" type="button" onclick="execCommand('justifyRight'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/justify_right.svg' %}" alt="R"></button>
+                <button class="toolbarBtn toolbarBtnControl" type="button" onclick="execCommand('strikethrough'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/strikethrough.svg' %}" alt="S"></button>
+                <button class="toolbarBtn toolbarBtnControl" type="button" onclick="execCommand('fontSize', true, 1); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/decrease_font_size.svg' %}" alt="-"></button>
+                <button class="toolbarBtn toolbarBtnControl" type="button" onclick="execCommand('fontSize', false, 2); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/normal_font_size.svg' %}" alt="="></button>
+                <button class="toolbarBtn toolbarBtnControl" type="button" onclick="execCommand('fontSize', true, 4); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/increase_font_size.svg' %}" alt="+"></button>
+                <button class="toolbarBtn toolbarBtnControl" type="button" onclick="execCommand('justifyLeft'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/justify_left.svg' %}" alt="L"></button>
+                <button class="toolbarBtn toolbarBtnControl" type="button" onclick="execCommand('justifyCenter'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/justify_center.svg' %}" alt="C"></button>
+                <button class="toolbarBtn toolbarBtnControl" type="button" onclick="execCommand('justifyRight'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/justify_right.svg' %}" alt="R"></button>
                 <button class="toolbarBtn" type="button" onclick="document.getElementById('fontcolor').click(); document.getElementById('maineditor').focus(); "><img src="{% static '../media/images/text_color.svg' %}" alt="A"></button>
                 <input type="color" style="width:  0px; border: none; margin:0px; padding: 0px;" id="fontcolor" oninput="execCommand('foreColor', true, this.value)">
                 <button class="toolbarBtn" type="button" onclick="document.getElementById('backcolor').click(); document.getElementById('maineditor').focus(); "><img src="{% static '../media/images/highlight.svg' %}" alt="H"></button>

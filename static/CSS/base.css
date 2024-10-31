@@ -705,6 +705,14 @@ div {
         flex-direction: column-reverse;
         margin: 40px;
     }
+    .accountPopupWindow.large {
+        /* position: fixed;
+        top: calc( 50% - 175px );
+        left: calc( 50% - 200px ); */
+        width: 700px;
+        max-height: 600px;
+        overflow-y: scroll;
+    }
     .textfield.large {
         width: 305px;
     }
