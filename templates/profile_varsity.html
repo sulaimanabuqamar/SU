@@ -90,7 +90,7 @@
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.13.1/xlsx.full.min.js"></script> 
 <script>
 function downloadList() {
-    var listofmembers = [{% for member in varsity.members.all %}{"Name": "{{member.name}}", "Gender": {% if member.associated_student.section == "B" or member.associated_student.section == "E" or member.associated_student.section == "H" or member.associated_student.section == "D" or member.associated_student.section == "J" %}"Male"{% else %}"Female"{% endif %}, "Grade": {{member.associated_student.year_level}}, "Section": "{{member.associated_student.section}}", "Email": "{{member.email}}", "School ID": "{{member.associated_student.student_db_id}}"}{% endfor %}]
+    var listofmembers = [{% for member in varsity.members.all %}{"Name": "{{member.name}}", "Gender": "{{member.associated_student.gender}}", "Grade": {{member.associated_student.year_level}}, "Section": "{{member.associated_student.section}}", "Email": "{{member.email}}", "School ID": "{{member.associated_student.student_db_id}}"},{% endfor %}]
     console.log(listofmembers);
     var ws = XLSX.utils.json_to_sheet(listofmembers);
     var wb = XLSX.utils.book_new();
