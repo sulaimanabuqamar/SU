@@ -794,9 +794,9 @@ def CreateNews(request: WSGIRequest):
             email = email.replace("{{logo}}",logo) 
             email = email.replace("{{email}}",request.user.email) 
             email = email.replace("{{text}}",event.text) 
-        officers = ['mohamad.moukayed@amb.sch.ae', 'sulaiman.abuqamar@amb.sch.ae']
+        officers = []
         for user in User.objects.all():
-            if user.is_admin:
+            if user.is_superuser:
                 officers.append(str(user.email))
         if event.draft == False:
             send_mail("News Post Awaiting Approval", "Students' Society", None, officers, False, html_message=email)
@@ -857,9 +857,9 @@ def ModifyNews(request: WSGIRequest, news_id):
             email = email.replace("{{logo}}",logo) 
             email = email.replace("{{email}}",request.user.email) 
             email = email.replace("{{text}}",news.text) 
-        officers = ['mohamad.moukayed@amb.sch.ae', 'sulaiman.abuqamar@amb.sch.ae']
+        officers = []
         for user in User.objects.all():
-            if user.is_admin:
+            if user.is_superuser:
                 officers.append(str(user.email))
         if news.draft == False:
             send_mail("News Post Awaiting Approval", "Students' Society", None, officers, False, html_message=email)

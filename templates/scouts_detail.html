@@ -26,7 +26,20 @@
                     </div>
             </div>
         </div>
-        <p class="subtitle">Members</p>
+        <p class="subtitle">Leaders</p>
+        <div class="studentGrid">
+            {% for leader in scouts.advisors.all %}
+            <div>
+                <a>
+                    <img src="{{ leader.associated_faculty.profile_picture.url }}" class="studentPFP" alt="{{ leader.name }}" class="profileCover">
+                    <p class="text">{{ leader.name }}</p>
+                </a>
+            </div>
+            {% empty %}
+            <p class="text">No scout leaders available.</p>
+            {% endfor %}
+        </div>
+        <p class="subtitle">Scouts</p>
         <div class="studentGrid">
             {% for member in scouts.members.all %}  <!-- Changed variable name for clarity -->
             <div>
@@ -39,17 +52,17 @@
             <p class="text">No members available.</p>
             {% endfor %}
         </div>
-        <p class="subtitle">Leaders</p>
+        <p class="subtitle">Advisors</p>
         <div class="studentGrid">
-            {% for leader in scouts.advisors.all %}
+            {% for member in scouts.advisors.all %}  <!-- Changed variable name for clarity -->
             <div>
                 <a>
-                    <img src="{{ leader.associated_faculty.profile_picture.url }}" class="studentPFP" alt="{{ leader.name }}" class="profileCover">
-                    <p class="text">{{ leader.name }}</p>
+                    <img src="{{ member.associated_faculty.profile_picture.url }}" alt="{{ member.name }}" class="studentPFP profileCover">
+                    <p class="text">{{ member.name }}</p>
                 </a>
             </div>
             {% empty %}
-            <p class="text">No scout leaders available.</p>
+            <p class="text">No advisors available.</p>
             {% endfor %}
         </div>
         <p class="subtitle">Events</p>
