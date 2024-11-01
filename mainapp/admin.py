@@ -53,10 +53,10 @@ class ClubAdmin(admin.ModelAdmin):
         ('Membership', {'fields': ('heads', 'leadership', 'members', 'advisors')}),
         ('Events', {'fields': ('events', )}),
     )
-class Scouts(Club):
+class Scout(Club):
     class Meta:
         proxy = True
-class ScoutsAdmin(admin.ModelAdmin):
+class ScoutAdmin(admin.ModelAdmin):
     list_display = ('name', 'pk')  # Display name and email in the list view
     search_fields = ('name', )  # Allow searching by name and email
     filter_horizontal = ('heads', 'leadership', 'members', 'advisors', 'events')  # Use a horizontal filter for many-to-many fields
@@ -114,7 +114,7 @@ admin.site.register(User, UserAdmin)
 admin.site.register(Student, StudentAdmin)
 admin.site.register(Faculty, FacultyAdmin)
 admin.site.register(Club, ClubAdmin)
-admin.site.register(Scouts, ScoutsAdmin)
+admin.site.register(Scout, ScoutAdmin)
 admin.site.register(Varsity, VarsityAdmin)
 admin.site.register(Event, EventAdmin)
 admin.site.register(Links, LinksAdmin) 
