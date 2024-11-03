@@ -3,12 +3,12 @@
 {% load custom_tags %}
 
 {% block style %}
-<title>SS - Modify News Post</title>
+<title>SS - {% if userType == "student" or userType == "faculty" %}Edit Profile{% elif userType ==  "club" %}Edit Club{% elif userType == "varsity" %}Edit Varsity{% endif %}</title>
 {% endblock %}
 
 {% block content %}
 <div>
-    <p class="pageTitle">Edit Profile</p>
+    <p class="pageTitle">{% if userType == "student" or userType == "faculty" %}Edit Profile{% elif userType ==  "club" %}Edit Club{% elif userType == "varsity" %}Edit Varsity{% endif %}</p>
 </div>
 <form method="post" class="detailsSide reverse" id="mainform" style="align-items: start;" enctype="multipart/form-data">
     {% csrf_token %}
