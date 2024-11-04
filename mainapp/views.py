@@ -1084,7 +1084,7 @@ def editBylaw(request:WSGIRequest, bylaw_id: int, club_id):
         bylaw.title = request.POST.get("title")
         bylaw.text = request.POST.get("content")
         bylaw.save()
-        return redirect('/Club/EditBylaws/view/3/') 
+        return redirect('/Club/EditBylaws/view/' + str(club_id) + "/") 
 
 def editProfile(request:WSGIRequest):
     if request.method == "GET":
