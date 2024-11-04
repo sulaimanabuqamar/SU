@@ -664,9 +664,6 @@ div {
     .navBar {
         position: fixed;
     }
-    .navBarMobile {
-        position: fixed;
-    }
     
     .side {
         display: none;
@@ -707,7 +704,7 @@ div {
         grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     }
     .navBarMobile {
-        position: absolute;
+        position: fixed;
         z-index: 20;
         display: flex;
         flex-direction: column;
@@ -807,5 +804,8 @@ div {
     }
     .popupBG {
         align-items: end;
+    }
+    #loadingBG {
+        align-items: center;
     }
 }

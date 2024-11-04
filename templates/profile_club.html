@@ -241,7 +241,7 @@ function downloadList() {
             {% csrf_token %}
             <div class="grid popup" style="margin-bottom: 30px;" id="addMemberField">
                 {% for member in allUsers %}
-                {% if member not in club.members.all and member.associated_student is not None %}
+                {% if member.associated_student is not None and member not in club.heads.all and member not in club.advisors.all and member not in club.leadership.all and member not in club.heads.all %}
                 <div class="profileRow">
                     <div class="profileRow popupBox" style="border: blue 3px solid; border-radius: 15px; padding: 5px; gap: 10px;">
                         <img class="eventCover" style=" width: 50px; height: 50px; border-radius: 50%; object-fit: cover;" src="{{ member.associated_student.profile_picture.url }}" alt="Club Cover">
@@ -268,7 +268,7 @@ function downloadList() {
         <input class="textfield" placeholder="Search..." style="margin: 0px; margin-bottom: 20px; width: calc( 100% - 55px ); margin-left: 20px; margin-right: 20px;" id="addHeadsSearch">
         <div class="grid popup" style="margin-bottom: 30px;" id="addHeadField">
             {% for member in allUsers %}
-            {% if member not in club.heads.all and member.associated_student is not None %}
+            {% if member.associated_student is not None and member not in club.heads.all and member not in club.advisors.all and member not in club.leadership.all and member not in club.heads.all %}
             <div class="profileRow">
                 <div class="profileRow popupBox" style="border: blue 3px solid; border-radius: 15px; padding: 5px; gap: 10px;">
                     <img class="eventCover" style=" width: 50px; height: 50px; border-radius: 50%; object-fit: cover;" src="{{ member.associated_student.profile_picture.url }}" alt="Club Cover">
@@ -290,7 +290,7 @@ function downloadList() {
         <input class="textfield" placeholder="Search..." style="margin: 0px; margin-bottom: 20px; width: calc( 100% - 55px ); margin-left: 20px; margin-right: 20px;" id="addAdvisorSearch">
         <div class="grid popup" style="margin-bottom: 30px;" id="addAdvisorField">
             {% for member in allUsers %}
-            {% if member not in club.advisors.all and member.associated_faculty is not None %}
+            {% if member.associated_student is not None and member not in club.heads.all and member not in club.advisors.all and member not in club.leadership.all and member not in club.heads.all %}
             <div class="profileRow">
                 <div class="profileRow popupBox" style="border: blue 3px solid; border-radius: 15px; padding: 5px; gap: 10px;">
                     <img class="eventCover" style=" width: 50px; height: 50px; border-radius: 50%; object-fit: cover;" src="{{ member.associated_faculty.profile_picture.url }}" alt="Club Cover">
@@ -311,7 +311,7 @@ function downloadList() {
         <input class="textfield" placeholder="Search..." style="margin: 0px; margin-bottom: 20px; width: calc( 100% - 55px ); margin-left: 20px; margin-right: 20px;" id="addLeadershipSearch">
         <div class="grid popup" style="margin-bottom: 30px;" id="addLeadershipField">
             {% for member in allUsers %}
-            {% if member not in club.leadership.all and member.associated_student is not None %}
+            {% if member.associated_student is not None and member not in club.heads.all and member not in club.advisors.all and member not in club.leadership.all and member not in club.heads.all %}
             <div class="profileRow">
                 <div class="profileRow popupBox" style="border: blue 3px solid; border-radius: 15px; padding: 5px; gap: 10px;">
                     <img class="eventCover" style=" width: 50px; height: 50px; border-radius: 50%; object-fit: cover;" src="{{ member.associated_student.profile_picture.url }}" alt="Club Cover">
