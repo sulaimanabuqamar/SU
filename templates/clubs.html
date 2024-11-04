@@ -15,7 +15,7 @@
     <div>
         <a href="{% url 'club_detail' club.id %}">
             <img class="eventCover" style="border: {{ club.color }} 3px solid;" src="{{ club.logo.url }}" alt="Club Cover">
-            <p class="text">{{ club.name }}</p>
+            <p class="text" style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;max-width: 306px;">{{ club.name }}</p>
             <p class="aboutText">{{ club.date }}</p>
         </a>
     </div>
