@@ -105,6 +105,14 @@ def Scouts_Detail(request, scouts_id):
         return error_404_view(request, None)
     return render(request, "scouts_detail.html", {'scouts': scouts, 'user': request.user, 'events':events, 'links': scouts.links.all()})
 
+def Club_Bylaws_Detail(request, club_id):
+    try:
+        club = Club.objects.get(id=club_id)
+        bylaws = club.bylaws.all()
+    except ObjectDoesNotExist:
+        return error_404_view(request, None)
+    return render(request, "club_bylaws_detail.html", {'club': club, 'user': request.user, 'bylaws':bylaws})
+
 def Meetings(request: WSGIRequest):
     meetings = Meeting.objects.all().order_by('-date')
     meetings_filtered = []
@@ -989,6 +997,94 @@ def addVarsityPlayer(request: WSGIRequest, varsity_id: int, sector: str):
                 varsity.coaches.add(user)
     varsity.save()
     return HttpResponse("{\"message\":\"competed\"}")
+
+def createBylaw(request: WSGIRequest):
+    pass
+def deleteBylaw(request: WSGIRequest):
+    pass
+def createResource(request:WSGIRequest, bylaw_id: int, club_id):
+    if request.method == "POST":
+        resource = Resource.objects.create()
+        resourceType = request.POST.get("type")
+        resource.type = resourceType
+        if resourceType == "file":
+            file = request.FILES.get("file")
+            if file is not None:
+                id = str(random.randint(11111111,999999999))
+                os.mkdir(os.path.join(settings.MEDIA_ROOT,"resources", id))
+                filename = os.path.join(settings.MEDIA_ROOT,"resources", id, file.name)
+                with open(filename, 'wb+') as f:
+                    for chunk in file.chunks():
+                        f.write(chunk)
+                resource.file = filename.replace(str(settings.BASE_DIR), '').replace("/media","")
+        elif resourceType == "link":
+            link = Links.objects.create()
+            link.name = request.POST.get("linkname")
+            link.link = request.POST.get("linkurl")
+            link.save()
+            resource.link = link
+        resource.name = request.POST.get("name")
+        resource.save()
+        bylaw = Bylaw.objects.get(id=bylaw_id)
+        bylaw.resources.add(resource)
+        bylaw.save()
+        return redirect('/Club/EditBylaws/edit/' + str(bylaw_id) + '/' + str(club_id) + "/")
+@csrf_exempt
+def deleteResource(request: WSGIRequest, resource_id):
+    if request.method == "POST":
+        resource = Resource.objects.get(id=resource_id)
+        if resource.type  == "link":
+            resource.link.delete()
+        elif resource.type == "file":
+            os.remove(os.path.join(settings.BASE_DIR, 'media') + resource.file.name) 
+        resource.delete()
+        return HttpResponse("Deleted")
+def createBylaw(request:WSGIRequest, club_id: int):
+    if request.method == "POST":
+        bylaw = Bylaw.objects.create()
+        bylaw.title = request.POST.get('title')
+        bylaw.text = request.POST.get('content')
+        bylaw.save()
+        club = Club.objects.get(id=club_id)
+        club.bylaws.add(bylaw)
+        club.save()
+        return redirect('/Club/EditBylaws/edit/' + str(bylaw.pk) + "/" + str(club.pk) + "/")
+def deleteBylaw(request:WSGIRequest, club_id: int, bylaw_id: int):
+    try:
+        club = Club.objects.get(id=club_id)
+        bylaw = Bylaw.objects.get(id=bylaw_id)
+        club.bylaws.remove(bylaw)
+        club.save()
+        bylaw.delete()
+        return HttpResponse("Deleted Successfully")
+    except:
+        return HttpResponse("Failed to delete bylaw", status=500) 
+def jsonBylaw(request:WSGIRequest, bylaw_id: int):
+    bylaw = Bylaw.objects.get(id=bylaw_id)
+    bylawjson = {}
+    bylawjson["title"] = bylaw.title
+    bylawjson["text"] = bylaw.text
+    bylawjson["resources"] = []
+    for resource in bylaw.resources.all():
+        if resource.type == "file":
+            bylawjson["resources"].append({'name': resource.name,'type': resource.type,'link': None, 'file': resource.file.url,}) 
+        elif resource.type == "link":
+            bylawjson["resources"].append({'name': resource.name,'type': resource.type,'link': {'name': resource.link.name, 'url': resource.link.link},'file': "",}) 
+    return HttpResponse(json.dumps(bylawjson))
+
+def viewBylaw(request:WSGIRequest, club_id: int):
+    if request.method == "GET":
+        return render(request, "club_bylaws_edit.html", {'club': Club.objects.get(id=club_id), 'user': request.user})
+
+def editBylaw(request:WSGIRequest, bylaw_id: int, club_id):
+    if request.method == "GET":
+        return render(request, "edit_bylaw.html", {'bylaw': Bylaw.objects.get(id=bylaw_id), 'user': request.user, 'club': Club.objects.get(id=club_id)})
+    elif request.method == "POST":
+        bylaw = Bylaw.objects.get(id=bylaw_id)
+        bylaw.title = request.POST.get("title")
+        bylaw.text = request.POST.get("content")
+        bylaw.save()
+        return redirect('/Club/EditBylaws/view/3/') 
 
 def editProfile(request:WSGIRequest):
     if request.method == "GET":

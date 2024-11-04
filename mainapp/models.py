@@ -12,6 +12,19 @@ class Links(models.Model):
     link = models.URLField()
     def __str__(self) -> str:
         return self.name
+class Resource(models.Model):
+    name = models.CharField(max_length=10000)
+    type = models.CharField(max_length=20, choices=[('link','Website Link'), ('file', 'Uploaded File')])
+    link = models.ForeignKey(Links, null=True, blank=True, on_delete=models.CASCADE)
+    file = models.FileField(blank=True, null=True, upload_to='resources/')
+    def __str__(self) -> str:
+        return self.name
+class Bylaw(models.Model):
+    title = models.CharField(max_length=10000)
+    text  = models.TextField(blank=True,null=True)
+    resources = models.ManyToManyField(Resource, blank=True,related_name="bylaw_resources")
+    def __str__(self) -> str:
+        return self.title
 
 class UserManager(BaseUserManager):
     def create_user(self, email, name, password=None):
@@ -119,6 +132,7 @@ class Club(models.Model):
     logo = models.ImageField(upload_to='clubs_logos/')
     color = models.CharField(max_length=7)  # Hex color code
     links = models.ManyToManyField(Links, related_name='club_links', blank=True)
+    bylaws = models.ManyToManyField(Bylaw, related_name='club_bylaws', blank=True) 
     def __str__(self) -> str:
         return self.name
 

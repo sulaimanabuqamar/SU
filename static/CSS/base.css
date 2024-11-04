@@ -29,6 +29,7 @@
     justify-content: center;
     align-items: center;
     gap: 5px;
+    z-index: 10;
 }
 
 .logo {
@@ -314,6 +315,13 @@ width: 45px;
     top: calc( 50% - 175px );
     left: calc( 50% - 200px ); */
     width: 700px;
+}
+.accountPopupWindow.maximized {
+    /* position: fixed;
+    top: calc( 50% - 175px );
+    left: calc( 50% - 200px ); */
+    width: 95%;
+    height: 95%;
 }
 
 .btn {
@@ -626,10 +634,40 @@ div {
 .toolbarBtnControl {
 
 }
+.buttoncontrol {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+}
 .popupBox {
     width: 330px;
 }
 @media only screen and (max-width: 1000px) {
+    
+    @keyframes openPopup {
+        from {
+            transform: translateY(100%);
+        }
+        to {
+            transform: translateY(0%);
+        }
+    }
+    @keyframes closePopup {
+        from {
+            transform: translateY(0px);
+        }
+        to {
+            transform: translateY(100%);
+        }
+    }
+    .navBar {
+        position: fixed;
+    }
+    .navBarMobile {
+        position: fixed;
+    }
+    
     .side {
         display: none;
     }
@@ -698,6 +736,11 @@ div {
         align-items: center;
         flex-direction: column;
     }
+    .buttoncontrol {
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+    }
     .pagecontrol {
         display: flex;
         gap: 100px;
@@ -762,5 +805,7 @@ div {
     .warning {
         width: calc(100% - 60px);
     }
-    
+    .popupBG {
+        align-items: end;
+    }
 }

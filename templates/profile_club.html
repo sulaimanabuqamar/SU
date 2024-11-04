@@ -106,7 +106,8 @@
         <a class="centercontrol"><button class="btn" onclick="openMemberPopup('selectApplicant')" >Send Admission Emails</button><a/><br>
         <a class="centercontrol"><button class="btn" onclick="downloadList()">Download List of Members</button></a><br>
         <a href="{% url "create_event" club.pk %}" class="centercontrol"><button class="btn">Create Event</button></a><br>
-        <a href="{% url "create_meeting" club.pk %}" class="centercontrol"><button class="btn">Create Meeting</button></a>
+        <a href="{% url "create_meeting" club.pk %}" class="centercontrol"><button class="btn">Create Meeting</button></a><br>
+        <a href="{% url "club_bylaws" club.pk %}" class="centercontrol"><button class="btn">Bylaws</button></a>
     </div>
 </div>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.13.1/xlsx.full.min.js"></script> 

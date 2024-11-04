@@ -1,0 +1,39 @@
+{% extends 'Base.html' %}
+{% load static %}
+
+{% block style %}
+<title>{{ club.name }} - Club Bylaws</title>
+{% endblock %}
+
+{% block content %}
+{% comment %} <p class="pageTitle" style="margin: 0px;">{{ club.name }} Bylaws</p> {% endcomment %}
+<div class="pagecontrol">
+    <div style="display: flex; justify-content: space-between; flex-direction: column; width: 100%;">
+        <div class="profileRow">
+        <p class="pageTitle" style="margin: 0px;">{{ club.name }} Bylaws</p>
+        {% if club in user.associated_clubs.all %}
+            <a href="{% url "club_edit_bylaws" club.pk %}"><button class="btn empty"><img src="{% static '../media/images/editButton.svg' %}"></button></a>
+        {% endif %}
+        </div>
+        <br>
+        {% for bylaw in bylaws %}
+        <br>
+        <p class="pageSubtitle" style="margin: 0px;">{{ bylaw.title }}</p>
+        <div style="padding-top: 20px; padding-bottom: 20px;">{{ bylaw.text|safe}}</div>
+        <div class="grid">
+            {% for resource in bylaw.resources.all %}
+            <div>
+                <a href="{% if resource.type == "file" %}{{resource.file.url}}{% elif resource.type == "link" %}{{resource.link.link}}{% endif %}" target="_blank" style="display: flex; flex-direction: row; align-items: center; gap: 5px;">
+                    <img src="{% if resource.type == "file" %}{% static "../media/images/file.svg" %}{% elif resource.type == "link" %}{% static "../media/images/link.svg" %}{% endif %}" alt="file" style="width: 30px; height: 30px;">
+                    <p class="text">{{ resource.name }}</p>
+                    {% comment %} <p class="aboutText">{{ club.date }}</p> {% endcomment %}
+                </a>
+            </div>
+            {% empty %}
+            <p class="text">No Resources</p>
+            {% endfor %}
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

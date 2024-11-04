@@ -51,7 +51,7 @@ class ClubAdmin(admin.ModelAdmin):
     fieldsets = (
         (None, {'fields': ('name', 'about', 'logo', 'color', 'links', 'type')}),
         ('Membership', {'fields': ('heads', 'leadership', 'members', 'advisors')}),
-        ('Events', {'fields': ('events', )}),
+        ('Events', {'fields': ('bylaws', 'events')}), 
     )
 class Scout(Club):
     class Meta:
@@ -103,10 +103,19 @@ class NewsAdmin(admin.ModelAdmin):
     
 class HomepageAdmin(admin.ModelAdmin):
     fields = ['event_highlight_1', 'event_highlight_2', 'event_highlight_3', 'news_highlight_1', 'news_highlight_2', 'news_highlight_3', 'officer_highlight_1', 'officer_highlight_2', 'officer_highlight_3', 'officer_highlight_4','carousel_scroll_duration']
+
 class LinksAdmin(admin.ModelAdmin):
     list_display = ('name',  'link')
     list_filter = ('name', 'link')
     search_fields = ('name','link')
+class ResourcesAdmin(admin.ModelAdmin):
+    list_display = ('name', 'pk', 'link', 'file')
+    list_filter = ('name', 'link')
+    search_fields = ('name','link')
+class BylawsAdmin(admin.ModelAdmin):
+    list_display = ('title', 'pk')
+    list_filter = ('title',)
+    search_fields = ('title',)
     
 # Register your models here
 admin.site.register(HomePage, HomepageAdmin)
@@ -120,3 +129,5 @@ admin.site.register(Event, EventAdmin)
 admin.site.register(Links, LinksAdmin) 
 admin.site.register(News, NewsAdmin)
 admin.site.register(Meeting, MeetingAdmin)
+admin.site.register(Resource, ResourcesAdmin)
+admin.site.register(Bylaw, BylawsAdmin)
