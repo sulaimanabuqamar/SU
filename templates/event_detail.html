@@ -35,9 +35,9 @@
                         <p class="aboutText confirmedcontrol" style="color: {% if member in event.confirmed_Students.all %}lime{% else %}red{% endif %};">{% if member in event.confirmed_Students.all %}Confirmed{% else %}Not Confirmed{% endif %}</p>
                         {% if member.email == user.email or event.author in user.associated_clubs.all %}
                         {% if member not in event.confirmed_Students.all %}
-                        <button class="btn empty" onclick="setAttendeeConfirmed('{{member.email}}')"><img src="{%static '../media/images/confirmButton.svg' %}"></button>
+                        <button class="btn empty" onclick="event.preventDefault(); setAttendeeConfirmed('{{member.email}}')"><img src="{%static '../media/images/confirmButton.svg' %}"></button>
                         {% else %}
-                        <button class="btn empty" onclick="setAttendeeNotConfirmed('{{member.email}}')"><img src="{%static '../media/images/unconfirmButton.svg' %}"></button>
+                        <button class="btn empty" onclick="event.preventDefault(); setAttendeeNotConfirmed('{{member.email}}')"><img src="{%static '../media/images/unconfirmButton.svg' %}"></button>
                         {% endif %}
                         {% endif %}
                         {% if event.author in user.associated_clubs.all %}
