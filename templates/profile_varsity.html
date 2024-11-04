@@ -205,10 +205,11 @@ function downloadList() {
         
     }
     function removeMember(email, sector) {
-        confirm("Are you sure you would like to delete " + email + "?");
+        if(confirm("Are you sure you would like to delete " + email + "?")) {
         fetch("/Varsity/Remove/{{varsity.pk}}/" + sector + "?email=" + email)
         .then(data => data.json())
         .then(json => {console.log(json); location.reload();});
+        }
     }
     function addMember(email, sector) {
         fetch("/Varsity/Add/{{varsity.pk}}/" + sector + "?" + email + "=on")

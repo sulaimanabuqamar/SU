@@ -41,7 +41,7 @@
                         {% endif %}
                         {% endif %}
                         {% if event.author in user.associated_clubs.all %}
-                        <button class="btn empty" onclick="removeAttendeeFromList('{{member.email}}')"><img src="{%static '../media/images/removeButton.svg' %}"></button>
+                        <button class="btn empty" onclick="event.preventDefault(); removeAttendeeFromList('{{member.email}}')"><img src="{%static '../media/images/removeButton.svg' %}"></button>
                         {% endif %}
                     </div>
                 </a>

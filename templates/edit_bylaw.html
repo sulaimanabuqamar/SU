@@ -270,36 +270,6 @@ function deleteResource(pk) {
 </div>
 
 <script>
-    function openMemberPopup(type) {
-        if(type == "member") {
-            openPopup('addMemberBG');
-        }
-        else if(type == "advisor") {
-            openPopup('addAdvisorBG');
-        }
-        else if(type == "leadership") {
-            openPopup('addLeadershipBG');
-        }
-        else if(type == "head") {
-            openPopup('addHeadBG');
-        }
-        else if(type == "selectApplicant") {
-            openPopup('selectApplicantBG');
-        }
-        
-    }
-    function removeMember(email, sector) {
-        confirm("Are you sure you would like to delete " + email + "?");
-        fetch("/Club/Remove/{{club.pk}}/" + sector + "?email=" + email)
-        .then(data => data.json())
-        .then(json => {console.log(json); location.reload();});
-    }
-    function addMember(email, sector) {
-        fetch("/Club/Add/{{club.pk}}/" + sector + "?" + email + "=on")
-        .then(data => data.json())
-        .then(json => {console.log(json); location.reload();});
-    }
-    
     function searchMemberGrid(searchTerm, grid) {
         try{
         for(var i = 0; i < grid.children.length; i++) {
