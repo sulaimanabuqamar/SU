@@ -13,7 +13,7 @@
 <form method="post" class="profileRow" id="mainform" style="align-items: start;" enctype="multipart/form-data">
     {% csrf_token %}
     <div style="display: flex; flex-direction: column;">
-    <input class="textfield" required name="title" placeholder="Title" value="{{meeting.title}}">
+    <input class="textfield" required name="title" placeholder="Title" value="{{meeting.title}}" maxlength="40">
     <div>
         <div class="textfieldtoolbar">
             <button class="toolbarBtn" style="border-top-left-radius: 10px;" type="button" onclick="execCommand('bold'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/bold.svg' %}" alt="B"></button>

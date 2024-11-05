@@ -12,7 +12,7 @@
 <form id="mainform" method="post" class="detailsSide reverse" style="align-items: start;" enctype="multipart/form-data">
     {% csrf_token %}
     <div style="display: flex; flex-direction: column;">
-    <input class="textfield" required name="title" placeholder="Title">
+    <input class="textfield" required name="title" placeholder="Title" maxlength="40">
     <div>
         <div class="textfieldtoolbar">
             <button class="toolbarBtn" style="border-top-left-radius: 10px;" type="button" onclick="execCommand('bold'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/bold.svg' %}" alt="B"></button>

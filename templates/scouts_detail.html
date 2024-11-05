@@ -28,10 +28,10 @@
         </div>
         <p class="subtitle">Leaders</p>
         <div class="studentGrid">
-            {% for leader in scouts.advisors.all %}
+            {% for leader in scouts.heads.all %}
             <div>
                 <a>
-                    <img src="{{ leader.associated_faculty.profile_picture.url }}" class="studentPFP" alt="{{ leader.name }}" class="profileCover">
+                    <img src="{{ leader.associated_student.profile_picture.url }}" class="studentPFP" alt="{{ leader.name }}" class="profileCover">
                     <p class="text">{{ leader.name }}</p>
                 </a>
             </div>

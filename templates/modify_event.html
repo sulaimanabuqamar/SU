@@ -14,7 +14,7 @@
     {% csrf_token %}
     <div style="display: flex; flex-direction: column;">
     <p class="subtext" id="wrongcred" hidden style="color: red">Incorrect Username or Password</p>
-    <input class="textfield" required name="title" placeholder="Title" value="{{event.title}}">
+    <input class="textfield" required name="title" placeholder="Title" value="{{event.title}}"  maxlength="40">
     <div>
         <div class="textfieldtoolbar">
             <button class="toolbarBtn" style="border-top-left-radius: 10px;" type="button" onclick="execCommand('bold'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/bold.svg' %}" alt="B"></button>
@@ -166,7 +166,7 @@
     </div>
     
 </div>
-<label style="font-family: Inter; margin-left: 10px;"><input name="highlight" type="checkbox" checked> Highlight</label>
+<label style="font-family: Inter; margin-left: 10px; margin-top: 20px;"><input name="highlight" type="checkbox" checked> Highlight</label>
 <label style="font-family: Inter; margin-left: 10px;"><input name="membersonly" type="checkbox" {{membersonly}}> Members Only</label>
     <label style="font-family: Inter; margin-left: 10px;"><input name="emailstudent" type="checkbox" > Email Student</label>
     <label style="font-family: Inter; margin-left: 10px;"><input name="emailhos" type="checkbox" onchange="if(this.checked){document.getElementById('hosemail').hidden = false;} else {document.getElementById('hosemail').hidden = true;}"> Email Faculty</label>

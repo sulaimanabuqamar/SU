@@ -83,7 +83,10 @@
 <div class="popupBG" hidden id="addMemberBG" onclick="if(event.srcElement == this) {closePopup(this.id)}">
     <div class="accountPopupWindow">
         <p class="subtitle" style="text-align: center; margin-bottom: 15px;">Add Attendee To Event</p>
-        <input class="textfield" placeholder="Search..." style="margin: 0px; margin-bottom: 20px; width: calc( 100% - 55px ); margin-left: 20px; margin-right: 20px;" id="addMemberSearch">
+        <div style="display: flex; align-items: center; margin-bottom: 20px;">
+            <input class="textfield" placeholder="Search..." style="margin: 0px; width: calc( 100% - 55px ); margin-left: 20px; margin-right: 20px;" id="addMemberSearch">
+            <input type="checkbox" onchange="togglerAllMembers()">
+        </div>
         <iframe name="hiddenFrame" width="0" height="0" border="0" style="display: none;"></iframe>
         <form action="/Event/Add" target="hiddenFrame" method="GET" onsubmit="setTimeout(function() {location.reload();}, 500);">
             {% csrf_token %}
@@ -109,6 +112,14 @@
             <button type="submit" class="btn primary" onclick="closePopup('addMemberBG');">Add Attendees</button>
             </div>
         </form>
+        <script>
+            var emails = [{% for member in allUsers %}{% if member.associated_student is not None and member in event.author.members.all %}"{{member.email}}",{% endif %}{% endfor %}];
+            function togglerAllMembers() {
+                for(var i = 0; i < emails.length; i++)  {
+                    document.getElementsByName(emails[i])[0].checked = !document.getElementsByName(emails[i])[0].checked;
+                }
+            }
+        </script>
     </div>
 </div>
 {% endif %}
