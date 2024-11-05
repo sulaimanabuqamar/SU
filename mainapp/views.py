@@ -70,8 +70,10 @@ def Home(request, invalid_login = False):
         if event.members_only:
             if request.user in event.author.members.all():
                 eventprefilter.append(event)
+        else:
+            eventprefilter.append(event)
     for event in eventprefilter:
-        if eventcount >= 2:
+        if eventcount >= 4:
             break
         else:
             highlights.append(event)

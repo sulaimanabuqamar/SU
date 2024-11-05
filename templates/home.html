@@ -22,7 +22,7 @@
     <button class="btn empty" onclick="previousHighlight();"><img src="{% static '../media/images/leftArrow.svg' %}"></button>
     <div class="highlightOverflow">
         {% for event in highlights %}
-        {% if user.associated_student is not None and event.author.type == user.associated_student.gender or event.author.type == "mixed"  or event.typeitem == "news" or user.associated_faculty is not None or user.is_superuser %}
+        {% if event.author.type == user.associated_student.gender or event.author.type == "mixed"  or event.typeitem == "news" or user.associated_faculty is not None or user.is_superuser %}
         <a class="highlightContent" href="/{% if event.typeitem == "event" %}Event{% elif event.typeitem == "news" %}News{% endif %}/Detail/{{event.pk}}">
             <div>
                 <p class="highlightTitle">{{event.title}}</p>
