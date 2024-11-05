@@ -132,7 +132,7 @@ div.aboutText.sidebar {
     display: grid;
     grid-gap: 25px;
     justify-items: center;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(306px, 1fr));
 }
 .grid.popup {
     max-height: 400px;
