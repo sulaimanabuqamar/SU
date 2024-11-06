@@ -196,7 +196,7 @@ def Clubs(request):
 
 def Club_Detail(request, club_id):
     club = get_object_or_404(Club, id=club_id) 
-    events = Event.objects.filter(author=club).order_by("start_time")
+    events = Event.objects.filter(author=club).order_by("date")
     heads = club.heads.all()  
     leadership = club.leadership.all()  
     members = club.members.all()
