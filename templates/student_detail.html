@@ -27,7 +27,7 @@
             <div>
                 <a href="{% url 'club_detail' club.id %}">
                     <img class="eventCover" style="border: {{ club.color }} 3px solid;" src="{{ club.logo.url }}" alt="Club Cover">
-                    <p class="text">{{ club.name }}</p>
+                    <p class="text" style="max-width: 306px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ club.name }}</p>
                     <p class="aboutText">Head of Club</p>
                 </a>
             </div>
@@ -36,7 +36,7 @@
             <div>
                 <a href="{% url 'club_detail' club.id %}">
                     <img class="eventCover" style="border: {{ club.color }} 3px solid;" src="{{ club.logo.url }}" alt="Club Cover">
-                    <p class="text">{{ club.name }}</p>
+                    <p class="text" style="max-width: 306px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ club.name }}</p>
                     <p class="aboutText">Committee of Club</p>
                 </a>
             </div>
@@ -45,7 +45,7 @@
             <div>
                 <a href="{% url 'club_detail' club.id %}">
                     <img class="eventCover" style="border: {{ club.color }} 3px solid;" src="{{ club.logo.url }}" alt="Club Cover">
-                    <p class="text">{{ club.name }}</p>
+                    <p class="text" style="max-width: 306px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ club.name }}</p>
                     <p class="aboutText">Member of Club</p>
                 </a>
             </div>

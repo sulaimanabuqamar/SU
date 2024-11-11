@@ -69,7 +69,8 @@
         <div class="studentGrid">
             {% for advisor in advisors %}
             <a href="/Faculty/Detail/{{advisor.pk}}">
-                <p class="text">• {{ advisor.name }}</p>
+                <img src="{{ advisor.associated_faculty.profile_picture.url }}" alt="{{ advisor.name }}" class="studentPFP profileCover">
+                <p class="text">{{ advisor.name }}</p>
             </a>
             {% empty %}
             <p class="text">No advisors available.</p>
@@ -81,7 +82,7 @@
             <div>
                 <a href="{% url 'event_detail' event.id %}">
                     <img class="eventCover" src="{{ event.cover.url }}" alt="Event Cover">
-                    <p class="text">{{ event.title }}</p>
+                    <p class="text" style="max-width: 306px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ event.title }}</p>
                     <p class="aboutText">{{ event.date }}</p>
                     <p class="aboutText">{{ event.start_time|time:"g:i A" }} - {{ event.end_time|time:"g:i A" }}</p>
                     <div class="tagBox" style="background: {{ event.author.color }};">

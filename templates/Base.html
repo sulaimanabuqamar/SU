@@ -98,7 +98,7 @@
     <div class="popupBG" id="aboutPopup" hidden onclick="console.log(event.srcElement); if(event.srcElement == this) {closePopup(this.id);}">
         <div id="accountPopupWindow" class="accountPopupWindow">
             <p class="subtitle" style="text-align: center; margin-bottom: 15px;">Student Society Website</p>
-            <p class="subtext">Version 2.48</p>
+            <p class="subtext">Version 2.49 BETA</p>
             <p class="subtext">Latest Commit: event sort in club details</p>
             <p class="subtext">Developed by Mohamad Moukayed and Sulaiman Abuqamar</p>
             <p class="subtext">Send us an email at studentsociety.amsi@gmail.com</p>
@@ -147,7 +147,7 @@
                     <a href="{% url 'news' %}">
                         <p class="navText" style="margin: 0px;">News</p>
                     </a>
-                    <a href="{% url 'meetings' %}">
+                    <a href="{% url 'meetings' %}" class="last">
                         <p class="navText" style="margin: 0px;">Meetings</p>
                     </a>
                     
@@ -167,29 +167,29 @@
             {% if user.is_authenticated %}
                 {% if "profile" in url %}
                 <div class="dropdown">
-                <p class="dropbtn navText" style="cursor: pointer;" onclick="signOut();">Sign Out</p>
-                <div class="dropdown-content" style="margin-left: -60px;">
-                    <a href="/profile/User">
-                        <p class="navText" style="margin: 0px;">{{ user.name }}</p>
-                    </a>
-                    {% if user.associated_clubs.count > 0 %}
-                    <hr>
-                    {% endif %}
-                    {% for club in user.associated_clubs.all %}
-                    <a href="/profile/Club/{{club.pk}}">
-                        <p class="navText" style="margin: 0px;">{{ club.name }}</p>
-                    </a>
-                    {% endfor %}
-                    {% if user.associated_varsities.count > 0 %}
-                    <hr>
-                    {% endif %}
-                    {% for varsity in user.associated_varsities.all %}
-                    <a href="/profile/Varsity/{{varsity.pk}}">
-                        <p class="navText" style="margin: 0px;">{{ varsity.name }}</p>
-                    </a>
-                    {% endfor %}
-                </div>
-                </div>
+                    <div class="dropbtn navText" style="cursor: pointer;" onclick="signOut();">Sign Out</div>
+                    <div class="dropdown-content">
+                        <a href="/profile/User" {% if user.associated_clubs.count == 0 and user.associated_varsities.count == 0 %}class="last"{% endif %}>
+                            <p class="navText" style="margin: 0px;">{{ user.name }}</p>
+                        </a>
+                        {% if user.associated_clubs.count > 0 %}
+                        <hr>
+                        {% endif %}
+                        {% for club in user.associated_clubs.all %}
+                        <a href="/profile/Club/{{club.pk}}" {% if forloop.last and user.associated_varsities.count == 0 %}class="last"{% endif %}>
+                            <p class="navText" style="margin: 0px;">{{ club.name }}</p>
+                        </a>
+                        {% endfor %}
+                        {% if user.associated_varsities.count > 0 %}
+                        <hr>
+                        {% endif %}
+                        {% for varsity in user.associated_varsities.all %}
+                        <a href="/profile/Varsity/{{varsity.pk}}" {% if forloop.last %}class="last"{% endif %}>
+                            <p class="navText" style="margin: 0px;">{{ varsity.name }}</p>
+                        </a>
+                        {% endfor %}
+                    </div>
+                    </div>
                 {% else %}
                 {% if user.associated_clubs is None and user.associated_varsities is None %}
                 <a href="/profile/User"><p class="navText" style="cursor: pointer;">Profile</p></a>
@@ -197,14 +197,14 @@
                 <div class="dropdown">
                 <div class="dropbtn navText">Profile</div>
                 <div class="dropdown-content">
-                    <a href="/profile/User">
+                    <a href="/profile/User" {% if user.associated_clubs.count == 0 and user.associated_varsities.count == 0 %}class="last"{% endif %}>
                         <p class="navText" style="margin: 0px;">{{ user.name }}</p>
                     </a>
                     {% if user.associated_clubs.count > 0 %}
                     <hr>
                     {% endif %}
                     {% for club in user.associated_clubs.all %}
-                    <a href="/profile/Club/{{club.pk}}">
+                    <a href="/profile/Club/{{club.pk}}" {% if forloop.last and user.associated_varsities.count == 0 %}class="last"{% endif %}>
                         <p class="navText" style="margin: 0px;">{{ club.name }}</p>
                     </a>
                     {% endfor %}
@@ -212,7 +212,7 @@
                     <hr>
                     {% endif %}
                     {% for varsity in user.associated_varsities.all %}
-                    <a href="/profile/Varsity/{{varsity.pk}}">
+                    <a href="/profile/Varsity/{{varsity.pk}}" {% if forloop.last %}class="last"{% endif %}>
                         <p class="navText" style="margin: 0px;">{{ varsity.name }}</p>
                     </a>
                     {% endfor %}

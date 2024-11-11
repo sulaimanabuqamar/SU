@@ -49,9 +49,13 @@
 a {
     text-decoration: none;
 }
-
+.dropdown {
+    display: flex;
+    justify-content: center;
+}
 .dropdown-content {
     display: none;
+    margin-top: 35px;
     position: absolute;
     background-color: #1F355E;
     min-width: 90px;
@@ -67,6 +71,19 @@ a {
     text-align: left;
     display: block;
 }
+.dropdown-content a:hover {
+    background-color: #BFD5FF;
+}
+.dropdown-content a:hover p.navText {
+    color: black;
+}
+.dropdown-content a.last:hover {
+    background-color: #BFD5FF;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+
 
 .dropdown:hover .dropdown-content {
     display: block;
@@ -342,6 +359,10 @@ width: 45px;
     background-color: #1F355E;
     color: white;
 }
+.btn.dangerous  {
+    background-color: #840000;
+    color: white;
+}
 .btn.empty {
     border: none;
     width: unset;
@@ -390,6 +411,10 @@ width: 45px;
     font-weight: 500;
     padding-left: 10px;
     padding-right: 10px;
+}
+select.textfield {
+    width: 367px;
+    margin-left: 18px;
 }
 .textfield.bottom {
     border-top-left-radius: 0px;
@@ -529,7 +554,7 @@ font {
     align-items: center;
 }
 img {
-    object-fit: contain;
+    object-fit: cover;
 }
 div {
     font-family: 'Inter';
@@ -593,7 +618,7 @@ div {
 .mobileItem {
     width: 100%;
     background-color: #1F355E;
-    height: 60px;
+    min-height: 60px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -711,6 +736,8 @@ div {
         width: 100%;
         margin-top: 70px;
         z-index: 19;
+        overflow-y: scroll;
+        max-height: 93%;
     }
     .dropdown-content {
         margin-top: 170px;

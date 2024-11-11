@@ -1,0 +1,21 @@
+{% extends 'Base.html' %}
+{% load static %}
+
+{% block style %}
+<title>SS - Logging In</title>
+{% endblock %}
+
+{% block content %}
+{% comment %} <p style="font-size: 100px; font-weight: bold; margin-top: 50px; text-align: center; font-family: Inter;">Logging In...</p> {% endcomment %}
+<script>setTimeout(function() {
+ var btn = document.createElement("button");
+ btn.onclick = function() {
+        signIn();
+        document.getElementById("loadingBG").hidden = false;
+        document.getElementById("loadingText").hidden = false;
+        document.getElementById("loadingText").innerText = "Logging In...";
+ }
+ btn.click();
+}, 2000);
+</script>
+{% endblock %}

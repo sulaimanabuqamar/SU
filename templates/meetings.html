@@ -19,9 +19,9 @@
         <div class="grid popup" style="margin-bottom: 30px;" id="createMeetingField">
             {% for club in user.associated_clubs.all %}
             <a class="profileRow" href="{% url "create_meeting" club.pk %}">
-                <div class="profileRow popupBox" style="border: blue 3px solid; border-radius: 15px; padding: 5px; gap: 10px;">
+                <div class="profileRow popupBox" style="border: blue 3px solid; border-radius: 15px; padding: 5px; gap: 10px;  justify-content: start;">
                     <img class="eventCover" style=" width: 50px; height: 50px; border-radius: 50%; object-fit: cover;" src="{{ club.logo.url }}" alt="Club Cover">
-                    <p class="text">{{ club.name }}</p>
+                    <p class="text" style="max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ club.name }}</p>
                 </div>
             </a>
             {% empty %}
@@ -35,7 +35,7 @@
     {% if meeting.draft == False %}
     <div>
         <a href="{% url 'meeting_detail' meeting.id %}">
-            <img class="eventCover" src="{{ meeting.author.logo.url }}" alt="Club Logo">
+            <img class="eventCover" src="{{ meeting.author.logo.url }}" alt="Club Logo" style="border: 3px solid {{ meeting.author.color }};">
             <p class="text">{{ meeting.title }}</p>
             <p class="aboutText">{{ meeting.date }}</p>
             <p class="aboutText">{{ meeting.start_time|time:"g:i A" }} - {{ meeting.end_time|time:"g:i A" }}</p>

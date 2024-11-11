@@ -117,7 +117,7 @@ function loginUserBackend() {
             document.getElementById("loadingBG").hidden = true;
             if(data["message"] == "logged in successfully") {
                 console.log("logged in successfully");
-                location.href = location.origin
+                location.reload();
             }
             else if(data["message"] == "only amb allowed on site") {
                 alert("Only AMB Students are allowed on this site");

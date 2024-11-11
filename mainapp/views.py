@@ -135,7 +135,7 @@ def Meeting_Details(request, meeting_id):
     return render(request, "meeting_detail.html", {'meeting': meeting, 'links': links, 'allUsers': allUsers, 'user': request.user})
 
 def Events(request):
-    events = Event.objects.all().order_by('-published_date')
+    events = Event.objects.all().order_by('-date')
     user: User = request.user
     filtered_events = []
     if not user.is_anonymous:
@@ -150,7 +150,7 @@ def Events(request):
         for event in events:
             if event.author.type == "mixed" and event.group == "ngr" and event.grade == "nosec":
                 filtered_events.append(event)
-    return render(request, "events.html", {'hasClubs':hasClubs(request.user),'events': filtered_events, 'user': request.user})
+    return render(request, "events.html", {'hasClubs':hasClubs(user),'events': filtered_events, 'user': request.user})
 
 def Event_Detail(request, event_id):
     try:
@@ -261,7 +261,7 @@ def Faculty_Detail(request, faculty_id):
     for varsity in Varsity.objects.all():
         if request.user in varsity.coaches.all():
             varsitiescoach.append(varsity)
-    return render(request, "faculty_detail.html", {'user': user, 'advisorclubs': advisorclubs, 'varsitiescoach': varsitiescoach}) 
+    return render(request, "faculty_detail.html", {'user': request.user, 'selecteduser': user, 'advisorclubs': advisorclubs, 'varsitiescoach': varsitiescoach}) 
 
 def Club_Varsity_login(request: WSGIRequest):
     user = authenticate(request, username=request.POST.get("email"), password=request.POST.get("password"))
@@ -535,7 +535,8 @@ def ModifyEvent(request: WSGIRequest, event_id):
             event.cover = filename.replace(str(settings.BASE_DIR), '').replace("/media","")
         linkstr = request.POST.get("links")
         print("(" + linkstr + ")")
-        event.links.clear() 
+        for link in event.links.all():
+            link.delete()
         if linkstr is not None and linkstr != "":
             for link in linkstr.split("\n"):
                 linkobj = Links.objects.create(name=link[:link.find("!")], link=link[link.find("!")+1:])
@@ -609,6 +610,18 @@ def DraftEvent(request: WSGIRequest,club_id, event_id):
             print("found")
             return ModifyEvent(request, event_id)
     return CreateEvent(request, club_id)
+def DeleteEvent(request:WSGIRequest, event_id):
+    event = Event.objects.get(id=event_id)
+    if event.author in request.user.associated_clubs.all():
+        for link in event.links.all():
+            link.delete()
+        event.attending_Students.clear()
+        event.confirmed_Students.clear()
+        event.save()
+        event.delete()
+        return redirect("/Events")
+    else:
+        return HttpResponse("YOU DO NOT HAVE ACCESS TO THIS CLUB", status=400)
 def CreateMeeting(request:WSGIRequest, club_id):
     club = Club.objects.get(id=club_id)
     if request.method == "GET":
@@ -703,7 +716,8 @@ def ModifyMeeting(request: WSGIRequest, meeting_id):
         meeting.draft = request.POST.get("draft") is not None
         linkstr = request.POST.get("links")
         print("(" + linkstr + ")")
-        meeting.links.clear()
+        for link in meeting.links.all():
+            link.delete()
         if linkstr is not None and linkstr != "":
             for link in linkstr.split("\n"):
                 linkobj = Links.objects.create(name=link[:link.find("!")], link=link[link.find("!")+1:])
@@ -774,6 +788,17 @@ def DraftMeeting(request: WSGIRequest,club_id, meeting_id):
         if meeting_id == meeting.pk:
             return ModifyMeeting(request, meeting_id)
     return CreateMeeting(request, club_id)
+def DeleteMeeting(request:WSGIRequest, meeting_id):
+    meeting = Meeting.objects.get(id=meeting_id)
+    if meeting.author in request.user.associated_clubs.all():
+        for link in meeting.links.all():
+            link.delete()
+        meeting.attending_Members.clear()
+        meeting.save()
+        meeting.delete()
+        return redirect("/Meetings")
+    else:
+        return HttpResponse("YOU DO NOT HAVE ACCESS TO THIS CLUB", status=400)
 def CreateNews(request: WSGIRequest):
     if request.method == "GET":
         return render(request, "create_news.html", {'user': request.user})
@@ -852,7 +877,8 @@ def ModifyNews(request: WSGIRequest, news_id):
             news.cover = filename.replace(str(settings.BASE_DIR), '').replace("/media","")
         linkstr = request.POST.get("links")
         print("(" + linkstr + ")")
-        news.links.clear()
+        for link in news.links.all():
+            link.delete()
         if linkstr is not None and linkstr != "":
             for link in linkstr.split("\n"):
                 linkobj = Links.objects.create(name=link[:link.find("!")], link=link[link.find("!")+1:])
@@ -884,6 +910,15 @@ def DraftNews(request: WSGIRequest, news_id):
         if news_id == news.pk:
             return ModifyNews(request, news_id)
     return CreateNews(request)
+def DeleteNews(request:WSGIRequest, news_id):
+    news = News.objects.get(id=news_id)
+    if news.author != request.user:
+        for link in news.links.all():
+            link.delete()
+        news.delete()
+        return redirect("/News")
+    else:
+        return HttpResponse("YOU DO NOT HAVE ACCESS TO THIS POST", status=400)
 def MeetingAttendeePermissionSlips(request: WSGIRequest, meeting_id: int):
     meeting = Meeting.objects.get(id=meeting_id)
     return render(request, "permission_slips.html", {'attendees': meeting.attending_Members.all(), 'meeting': meeting})
@@ -1073,10 +1108,48 @@ def jsonBylaw(request:WSGIRequest, bylaw_id: int):
         elif resource.type == "link":
             bylawjson["resources"].append({'name': resource.name,'type': resource.type,'link': {'name': resource.link.name, 'url': resource.link.link},'file': "",}) 
     return HttpResponse(json.dumps(bylawjson))
+def moveBylawUp(request: WSGIRequest, club_id, bylaw_id):
+    club = Club.objects.get(id=club_id)
+    bylaw = Bylaw.objects.get(id=bylaw_id)
+    tempbylaws = []
+    modbylaws = []
+    lastbylaw = None
+    x = 0
+    index = 0
+    for bylawf in club.bylaws.all():
+        if bylawf == bylaw:
+            index = x
+        tempbylaws.append(bylawf)
+        x += 1
+    i = 0
+    for bylawf in tempbylaws:
+        if i == index-1:
+            modbylaws.append(bylaw)
+            modbylaws.append(bylawf)
+        else:
+            if bylawf != bylaw:
+                modbylaws.append(bylawf)
+        i += 1
+    print(tempbylaws)
+    print(modbylaws)
+    club.bylaws.clear()
+    for b in modbylaws:
+        club.bylaws.add(b)
+    club.save()
+    return HttpResponse("")
+
+def moveBylawDown(request: WSGIRequest, club_id, bylaw_id):
+    pass
 
 def viewBylaw(request:WSGIRequest, club_id: int):
     if request.method == "GET":
-        return render(request, "club_bylaws_edit.html", {'club': Club.objects.get(id=club_id), 'user': request.user})
+        club = Club.objects.get(id=club_id)
+        bylaws = []
+        x = 0
+        for bylaw in club.bylaws.all():
+            x += 1 
+            bylaws.append({'index':x, 'bylaw':bylaw})
+        return render(request, "club_bylaws_edit.html", {'club': club, 'user': request.user, 'bylaws': bylaws})
 
 def editBylaw(request:WSGIRequest, bylaw_id: int, club_id):
     if request.method == "GET":
@@ -1133,7 +1206,8 @@ def editVarsity(request:WSGIRequest, varsity_id: int):
         varsity.about = request.POST.get("content")
         linkstr = request.POST.get("links")
         print("(" + linkstr + ")")
-        varsity.links.clear()
+        for link in varsity.links.all():
+            link.delete()
         if linkstr is not None and linkstr != "":
             for link in linkstr.split("\n"):
                 linkobj = Links.objects.create(name=link[:link.find("!")], link=link[link.find("!")+1:])
@@ -1165,7 +1239,8 @@ def editClub(request:WSGIRequest, club_id: int):
         club.about = request.POST.get("content")
         linkstr = request.POST.get("links")
         print("(" + linkstr + ")")
-        club.links.clear()
+        for link in club.links.all():
+            link.delete()
         if linkstr is not None and linkstr != "":
             for link in linkstr.split("\n"):
                 linkobj = Links.objects.create(name=link[:link.find("!")], link=link[link.find("!")+1:])
@@ -1235,7 +1310,10 @@ def error_500_view(request):
     # we add the path to the 500.html file
     # here. The name of our HTML file is 404.html
     exc_type, exc_value, exc_traceback = sys.exc_info()
-    return render(request, '500.html', {'exc': exc_value, 'exc_trace': exc_traceback}, status=500) 
+    if "AnonymousUser" in str(exc_value): 
+        return render(request, 'autologin.html', {'exc': exc_value, 'exc_trace': exc_traceback}, status=500) 
+    else:
+        return render(request, '500.html', {'exc': exc_value, 'exc_trace': exc_traceback}, status=500) 
 
 def restartServer():
     time.sleep(2)
@@ -1275,3 +1353,29 @@ def uploadImage(request:WSGIRequest):
         return HttpResponse(settings.MEDIA_URL + filename.replace(str(settings.BASE_DIR), '').replace("/media",""))  
     else:
         return HttpResponse("Failed to upload file")
+    
+
+
+def ToggleLockEvent(request: WSGIRequest, event_id):
+    event = Event.objects.get(id=event_id)
+    if event.author in request.user.associated_clubs.all():
+        event.attendance_locked = not event.attendance_locked
+        event.save()
+    return redirect("/Event/Detail/" + str(event.pk) + "/") 
+
+def addMemberByLink(request: WSGIRequest, club_id):
+    club = Club.objects.get(id=club_id)
+    if request.method == "GET":
+        if request.user.is_authenticated:
+            if request.user.associated_student is not None:
+                if request.user not in club.members.all():
+                    return render(request, 'add_by_link.html', {'club': club,'error_text': "false", 'error_redirect': 'false', 'error_button_text': "true"})
+                else:
+                    return render(request, 'add_by_link.html', {'club': club,'error_text': "You are already in the club.", 'error_redirect': '/Club/Detail/' + str(club_id) + "/", 'error_button_text': "Go To Club"})
+            else:
+                return render(request, 'add_by_link.html', {'club': club, 'error_text': "Only students can be members of the club.", 'error_redirect': '', 'error_button_text': "Done"})
+        else:
+            return render(request, 'add_by_link.html', {'club': club, 'error_text': "You are not logged in.", 'error_redirect': 'javascript:signIn();', 'error_button_text': "Sign In"})
+    elif request.method == "POST":
+        club.members.add(request.user)
+        return redirect("/Club/Detail/" + str(club_id) + "/")

@@ -11,7 +11,7 @@ class Links(models.Model):
     name = models.CharField(max_length=10000)
     link = models.URLField()
     def __str__(self) -> str:
-        return self.name
+        return self.name + "!" + self.link
 class Resource(models.Model):
     name = models.CharField(max_length=10000)
     type = models.CharField(max_length=20, choices=[('link','Website Link'), ('file', 'Uploaded File')])
@@ -170,6 +170,7 @@ class Event(models.Model):
     color = models.ForeignKey(Club, on_delete=models.CASCADE, related_name='club_color', blank=True, null=True)
     group = models.CharField(max_length=3, choices=GROUP_CHOICES,default="ngr")
     grade = models.CharField(max_length=5, choices=GRADE_CHOICES,default="nosec")
+    attendance_locked = models.BooleanField(default=False)
     members_only = models.BooleanField(default=False)
     highlight = models.BooleanField(default=False)
     draft = models.BooleanField(default=False)

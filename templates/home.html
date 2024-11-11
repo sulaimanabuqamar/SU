@@ -19,7 +19,7 @@
 
 {% block content %}
 <div class="highlightBox">
-    <button class="btn empty" onclick="previousHighlight();"><img src="{% static '../media/images/leftArrow.svg' %}"></button>
+    <button class="btn empty" onclick="previousHighlight(true);"><img src="{% static '../media/images/leftArrow.svg' %}"></button>
     <div class="highlightOverflow">
         {% for event in highlights %}
         {% if event.author.type == user.associated_student.gender or event.author.type == "mixed"  or event.typeitem == "news" or user.associated_faculty is not None or user.is_superuser %}
@@ -33,7 +33,7 @@
         {% endif %}
         {% endfor %}
     </div>
-    <button class="btn empty" onclick="nextHighlight();"><img src="{% static '../media/images/rightArrow.svg' %}"></button>
+    <button class="btn empty" onclick="nextHighlight(true);"><img src="{% static '../media/images/rightArrow.svg' %}"></button>
 </div>
 <div class="centerer hirr">
 <p class="homeheader">WELCOME TO AMBSS</p>
@@ -41,21 +41,21 @@
     {% if home_page.event_highlight_1 is not None %}
     <a href="{% url 'event_detail' home_page.event_highlight_1.id %}">
         <img class="eventCover" src="{{ home_page.event_highlight_1.cover.url }}" alt="Event Highlight 1">
-        <p class="text">{{ home_page.event_highlight_1.title }}</p>
+        <p class="text" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 306px;">{{ home_page.event_highlight_1.title }}</p>
         <p class="aboutText">{{ home_page.event_highlight_1.date|date:"N j, Y" }}</p>
     </a>
     {% endif %}
     {% if home_page.event_highlight_2 is not None %}
     <a href="{% url 'event_detail' home_page.event_highlight_2.id %}">
         <img class="eventCover" src="{{ home_page.event_highlight_2.cover.url }}" alt="Event Highlight 2">
-        <p class="text">{{ home_page.event_highlight_2.title }}</p>
+        <p class="text" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 306px;">{{ home_page.event_highlight_2.title }}</p>
         <p class="aboutText">{{ home_page.event_highlight_2.date|date:"N j, Y" }}</p>
     </a>
     {% endif %}
     {% if home_page.event_highlight_3 is not None %}
     <a href="{% url 'event_detail' home_page.event_highlight_3.id %}">
         <img class="eventCover" src="{{ home_page.event_highlight_3.cover.url }}" alt="Event Highlight 3">
-        <p class="text">{{ home_page.event_highlight_3.title }}</p>
+        <p class="text" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 306px;">{{ home_page.event_highlight_3.title }}</p>
         <p class="aboutText">{{ home_page.event_highlight_3.date|date:"N j, Y" }}</p>
     </a>
     {% endif %}
@@ -67,21 +67,21 @@
     {% if home_page.news_highlight_1 is not None %}
     <a href="{% url 'news_detail' home_page.news_highlight_1.id %}">
         <img class="newsCover" src="{{ home_page.news_highlight_1.cover.url }}" alt="News Highlight 1">
-        <p class="text">{{ home_page.news_highlight_1.title }}</p>
+        <p class="text" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 306px;">{{ home_page.news_highlight_1.title }}</p>
         <p class="aboutText">{{ home_page.news_highlight_1.published_date|date:"N j, Y" }}</p>
     </a>
     {% endif %}
     {% if home_page.news_highlight_2 is not None %}
     <a href="{% url 'news_detail' home_page.news_highlight_2.id %}">
         <img class="newsCover" src="{{ home_page.news_highlight_2.cover.url }}" alt="News Highlight 2">
-        <p class="text">{{ home_page.news_highlight_2.title }}</p>
+        <p class="text" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 306px;">{{ home_page.news_highlight_2.title }}</p>
         <p class="aboutText">{{ home_page.news_highlight_2.published_date|date:"N j, Y" }}</p>
     </a>
     {% endif %}
     {% if home_page.news_highlight_3 is not None %}
     <a href="{% url 'news_detail' home_page.news_highlight_3.id %}">
         <img class="newsCover" src="{{ home_page.news_highlight_3.cover.url }}" alt="News Highlight 3">
-        <p class="text">{{ home_page.news_highlight_3.title }}</p>
+        <p class="text" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 306px;">{{ home_page.news_highlight_3.title }}</p>
         <p class="aboutText">{{ home_page.news_highlight_3.published_date|date:"N j, Y" }}</p>
     </a>
     {% endif %}
@@ -117,10 +117,11 @@
 </div>
 </div>
 <script>
+var highlightInterval;
 var currentHighlight = 0;
 var highlights = document.getElementsByClassName("highlightContent");
 var container = document.getElementsByClassName("highlightOverflow")[0];
-function previousHighlight() {
+function previousHighlight(cancel = false) {
     if(currentHighlight <= 0) {
         currentHighlight = highlights.length-1;
     }
@@ -131,8 +132,12 @@ function previousHighlight() {
         console.log("scroll");
         container.scroll({left: highlights[currentHighlight].offsetLeft-50,behavior:'smooth'});
     }
+    if(cancel) {
+        clearInterval(highlightInterval);
+        highlightInterval = setTimeout(function() {setHighlightAuto()}, 4000);
+    }
 }
-function nextHighlight() {
+function nextHighlight(cancel = false) {
     if(currentHighlight >= highlights.length-1) {
         currentHighlight = 0;
     }
@@ -143,7 +148,13 @@ function nextHighlight() {
         console.log("scroll");
         container.scroll({left: highlights[currentHighlight].offsetLeft-50,behavior:'smooth'});
     }
+    if(cancel) {
+        clearInterval(highlightInterval);
+        highlightInterval = setTimeout(function() {setHighlightAuto()}, 4000);
+    }
 }
-setInterval(function() {nextHighlight();}, {{home_page.carousel_scroll_duration}});
+function setHighlightAuto() {
+    highlightInterval = setInterval(function() {nextHighlight();}, {{home_page.carousel_scroll_duration}});
+}
 </script>
 {% endblock %}

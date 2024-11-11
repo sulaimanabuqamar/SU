@@ -258,7 +258,7 @@ function deleteResource(pk) {
         <input class="textfield" name="linkurl" placeholder="Link URL" style="margin: 0px; margin-bottom: 20px; width: calc( 100% - 55px ); margin-left: 20px; margin-right: 20px;">
     </div>
     <div id="uploadfilebox" style="display: none; justify-content: center;">
-        <input class="" type="file" name="file" placeholder="Link URL" style="margin: 0px; margin-bottom: 20px; width: calc( 100% - 55px ); margin-left: 20px; margin-right: 20px;">
+        <input class="" type="file" onchange="if(this.files[0].size > 1048576) {alert('File can\'t be bigger than 1MB');}" name="file" placeholder="Link URL" style="margin: 0px; margin-bottom: 20px; width: calc( 100% - 55px ); margin-left: 20px; margin-right: 20px;">
     </div>
     
         <div class="buttoncontrol">

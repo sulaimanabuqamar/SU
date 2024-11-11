@@ -18,14 +18,19 @@
         <input class="textfield" placeholder="Search..." style="margin: 0px; width: unset;" id="memberSearch">
         <br>
         <div class="memberGrid" id="memberField">
-            {% for bylaw in club.bylaws.all %}
-            <a class="profileRow" href="{% url "edit_bylaw" bylaw.pk club.pk %}">
+            {% for bylaw in bylaws %}
+            <a class="profileRow" href="{% url "edit_bylaw" bylaw.bylaw.pk club.pk %}">
                 <div class="profileRow Box" style="border: black 3px solid; border-radius: 15px; padding: 10px; gap: 10px;">
                     {% comment %} <img class="eventCover" style=" width: 50px; height: 50px; border-radius: 50%; object-fit: cover; margin-right: 10px;" src="{{ member.associated_student.profile_picture.url }}" alt="Club Cover"> {% endcomment %}
-                    <p class="text">{{ bylaw.title }}</p>
-                    <p class="aboutText" style="white-space: nowrap;">{{ bylaw.resources.count }} Resources</p>
-                    <p class="aboutText" style="max-width: 150px; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;">{{ bylaw.text|safe }}</p>
-                    <button class="btn empty" onclick="event.preventDefault(); if(confirm('Are you sure you would like to delete this bylaw?')) {deleteBylaw('{{bylaw.pk}}')}"><img src="{%static '../media/images/removeButton.svg' %}"></button>
+                    <p class="text">{{ bylaw.bylaw.title }}</p>
+                    <p class="aboutText" style="white-space: nowrap;">{{ bylaw.bylaw.resources.count }} Resources</p>
+                    {% if bylaw.index != 1 %}
+                    <button class="btn empty" onclick="event.preventDefault(); moveUp('{{bylaw.bylaw.pk}}');"><img src="{%static '../media/images/upButton.svg' %}"></button>
+                    {% endif %}
+                    {% if bylaw.index != bylaws.count %}
+                    <button class="btn empty" onclick="event.preventDefault(); moveDown('{{bylaw.bylaw.pk}}');"><img src="{%static '../media/images/downButton.svg' %}"></button>
+                    {% endif %}
+                    <button class="btn empty" onclick="event.preventDefault(); if(confirm('Are you sure you would like to delete this bylaw?')) {deleteBylaw('{{bylaw.bylaw.pk}}')}"><img src="{%static '../media/images/removeButton.svg' %}"></button>
                 </div>
             </a>
             {% empty %}
@@ -98,6 +103,30 @@ function deleteBylaw(pk) {
             document.getElementById("loadingBG").hidden = true;
         });
     setTimeout(function() { location.reload()}, 300);
+}
+function moveDown(pk) {
+    fetch("/Club/EditBylaws/down/{{club.pk}}/" + pk + "/", {
+        method: 'GET',
+        })
+        .then(response => response.text())
+        .then(response => {
+            setTimeout(function() { location.reload()}, 300);
+        })
+        .catch(error => {
+            console.error(error);
+        });
+}
+function moveUp(pk) {
+    fetch("/Club/EditBylaws/up/{{club.pk}}/" + pk + "/", {
+        method: 'GET',
+        })
+        .then(response => response.text())
+        .then(response => {
+            setTimeout(function() { location.reload()}, 300);
+        })
+        .catch(error => {
+            console.error(error);
+        });
 }
 
 </script>

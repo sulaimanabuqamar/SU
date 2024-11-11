@@ -54,7 +54,7 @@
     <div>
         <a href="/Club/Detail/{{meeting.author.pk}}">
         <div class="centerer" style="height: unset; margin-bottom: 20px;">
-        <img src="{{ meeting.author.logo.url }}" alt="{{ meeting.title }} Cover" class="articleCover">
+        <img src="{{ meeting.author.logo.url }}" alt="{{ meeting.title }} Cover" class="articleCover"  style="border: 3px solid {{ meeting.author.color }};">
         </div>
         <div class="tagBox" style="background: {{ meeting.author.color }};">
             <p class="tagText">{{ meeting.author.name }}</p>

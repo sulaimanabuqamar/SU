@@ -1,0 +1,44 @@
+{% extends 'Base.html' %}
+{% load static %}
+
+{% block style %}
+<title>SS - Internal Error</title>
+{% endblock %}
+
+{% block content %}
+<div class="centerer horr"><img src="{{ club.logo.url }}" alt="Profile Picture" class="articleCover" style="border: {{club.color}} 3px solid;"></div>
+<p style="font-size: 70px; font-weight: bold; margin-top: 50px; text-align: center; font-family: Inter;">{{club.name}}</p>
+        <p style="font-size: 20px; text-align: center; font-family: Inter;">{{club.about}}</p>
+        <p class="subtitle" style="text-align: center;">Heads</p>
+        <div class="studentGrid">
+            {% for head in club.heads.all %}
+            <div>
+                <a href="/Student/Detail/{{head.pk}}" >
+                    <img src="{{ head.associated_student.profile_picture.url }}" class="studentPFP" alt="{{ head.name }}" class="profileCover">
+                    <p class="text">{{ head.name }}</p>
+                </a>
+            </div>
+            {% empty %}
+            <p class="text">No heads available.</p>
+            {% endfor %}
+        </div>
+        <form  method="POST" class="centerer horr">
+                {% csrf_token %}
+                <button type="submit" class="btn primary">Join Club</button>
+        </form>
+        <div class="popupBG" hidden id="errorPopup" style="z-index: 17;">
+                <div class="accountPopupWindow" style="z-index: 18;">
+                    <p class="subtitle" style="text-align: center; margin-bottom: 15px;">Error</p>
+                    {% comment %} <input class="textfield" placeholder="Search..." style="margin: 0px; margin-bottom: 20px; width: calc( 100% - 55px ); margin-left: 20px; margin-right: 20px;" id="addHeadsSearch"> {% endcomment %}
+                    <p class="subtext">{{error_text}}</p>
+                    <div style="display: flex; justify-content: center;">
+                        <button class="btn primary" onclick="closePopup('errorPopup'); var a = document.createElement('a'); a.href = '{{error_redirect}}'; a.click();">{{error_button_text}}</button>
+                </div>
+                </div>
+            </div>
+        <script>
+        if("{{error_text}}" != "false") {
+                openPopup("errorPopup");
+        }
+</script>
+{% endblock %}

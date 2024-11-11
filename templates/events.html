@@ -19,9 +19,9 @@
         <div class="grid popup" style="margin-bottom: 30px;" id="createEventField">
             {% for club in user.associated_clubs.all %}
             <a class="profileRow" href="{% url "create_event" club.pk %}">
-                <div class="profileRow popupBox" style="border: blue 3px solid; border-radius: 15px; padding: 5px; gap: 10px;">
+                <div class="profileRow popupBox" style="border: blue 3px solid; border-radius: 15px; padding: 5px; gap: 10px; justify-content: start;">
                     <img class="eventCover" style=" width: 50px; height: 50px; border-radius: 50%; object-fit: cover;" src="{{ club.logo.url }}" alt="Club Cover">
-                    <p class="text">{{ club.name }}</p>
+                    <p class="text" style="max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ club.name }}</p>
                 </div>
             </a>
             {% empty %}
@@ -36,8 +36,8 @@
     {% if not event.members_only or user.is_superuser %}
     <div>
         <a href="{% url 'event_detail' event.id %}">
-            <img class="eventCover" src="{{ event.cover.url }}" alt="Event Cover">
-            <p class="text">{{ event.title }}</p>
+            <img class="eventCover" src="{{ event.cover.url }}" alt="Event Cover" style="border: 3px solid {{event.author.color}};">
+            <p class="text" style="max-width: 306px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ event.title }}</p>
             <p class="aboutText">{{ event.date }}</p>
             <p class="aboutText">{{ event.start_time|time:"g:i A" }} - {{ event.end_time|time:"g:i A" }}</p>
             <div class="tagBox" style="background: {{ event.author.color }};">
@@ -49,7 +49,7 @@
     {% if user in event.author.members.all %}
     <div>
         <a href="{% url 'event_detail' event.id %}">
-            <img class="eventCover" src="{{ event.cover.url }}" alt="Event Cover">
+            <img class="eventCover" src="{{ event.cover.url }}" alt="Event Cover" style="border: 3px solid {{event.author.color}};">
             <p class="text">{{ event.title }}</p>
             <p class="aboutText">{{ event.date }}</p>
             <p class="aboutText">{{ event.start_time|time:"g:i A" }} - {{ event.end_time|time:"g:i A" }}</p>

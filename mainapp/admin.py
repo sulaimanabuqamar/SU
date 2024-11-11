@@ -8,7 +8,7 @@ from .models import *
 from django.db.models.query  import QuerySet
 
 class UserAdmin(BaseUserAdmin):
-    list_display = ('email', 'name', 'is_admin', 'associated_student',  'is_superuser') 
+    list_display = ('email', 'name', 'is_admin', 'associated_student', 'associated_faculty', 'is_superuser') 
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
         ('Personal Info', {'fields': ('name',)}),
@@ -42,7 +42,6 @@ class FacultyAdmin(admin.ModelAdmin):
         (None, {'fields': ('faculty_db_id', 'profile_picture')}), 
     )
     search_fields = ('faculty_db_id',)
-
 class ClubAdmin(admin.ModelAdmin):
     list_display = ('name', 'pk')  # Display name and email in the list view
     search_fields = ('name', )  # Allow searching by name and email
@@ -53,6 +52,12 @@ class ClubAdmin(admin.ModelAdmin):
         ('Membership', {'fields': ('heads', 'leadership', 'members', 'advisors')}),
         ('Events', {'fields': ('bylaws', 'events')}), 
     )
+    def get_queryset(self, request):
+        clubs = []
+        for club in self.model.objects.all():
+            if "Scouts" not in club.about:
+                clubs.append(club.pk)
+        return Club.objects.filter(pk__in=clubs)
 class Scout(Club):
     class Meta:
         proxy = True

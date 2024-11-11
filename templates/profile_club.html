@@ -235,13 +235,17 @@ function downloadList() {
 <div class="popupBG" hidden id="addMemberBG" onclick="if(event.srcElement == this) {closePopup(this.id);}">
     <div class="accountPopupWindow">
         <p class="subtitle" style="text-align: center; margin-bottom: 15px;">Add Student To Club</p>
-        <input class="textfield" placeholder="Search..." style="margin: 0px; margin-bottom: 20px; width: calc( 100% - 55px ); margin-left: 20px; margin-right: 20px;" id="addMemberSearch">
+        <div style="display: flex; align-items: center; margin-bottom: 20px;">
+        <input class="textfield" placeholder="Search..." style="margin: 0px; width: calc( 100% - 55px ); margin-left: 20px; margin-right: 20px;" id="addMemberSearch">
+        <button class="btn empty" onclick="try { navigator.clipboard.writeText('https://ss.amb.sch.ae/Club/AddByLink/{{club.pk}}/'); alert('Link copied to clipboard') } catch (error) { console.error(error.message); }"><img src="{% static "../media/images/link.svg" %}"></button>
+        </div>
         <iframe name="hiddenFrame" width="0" height="0" border="0" style="display: none;"></iframe>
         <form action="/Club/Add/{{club.pk}}/Member" target="hiddenFrame" method="GET" onsubmit="setTimeout(function() {location.reload();}, 500);">
             {% csrf_token %}
             <div class="grid popup" style="margin-bottom: 30px;" id="addMemberField">
                 {% for member in allUsers %}
-                {% if member.associated_student is not None and member not in club.heads.all and member not in club.advisors.all and member not in club.leadership.all and member not in club.heads.all %}
+                {% if member.associated_student is not None and member not in club.members.all and member not in club.advisors.all and member not in club.leadership.all and member not in club.heads.all %}
+                {% if member.associated_student.gender == club.type or club.type == "mixed" %}
                 <div class="profileRow">
                     <div class="profileRow popupBox" style="border: blue 3px solid; border-radius: 15px; padding: 5px; gap: 10px;">
                         <img class="eventCover" style=" width: 50px; height: 50px; border-radius: 50%; object-fit: cover;" src="{{ member.associated_student.profile_picture.url }}" alt="Club Cover">
@@ -251,6 +255,7 @@ function downloadList() {
                         <input type="checkbox" name="{{member.email}}">
                     </div>
                 </div>
+                {% endif %}
                 {% endif %}
                 {% empty %}
                 <p class="text">No Students.</p>
@@ -268,7 +273,8 @@ function downloadList() {
         <input class="textfield" placeholder="Search..." style="margin: 0px; margin-bottom: 20px; width: calc( 100% - 55px ); margin-left: 20px; margin-right: 20px;" id="addHeadsSearch">
         <div class="grid popup" style="margin-bottom: 30px;" id="addHeadField">
             {% for member in allUsers %}
-            {% if member.associated_student is not None and member not in club.heads.all and member not in club.advisors.all and member not in club.leadership.all and member not in club.heads.all %}
+            {% if member.associated_student is not None and member not in club.members.all and member not in club.advisors.all and member not in club.leadership.all and member not in club.heads.all %}
+            {% if member.associated_student.gender == club.type or club.type == "mixed" %}
             <div class="profileRow">
                 <div class="profileRow popupBox" style="border: blue 3px solid; border-radius: 15px; padding: 5px; gap: 10px;">
                     <img class="eventCover" style=" width: 50px; height: 50px; border-radius: 50%; object-fit: cover;" src="{{ member.associated_student.profile_picture.url }}" alt="Club Cover">
@@ -277,6 +283,7 @@ function downloadList() {
                     <button class="btn empty" onclick="addMember('{{member.email}}', 'Head')"><img src="{%static '../media/images/joinButton.svg' %}"></button>
                 </div>
             </div>
+            {% endif %}
             {% endif %}
             {% empty %}
             <p class="text">No Students.</p>
@@ -290,7 +297,7 @@ function downloadList() {
         <input class="textfield" placeholder="Search..." style="margin: 0px; margin-bottom: 20px; width: calc( 100% - 55px ); margin-left: 20px; margin-right: 20px;" id="addAdvisorSearch">
         <div class="grid popup" style="margin-bottom: 30px;" id="addAdvisorField">
             {% for member in allUsers %}
-            {% if member.associated_student is not None and member not in club.heads.all and member not in club.advisors.all and member not in club.leadership.all and member not in club.heads.all %}
+            {% if member.associated_faculty is not None and member not in club.heads.all and member not in club.advisors.all and member not in club.leadership.all and member not in club.heads.all %}
             <div class="profileRow">
                 <div class="profileRow popupBox" style="border: blue 3px solid; border-radius: 15px; padding: 5px; gap: 10px;">
                     <img class="eventCover" style=" width: 50px; height: 50px; border-radius: 50%; object-fit: cover;" src="{{ member.associated_faculty.profile_picture.url }}" alt="Club Cover">
@@ -311,7 +318,8 @@ function downloadList() {
         <input class="textfield" placeholder="Search..." style="margin: 0px; margin-bottom: 20px; width: calc( 100% - 55px ); margin-left: 20px; margin-right: 20px;" id="addLeadershipSearch">
         <div class="grid popup" style="margin-bottom: 30px;" id="addLeadershipField">
             {% for member in allUsers %}
-            {% if member.associated_student is not None and member not in club.heads.all and member not in club.advisors.all and member not in club.leadership.all and member not in club.heads.all %}
+            {% if member.associated_student is not None and member not in club.members.all and member not in club.advisors.all and member not in club.leadership.all and member not in club.heads.all %}
+            {% if member.associated_student.gender == club.type or club.type == "mixed" %}
             <div class="profileRow">
                 <div class="profileRow popupBox" style="border: blue 3px solid; border-radius: 15px; padding: 5px; gap: 10px;">
                     <img class="eventCover" style=" width: 50px; height: 50px; border-radius: 50%; object-fit: cover;" src="{{ member.associated_student.profile_picture.url }}" alt="Club Cover">
@@ -320,6 +328,7 @@ function downloadList() {
                     <button class="btn empty" onclick="addMember('{{member.email}}', 'Leadership')"><img src="{%static '../media/images/joinButton.svg' %}"></button>
                 </div>
             </div>
+            {% endif %}
             {% endif %}
             {% empty %}
             <p class="text">No Students.</p>
