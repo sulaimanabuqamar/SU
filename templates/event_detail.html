@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block content %}
-{% if user.associated_student is not None and event.author.type == user.associated_student.gender or user.associated_faculty is not None or user.is_superuser %}
+{% if user.associated_student is not None and event.author.type == user.associated_student.gender or event.author.type == "mixed" or user.associated_faculty is not None or user.is_superuser %}
 <div class="pagecontrol">
     <div style="display: flex; justify-content: space-between; flex-direction: column;">
         <p class="pageTitle" style="margin: 0px;">{{ event.title }}</p>
