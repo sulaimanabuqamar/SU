@@ -43,7 +43,7 @@ class FacultyAdmin(admin.ModelAdmin):
     )
     search_fields = ('faculty_db_id',)
 class ClubAdmin(admin.ModelAdmin):
-    list_display = ('name', 'pk')  # Display name and email in the list view
+    list_display = ('name','type', 'pk')  # Display name and email in the list view
     search_fields = ('name', )  # Allow searching by name and email
     filter_horizontal = ('heads', 'leadership', 'members', 'advisors', 'events')  # Use a horizontal filter for many-to-many fields
 
