@@ -30,7 +30,7 @@
         <div>
             <a  href="/Student/Detail/{{captain.pk}}">
                 <img src="{{ captain.associated_student.profile_picture.url }}" class="studentPFP" alt="{{ captain.name }}">
-                <p class="text">{{ captain.name }}</p>
+                <p class="text" style="max-width: 200px;">{{ captain.name }}</p>
             </a>
         </div>
         {% empty %}
@@ -43,7 +43,7 @@
         <div>
             <a href="/Student/Detail/{{player.pk}}">
                 <img src="{{ player.associated_student.profile_picture.url }}" class="studentPFP" alt="{{ player.name }}">
-                <p class="text">{{ player.name }}</p>
+                <p class="text" style="max-width: 200px;">{{ player.name }}</p>
             </a>
         </div>
         {% empty %}
@@ -56,7 +56,7 @@
         <div>
             <a href="/Faculty/Detail/{{coach.pk}}">
                 <img src="{{ coach.associated_faculty.profile_picture.url }}" class="studentPFP" alt="{{ coach.name }}">
-                <p class="text">{{ coach.name }}</p>
+                <p class="text" style="max-width: 200px;">{{ coach.name }}</p>
             </a>
         </div>
         {% empty %}

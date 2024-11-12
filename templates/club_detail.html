@@ -33,7 +33,7 @@
             <div>
                 <a href="/Student/Detail/{{head.pk}}" >
                     <img src="{{ head.associated_student.profile_picture.url }}" class="studentPFP" alt="{{ head.name }}" class="profileCover">
-                    <p class="text">{{ head.name }}</p>
+                    <p class="text" style="max-width: 200px;">{{ head.name }}</p>
                 </a>
             </div>
             {% empty %}
@@ -47,7 +47,7 @@
             <div>
                 <a href="/Student/Detail/{{leader.pk}}" >
                     <img src="{{ leader.associated_student.profile_picture.url }}" alt="{{ leader.name }}" class="studentPFP profileCover">
-                    <p class="text">{{ leader.name }}</p>
+                    <p class="text" style="max-width: 200px;">{{ leader.name }}</p>
                 </a>
             </div>
             {% empty %}
@@ -70,7 +70,7 @@
             {% for advisor in advisors %}
             <a href="/Faculty/Detail/{{advisor.pk}}">
                 <img src="{{ advisor.associated_faculty.profile_picture.url }}" alt="{{ advisor.name }}" class="studentPFP profileCover">
-                <p class="text">{{ advisor.name }}</p>
+                <p class="text" style="max-width: 200px;">{{ advisor.name }}</p>
             </a>
             {% empty %}
             <p class="text">No advisors available.</p>
