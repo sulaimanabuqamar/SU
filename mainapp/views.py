@@ -214,6 +214,10 @@ def Club_Detail(request, club_id):
         
     })
 
+def Faqs_View(request):
+    faqs = FAQ.objects.all()  
+    return render(request, "faqs.html", {'faqs': faqs})
+
 def Varsity_View(request):
     varsities = Varsity.objects.all()  
     return render(request, "varsity.html", {'varsities': varsities})

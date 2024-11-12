@@ -27,7 +27,7 @@ SETTINGS_PATH = os.path.dirname(os.path.dirname(__file__))
 SECRET_KEY = "django-insecure-d5+fc0#s34kjdl66iaa7@%^2*3f_&00i!ih6!yoc&pogzyaqf_"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['ss.amb.sch.ae', 'localhost', '192.168.1.124']
 
@@ -128,13 +128,13 @@ EMAIL_USE_TLS = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = "http://localhost:81/static/"   
-# STATIC_URL = "https://ss.amb.sch.ae/static/"
+# STATIC_URL = "http://localhost:81/static/"   
+STATIC_URL = "https://ss.amb.sch.ae/static/"
 # STATIC_ROOT = os.path.join(BASE_DIR, "static")
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
-MEDIA_URL = 'http://localhost:81/media/'
-# MEDIA_URL = 'https://ss.amb.sch.ae/media/'
+# MEDIA_URL = 'http://localhost:81/media/'
+MEDIA_URL = 'https://ss.amb.sch.ae/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Default primary key field type

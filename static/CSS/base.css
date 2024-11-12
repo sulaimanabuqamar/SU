@@ -559,6 +559,62 @@ img {
 div {
     font-family: 'Inter';
 }
+.faqbox {
+    background-color: #1F355E;
+    color: white;
+    width: calc(100% - 40px);
+    height: 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-left: 20px;
+    padding-right: 20px;
+    cursor: pointer;
+}
+.faqgrid {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 20px;
+}
+.faqanswer  {
+    background-color: #BFD5FF;
+    width: 90%;
+    padding: 20px;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    overflow: hidden;
+}
+.faqcontainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+@keyframes openFAQ {
+    from  {
+        max-height: 0px;
+        padding-top: 0px;
+        padding-bottom: 0px;
+    }
+    to {
+        max-height: 420px;
+        padding-top: 20px;
+        padding-bottom: 20px;
+    }
+}
+@keyframes closeFAQ {
+    from  {
+        max-height: 420px;
+        padding-top: 20px;
+        padding-bottom: 20px;
+    }
+    to {
+        max-height: 0px;
+        padding-top: 0px;
+        padding-bottom: 0px;
+    }
+}
+
 @keyframes openPopup {
     from {
         transform: translateY(-10px);

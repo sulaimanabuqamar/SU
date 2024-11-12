@@ -12,6 +12,12 @@ class Links(models.Model):
     link = models.URLField()
     def __str__(self) -> str:
         return self.name + "!" + self.link
+class FAQ(models.Model):
+    question = models.CharField(max_length=10000)
+    answer = models.TextField(blank=True,null=True)
+    type = models.CharField(choices=[('student', "Student FAQ"),('clubhead',"Club Heads FAQ"),('faculty',"Faulty FAQ"),('ssofficer',"SS Officer FAQ")], max_length=10)
+    def __str__(self) -> str:
+        return self.type + ": " + self.question
 class Resource(models.Model):
     name = models.CharField(max_length=10000)
     type = models.CharField(max_length=20, choices=[('link','Website Link'), ('file', 'Uploaded File')])

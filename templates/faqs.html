@@ -1,0 +1,120 @@
+{% extends 'Base.html' %}
+{% load static %}
+
+{% block style %}
+<title>SS - Frequently Asked Questions</title>
+{% endblock %}
+
+{% block content %}
+<div>
+        <p class="pageTitle">FAQs</p>
+    </div>
+    <div class="faqgrid" id="mainfaqlist">
+        {% if user.associated_student is not None %}
+        <div class="faqbox" onclick="showFaqs('studentfaqlist')">
+            <p class="text" style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;max-width: 100%; color: white;">Student Frequently Asked Questions</p>
+            <img src="{% static "../media/images/expandButton.svg" %}" alt="Club Cover">
+        </div>
+        {% endif %}
+        {% if user.associated_clubs.count > 0 %}
+        <div class="faqbox" onclick="showFaqs('clubheadfaqlist')">
+            <p class="text" style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;max-width: 100%; color: white;">Club Heads' Frequently Asked Questions</p>
+            <img src="{% static "../media/images/expandButton.svg" %}" alt="Club Cover">
+        </div>
+        {% endif %}
+        {% if user.associated_faculty is not None %}
+        <div class="faqbox" onclick="showFaqs('facultyfaqlist')">
+            <p class="text" style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;max-width: 100%; color: white;">Facultys' Frequently Asked Questions</p>
+            <img src="{% static "../media/images/expandButton.svg" %}" alt="Club Cover">
+        </div>
+        {% endif %}
+        {% if user.is_superuser %}
+        <div class="faqbox" onclick="showFaqs('ssofficerfaqlist')">
+            <p class="text" style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;max-width: 100%; color: white;">SS Officers' Frequently Asked Questions</p>
+            <img src="{% static "../media/images/expandButton.svg" %}" alt="Club Cover">
+        </div>
+        {% endif %}
+    </div>
+    <div class="faqgrid" id="studentfaqlist" style="display: none;">
+        <p class="pageSubtitle" style="margin-bottom: 10px; cursor: pointer;" onclick="showFaqs('mainfaqlist')"><- Back</p>
+        {% for faq in faqs %}
+        {% if faq.type == "student" %}
+        <div class="faqcontainer">
+        <div class="faqbox" onclick="this.children[0].click(); if(this.children[0].checked) {this.children[2].hidden = true; this.children[3].hidden = false;} else {this.children[2].hidden = false; this.children[3].hidden = true;}">
+                <input type="checkbox" hidden onchange="if(this.checked) {this.parentElement.parentElement.children[1].style.animation = 'openFAQ 0.6s ease-in-out forwards';} else  {this.parentElement.parentElement.children[1].style.animation = 'closeFAQ 0.6s ease-in-out forwards';}">
+            <p class="text" style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;max-width: 100%; color: white;">{{ faq.question}} </p>
+            <img src="{% static "../media/images/expandButton.svg" %}" alt="expand/collapse">
+            <img src="{% static "../media/images/collapseButton.svg" %}" alt="expand/collapse" hidden>
+        </div>
+        <div class="faqanswer" style="animation: closeFAQ 0s ease-in-out forwards;">
+                {{faq.answer|safe}}
+        </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+    <div class="faqgrid" id="clubheadfaqlist" style="display: none;">
+        <p class="pageSubtitle" style="margin-bottom: 10px; cursor: pointer;" onclick="showFaqs('mainfaqlist')"><- Back</p>
+        {% for faq in faqs %}
+        {% if faq.type == "clubhead" %}
+        <div class="faqcontainer">
+                <div class="faqbox" onclick="this.children[0].click(); if(this.children[0].checked) {this.children[2].hidden = true; this.children[3].hidden = false;} else {this.children[2].hidden = false; this.children[3].hidden = true;}">
+                        <input type="checkbox" hidden onchange="if(this.checked) {this.parentElement.parentElement.children[1].style.animation = 'openFAQ 0.6s ease-in-out forwards';} else  {this.parentElement.parentElement.children[1].style.animation = 'closeFAQ 0.6s ease-in-out forwards';}">
+                    <p class="text" style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;max-width: 100%; color: white;">{{ faq.question}} </p>
+                    <img src="{% static "../media/images/expandButton.svg" %}" alt="expand/collapse">
+                    <img src="{% static "../media/images/collapseButton.svg" %}" alt="expand/collapse" hidden>
+                </div>
+                <div class="faqanswer" style="animation: closeFAQ 0s ease-in-out forwards;">
+                        {{faq.answer|safe}}
+                </div>
+                </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+    <div class="faqgrid" id="facultyfaqlist" style="display: none;">
+        <p class="pageSubtitle" style="margin-bottom: 10px; cursor: pointer;" onclick="showFaqs('mainfaqlist')"><- Back</p>
+        {% for faq in faqs %}
+        {% if faq.type == "faculty" %}
+        <div class="faqcontainer">
+                <div class="faqbox" onclick="this.children[0].click(); if(this.children[0].checked) {this.children[2].hidden = true; this.children[3].hidden = false;} else {this.children[2].hidden = false; this.children[3].hidden = true;}">
+                        <input type="checkbox" hidden onchange="if(this.checked) {this.parentElement.parentElement.children[1].style.animation = 'openFAQ 0.6s ease-in-out forwards';} else  {this.parentElement.parentElement.children[1].style.animation = 'closeFAQ 0.6s ease-in-out forwards';}">
+                    <p class="text" style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;max-width: 100%; color: white;">{{ faq.question}} </p>
+                    <img src="{% static "../media/images/expandButton.svg" %}" alt="expand/collapse">
+                    <img src="{% static "../media/images/collapseButton.svg" %}" alt="expand/collapse" hidden>
+                </div>
+                <div class="faqanswer" style="animation: closeFAQ 0s ease-in-out forwards;">
+                        {{faq.answer|safe}}
+                </div>
+                </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+    <div class="faqgrid" id="ssofficerfaqlist" style="display: none;">
+        <p class="pageSubtitle" style="margin-bottom: 10px; cursor: pointer;" onclick="showFaqs('mainfaqlist')"><- Back</p>
+        {% for faq in faqs %}
+        {% if faq.type == "ssofficer" %}
+        <div class="faqcontainer">
+                <div class="faqbox" onclick="this.children[0].click(); if(this.children[0].checked) {this.children[2].hidden = true; this.children[3].hidden = false;} else {this.children[2].hidden = false; this.children[3].hidden = true;}">
+                        <input type="checkbox" hidden onchange="if(this.checked) {this.parentElement.parentElement.children[1].style.animation = 'openFAQ 0.6s ease-in-out forwards';} else  {this.parentElement.parentElement.children[1].style.animation = 'closeFAQ 0.6s ease-in-out forwards';}">
+                    <p class="text" style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;max-width: 100%; color: white;">{{ faq.question}} </p>
+                    <img src="{% static "../media/images/expandButton.svg" %}" alt="expand/collapse">
+                    <img src="{% static "../media/images/collapseButton.svg" %}" alt="expand/collapse" hidden>
+                </div>
+                <div class="faqanswer" style="animation: closeFAQ 0s ease-in-out forwards;">
+                        {{faq.answer|safe}}
+                </div>
+                </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+    
+    <script>
+function showFaqs(id) {
+        var faqgrids = document.getElementsByClassName("faqgrid");
+        for(var i = 0; i < faqgrids.length; i++) {
+                faqgrids[i].style.display = "none";
+        }
+        document.getElementById(id).style.display = "flex";
+}
+    </script>
+{% endblock %}

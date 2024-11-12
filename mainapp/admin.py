@@ -113,6 +113,11 @@ class LinksAdmin(admin.ModelAdmin):
     list_display = ('name',  'link')
     list_filter = ('name', 'link')
     search_fields = ('name','link')
+class FAQAdmin(admin.ModelAdmin):
+    list_display = ('question',  'type', 'pk')
+    list_filter = ('type',)
+    search_fields = ('question','answer', 'type')
+
 class ResourcesAdmin(admin.ModelAdmin):
     list_display = ('name', 'pk', 'link', 'file')
     list_filter = ('name', 'link')
@@ -136,3 +141,4 @@ admin.site.register(News, NewsAdmin)
 admin.site.register(Meeting, MeetingAdmin)
 admin.site.register(Resource, ResourcesAdmin)
 admin.site.register(Bylaw, BylawsAdmin)
+admin.site.register(FAQ, FAQAdmin)
