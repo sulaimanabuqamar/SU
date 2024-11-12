@@ -725,7 +725,33 @@ div {
     width: 330px;
 }
 @media only screen and (max-width: 1000px) {
-    
+    .faqanswer {
+        width: unset;
+    }
+    @keyframes openFAQ {
+        from  {
+            max-height: 0px;
+            padding-top: 0px;
+            padding-bottom: 0px;
+        }
+        to {
+            max-height: 900px;
+            padding-top: 20px;
+            padding-bottom: 20px;
+        }
+    }
+    @keyframes closeFAQ {
+        from  {
+            max-height: 900px;
+            padding-top: 20px;
+            padding-bottom: 20px;
+        }
+        to {
+            max-height: 0px;
+            padding-top: 0px;
+            padding-bottom: 0px;
+        }
+    }
     @keyframes openPopup {
         from {
             transform: translateY(100%);
