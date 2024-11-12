@@ -21,7 +21,7 @@
             {% for member in club.members.all %}
             <a href="/Student/Detail/{{member.pk}}"  class="profileRow">
                 <div class="profileRow Box" style="border: {{ member.color }} 3px solid; border-radius: 15px; padding: 10px; gap: 10px;">
-                    <img class="eventCover" style=" width: 50px; height: 50px; border-radius: 50%; object-fit: cover; margin-right: 10px;" src="{{ member.associated_student.profile_picture.url }}" alt="Club Cover">
+                    <img class="eventCover" style=" width: 50px; height: 50px; border-radius: 50%; object-fit: cover; aspect-ratio: 1/1;margin-right: 10px;" src="{{ member.associated_student.profile_picture.url }}" alt="Club Cover">
                     <p class="text">{{ member.name }}</p>
                     <p class="aboutText">{{ member.associated_student.year_level }}{{ member.associated_student.section }}</p>
                     <button class="btn empty" onclick="event.preventDefault(); removeMember('{{member.email}}', 'Member');"><img src="{%static '../media/images/removeButton.svg' %}"></button>
@@ -41,7 +41,7 @@
             {% for head in club.heads.all %}
             <a href="/Student/Detail/{{head.pk}}"  class="profileRow">
                 <div class="profileRow Box" style="border: {{ head.color }} 3px solid; border-radius: 15px; padding: 10px; gap: 10px;">
-                    <img class="eventCover" style=" width: 50px; height: 50px; border-radius: 50%; object-fit: cover; margin-right: 10px;" src="{{ head.associated_student.profile_picture.url }}" alt="Club Cover">
+                    <img class="eventCover" style=" width: 50px; height: 50px; border-radius: 50%; object-fit: cover; aspect-ratio: 1/1;margin-right: 10px;" src="{{ head.associated_student.profile_picture.url }}" alt="Club Cover">
                     <p class="text">{{ head.name }}</p>
                     <p class="aboutText">{{ head.associated_student.year_level }}{{ head.associated_student.section }}</p>
                     <button class="btn empty" onclick="event.preventDefault(); removeMember('{{head.email}}', 'Head');"><img src="{%static '../media/images/removeButton.svg' %}"></button>
@@ -62,7 +62,7 @@
             {% for leader in club.leadership.all %}
             <a href="/Student/Detail/{{leader.pk}}"  class="profileRow">
                 <div class="profileRow Box" style="border: {{ leader.color }} 3px solid; border-radius: 15px; padding: 10px; gap: 10px;">
-                    <img class="eventCover" style=" width: 50px; height: 50px; border-radius: 50%; object-fit: cover; margin-right: 10px;" src="{{ leader.associated_student.profile_picture.url }}" alt="Club Cover">
+                    <img class="eventCover" style=" width: 50px; height: 50px; border-radius: 50%; object-fit: cover; aspect-ratio: 1/1;margin-right: 10px;" src="{{ leader.associated_student.profile_picture.url }}" alt="Club Cover">
                     <p class="text">{{ leader.name }}</p>
                     <p class="aboutText">{{ leader.associated_student.year_level }}{{ leader.associated_student.section }}</p>
                     <button class="btn empty" onclick="event.preventDefault(); removeMember('{{leader.email}}', 'Leadership');"><img src="{%static '../media/images/removeButton.svg' %}"></button>
@@ -83,7 +83,7 @@
             {% for advisor in club.advisors.all %}
             <a href="/Faculty/Detail/{{advisor.pk}}" class="profileRow">
                 <div class="profileRow Box" style="border: {{ advisor.color }} 3px solid; border-radius: 15px; padding: 10px; gap: 10px;">
-                    <img class="eventCover" style=" width: 50px; height: 50px; border-radius: 50%; object-fit: cover; margin-right: 10px;" src="{{ advisor.associated_faculty.profile_picture.url }}" alt="Club Cover">
+                    <img class="eventCover" style=" width: 50px; height: 50px; border-radius: 50%; object-fit: cover; aspect-ratio: 1/1;margin-right: 10px;" src="{{ advisor.associated_faculty.profile_picture.url }}" alt="Club Cover">
                     <p class="text">{{ advisor.name }}</p>
                     {% comment %} <p class="aboutText">{{ advisor.associated_student.year_level }}{{ advisor.associated_student.section }}</p> {% endcomment %}
                     <button class="btn empty" onclick="event.preventDefault(); removeMember('{{advisor.email}}', 'Advisor');"><img src="{%static '../media/images/removeButton.svg' %}"></button>

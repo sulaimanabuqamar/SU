@@ -106,7 +106,7 @@
             {% if resource.type == "file" %}
             <a class="profileRow" href="{{resource.file.url}}" target="_blank" download>
                 <div class="profileRow Box" style="border: black 3px solid; border-radius: 15px; padding: 10px; gap: 10px;">
-                    <img class="eventCover" style=" width: 50px; height: 50px; border-radius: 50%; object-fit: cover; margin-right: 10px;" src="{% static "../media/images/file.svg" %}" alt="Club Cover">
+                    <img class="eventCover" style=" width: 50px; height: 50px; border-radius: 50%; object-fit: cover; aspect-ratio: 1/1;margin-right: 10px;" src="{% static "../media/images/file.svg" %}" alt="Club Cover">
                     <p class="text">{{ resource.name }}</p>
                     <p class="aboutText" style="max-width: 150px; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;">{{ resource.file.name }}</p>
                     <button class="btn empty" onclick="event.preventDefault(); deleteResource('{{resource.pk}}');"><img src="{%static '../media/images/removeButton.svg' %}"></button>
@@ -115,7 +115,7 @@
             {% elif resource.type == "link" %}
             <a class="profileRow" href="{{resource.link.link}}" target="_blank">
                 <div class="profileRow Box" style="border: black 3px solid; border-radius: 15px; padding: 10px; gap: 10px;">
-                    <img class="eventCover" style=" width: 50px; height: 50px; border-radius: 50%; object-fit: cover; margin-right: 10px;" src="{% static "../media/images/link.svg" %}" alt="Club Cover">
+                    <img class="eventCover" style=" width: 50px; height: 50px; border-radius: 50%; object-fit: cover; aspect-ratio: 1/1;margin-right: 10px;" src="{% static "../media/images/link.svg" %}" alt="Club Cover">
                     <p class="text">{{ resource.name }}</p>
                     {% comment %} <p class="aboutText" style="white-space: nowrap;">{{ bylaw.resources.count }} Resources</p> {% endcomment %}
                     <p class="aboutText" style="max-width: 150px; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;">{{ resource.link.link }}</p>
