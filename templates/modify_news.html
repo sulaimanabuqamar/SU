@@ -117,7 +117,7 @@
         document.getElementsByName("sectionfilter")[0].value = "{{news.grade}}";
     </script>
 
-<label style="font-family: Inter; margin-left: 10px;"><input name="highlight" type="checkbox"> Highlight</label>
+{% comment %} <label style="font-family: Inter; margin-left: 10px;"><input name="highlight" type="checkbox"> Highlight</label> {% endcomment %}
 <div class="linkcontrol" style=" margin-left: -10px; margin-top: 30px;">
     <button class="btn" onclick="navigation.back()" type="reset">Cancel Changes</button>
     <button type="button" class="btn"  onclick="document.getElementById('mainform').action = '/News/Draft/{{news.pk}}/'; document.getElementById('mainform').submit(); var element = this; setTimeout(function() {element.disabled = true; element.style.backgroundColor = '#aaaaaa'; }, 250); setTimeout(function(){element.disabled = false; element.style.backgroundColor = 'white';}, 10000);">Save to Drafts</button><br>
