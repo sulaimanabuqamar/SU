@@ -66,7 +66,7 @@ def Home(request, invalid_login = False):
     highlights = []
     eventcount = 0
     eventprefilter = []
-    for event in Event.objects.filter(highlight=True):
+    for event in Event.objects.filter(highlight=True,draft=False):
         if event.members_only:
             if request.user in event.author.members.all():
                 eventprefilter.append(event)
@@ -79,7 +79,7 @@ def Home(request, invalid_login = False):
             highlights.append(event)
             eventcount += 1
     newscount = 0
-    for news in News.objects.filter(approved=True,awaiting_approval=False):
+    for news in News.objects.filter(approved=True,awaiting_approval=False,draft=False): 
         if newscount >= 6-eventcount:
             break
         else:
@@ -219,7 +219,7 @@ def Faqs_View(request):
     return render(request, "faqs.html", {'faqs': faqs})
 
 def Varsity_View(request):
-    varsities = Varsity.objects.all()  
+    varsities = Varsity.objects.all().order_by("-name")  
     return render(request, "varsity.html", {'varsities': varsities})
 
 def Varsity_Detail(request, varsity_id):
