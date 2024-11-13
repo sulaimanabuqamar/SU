@@ -822,6 +822,8 @@ def CreateNews(request: WSGIRequest):
             for link in linkstr.split("\n"):
                 linkobj = Links.objects.create(name=link[:link.find("!")], link=link[link.find("!")+1:]) 
                 event.links.add(linkobj)
+        event.approved = request.user.is_superuser
+        event.awaiting_approval = not request.user.is_superuser
         event.save()
         email = ""
         with open(os.path.join(settings.BASE_DIR, "templates", "new_news_email.html"), 'r') as f:
@@ -837,7 +839,7 @@ def CreateNews(request: WSGIRequest):
         for user in User.objects.all():
             if user.is_superuser:
                 officers.append(str(user.email))
-        if event.draft == False:
+        if event.draft == False and request.user.is_superuser == False:
             send_mail("News Post Awaiting Approval", "Students' Society", None, officers, False, html_message=email)
         return redirect("/News/Detail/" + str(event.pk)) 
 
@@ -869,8 +871,8 @@ def ModifyNews(request: WSGIRequest, news_id):
         news.grade = request.POST.get("sectionfilter")
         news.published_date = datetime.datetime.now()
         news.highlight = request.POST.get("highlight") is not None
-        news.approved = False
-        news.awaiting_approval = True
+        news.approved = request.user.is_superuser
+        news.awaiting_approval = not request.user.is_superuser
         news.draft = request.POST.get("draft") is not None
         file = request.FILES.get("coverPhoto")
         if file is not None:
@@ -888,7 +890,7 @@ def ModifyNews(request: WSGIRequest, news_id):
                 linkobj = Links.objects.create(name=link[:link.find("!")], link=link[link.find("!")+1:])
                 news.links.add(linkobj)
         email = ""
-        with open(os.path.join(settings.BASE_DIR, "templates", "new_news_email.html"), 'r') as f:
+        with open(os.path.join(settings.BASE_DIR, "templates", "modified_news_email.html"), 'r') as f:
             email = f.read()
             email = email.replace("{{title}}",news.title)
             email = email.replace("{{summary}}",news.summary)
@@ -901,8 +903,8 @@ def ModifyNews(request: WSGIRequest, news_id):
         for user in User.objects.all():
             if user.is_superuser:
                 officers.append(str(user.email))
-        if news.draft == False:
-            send_mail("News Post Awaiting Approval", "Students' Society", None, officers, False, html_message=email)
+        if news.draft == False and request.user.is_superuser == False:
+            send_mail("Modified News Post Awaiting Approval", "Students' Society", None, officers, False, html_message=email)
         news.save()
         return redirect("/News/Detail/" + str(news.pk))
 def DraftNews(request: WSGIRequest, news_id):
