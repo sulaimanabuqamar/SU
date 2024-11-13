@@ -58,6 +58,17 @@ class ClubAdmin(admin.ModelAdmin):
             if "Scouts" not in club.about:
                 clubs.append(club.pk)
         return Club.objects.filter(pk__in=clubs)
+    def formfield_for_manytomany(self, db_field, request, **kwargs):
+        if db_field.name == 'advisors':  # Replace with your field name
+            kwargs['queryset'] = User.objects.filter(associated_faculty__isnull=False)
+        if db_field.name == 'members':  # Replace with your field name
+            kwargs['queryset'] = User.objects.filter(associated_student__isnull=False)
+        if db_field.name == 'leadership':  # Replace with your field name
+            kwargs['queryset'] = User.objects.filter(associated_student__isnull=False)
+        if db_field.name == 'heads':  # Replace with your field name
+            kwargs['queryset'] = User.objects.filter(associated_student__isnull=False)
+        
+        return super().formfield_for_manytomany(db_field, request, **kwargs)
 class Scout(Club):
     class Meta:
         proxy = True
