@@ -73,7 +73,8 @@
         </div>
         <br>
         {% if meeting.author in user.associated_clubs.all or user.associated_faculty is not None %}
-        <a href="/AttendeesList/Permissions/{{ meeting.pk }}" target="_blank" class="centercontrol"><button class="btn">Permission Slips</button></a><br>
+        <a href="/AttendeesList/Printable/meeting/{{ meeting.pk }}" target="_blank" class="centercontrol"><button class="btn">Printable List of Attendees</button></a><br>
+        <a href="/AttendeesList/Permissions/meeting/{{ meeting.pk }}" target="_blank" class="centercontrol"><button class="btn">Permission Slips</button></a><br>
         {% endif %}
         {% if meeting.author in user.associated_clubs.all %}
         <a href="/Meetings/Modify/{{ meeting.pk }}"  class="centercontrol"><button class="btn">Edit Meeting</button></a>

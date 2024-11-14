@@ -554,7 +554,7 @@ font {
     align-items: center;
 }
 img {
-    object-fit: cover;
+    object-fit: contain;
 }
 div {
     font-family: 'Inter';

@@ -137,6 +137,11 @@ class BylawsAdmin(admin.ModelAdmin):
     list_display = ('title', 'pk')
     list_filter = ('title',)
     search_fields = ('title',)
+
+class AddByLinkAdmin(admin.ModelAdmin):
+    list_display = ('club', 'pk')
+    list_filter = ('club',)
+    search_fields = ('club',)
     
 # Register your models here
 admin.site.register(HomePage, HomepageAdmin)
@@ -153,3 +158,4 @@ admin.site.register(Meeting, MeetingAdmin)
 admin.site.register(Resource, ResourcesAdmin)
 admin.site.register(Bylaw, BylawsAdmin)
 admin.site.register(FAQ, FAQAdmin)
+admin.site.register(AddByLink, AddByLinkAdmin) 

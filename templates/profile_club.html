@@ -237,7 +237,28 @@ function downloadList() {
         <p class="subtitle" style="text-align: center; margin-bottom: 15px;">Add Student To Club</p>
         <div style="display: flex; align-items: center; margin-bottom: 20px;">
         <input class="textfield" placeholder="Search..." style="margin: 0px; width: calc( 100% - 55px ); margin-left: 20px; margin-right: 20px;" id="addMemberSearch">
-        <button class="btn empty" onclick="try { navigator.clipboard.writeText('https://ss.amb.sch.ae/Club/AddByLink/{{club.pk}}/'); alert('Link copied to clipboard') } catch (error) { console.error(error.message); }"><img src="{% static "../media/images/link.svg" %}"></button>
+        <button class="btn empty" onclick="requestHash()"><img src="{% static "../media/images/link.svg" %}"></button>
+        <script>
+            function requestHash() {
+                fetch("/Club/AddByLink/request/{{club.pk}}/", {method: 'POST'})
+                .then(data => data.json())
+                .then(json => {
+                    if(json["error"] == null) {
+                        // console.log(json);
+                        try { 
+                            navigator.clipboard.writeText(json["url"]); 
+                            alert('Link copied to clipboard\nLink Expires On: ' + json["expiry"])
+                        } 
+                        catch (error) { 
+                            console.error(error.message); 
+                        }
+                    }
+                    else {
+                        alert(json["error"]);
+                    }
+                });
+            }
+        </script>
         </div>
         <iframe name="hiddenFrame" width="0" height="0" border="0" style="display: none;"></iframe>
         <form action="/Club/Add/{{club.pk}}/Member" target="hiddenFrame" method="GET" onsubmit="setTimeout(function() {location.reload();}, 500);">

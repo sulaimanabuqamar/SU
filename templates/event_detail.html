@@ -74,7 +74,8 @@
         </div>
         <br>
         {% if event.author in user.associated_clubs.all or user.associated_faculty is not None %}
-        <a href="/AttendeesList/Printable/{{ event.pk }}" target="_blank" class="centercontrol"><button class="btn">Printable List of Attendees</button></a><br>
+        <a href="/AttendeesList/Printable/event/{{ event.pk }}" target="_blank" class="centercontrol"><button class="btn">Printable List of Attendees</button></a><br>
+        <a href="/AttendeesList/Permissions/event/{{ event.pk }}" target="_blank" class="centercontrol"><button class="btn">Permission Slips</button></a><br>
         {% endif %}
         {% if event.author in user.associated_clubs.all %}
         <a href="/Event/Lock/{{ event.pk }}" class="centercontrol"><button class="btn {% if not event.attendance_locked %}primary{% endif %}">{% if event.attendance_locked %}Unlock Attendance{% else %}Lock Attendance{% endif %}</button></a><br>

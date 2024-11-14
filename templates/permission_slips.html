@@ -25,7 +25,7 @@
         Name: {{ attendee.name }}<br>
         Grade: {{ attendee.associated_student.year_level }}{{attendee.associated_student.section}}<br>
         Location: {{ meeting.location }}<br>
-            Date: {{ meeting.date }}<br>
+        Date: {{ meeting.date }}<br>
         Time: {{ meeting.start_time|time:"g:i A" }} - {{ meeting.end_time|time:"g:i A" }}
     </div>
     {% endfor %}

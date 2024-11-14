@@ -15,7 +15,7 @@
             <div>
                 <a href="/Student/Detail/{{head.pk}}" >
                     <img src="{{ head.associated_student.profile_picture.url }}" class="studentPFP" alt="{{ head.name }}" class="profileCover">
-                    <p class="text">{{ head.name }}</p>
+                    <p class="text" style="white-space: nowrap; overflow: hidden; max-width: 306px; text-overflow: ellipsis;">{{ head.name }}</p>
                 </a>
             </div>
             {% empty %}

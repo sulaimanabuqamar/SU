@@ -12,7 +12,7 @@ import studentsunion.settings as settings
 import json
 import random
 import os
-import datetime
+from datetime import datetime, timedelta
 import sys 
 from threading import Thread
 import time
@@ -25,7 +25,7 @@ logo = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAVUAAACgCAYAAAC8JP8wAAAACX
 
 @register.simple_tag
 def getUserAttending(email, event_id):
-    # return datetime.datetime.now().strftime(format_string)
+    # return datetime.now().strftime(format_string)
     event = Event.objects.get(id=event_id)
     if User.objects.get(email=email) in event.attending_Students.all():
         return "checked"
@@ -33,7 +33,7 @@ def getUserAttending(email, event_id):
         return ""
 @register.simple_tag
 def getUserAttendingMeeting(email, meeting_id):
-    # return datetime.datetime.now().strftime(format_string)
+    # return datetime.now().strftime(format_string)
     meeting = Meeting.objects.get(id=meeting_id)
     if User.objects.get(email=email) in meeting.attending_Members.all():
         return "checked"
@@ -435,9 +435,9 @@ def CreateEvent(request:WSGIRequest, club_id):
             with open(filename, 'wb+') as f:
                 for chunk in file.chunks():
                     f.write(chunk)
-            event = Event.objects.create(author=club, significant_event=(request.POST.get("significant") is not None), cover=filename.replace(str(settings.BASE_DIR), '').replace("/media",""), title=request.POST.get("title"), text=request.POST.get("content"), summary=request.POST.get("summary"), date=request.POST.get("date"), start_time=request.POST.get("starttime"), end_time=request.POST.get("endtime"), location=request.POST.get("location"), color=club, members_only=(request.POST.get("membersonly") is not None), highlight=(request.POST.get("highlight") is not None), group=request.POST.get("gradefilter"), grade=request.POST.get("sectionfilter"), published_date=datetime.datetime.now(), draft=request.POST.get("draft") is not None)
+            event = Event.objects.create(author=club, significant_event=(request.POST.get("significant") is not None), cover=filename.replace(str(settings.BASE_DIR), '').replace("/media",""), title=request.POST.get("title"), text=request.POST.get("content"), summary=request.POST.get("summary"), date=request.POST.get("date"), start_time=request.POST.get("starttime"), end_time=request.POST.get("endtime"), location=request.POST.get("location"), color=club, members_only=(request.POST.get("membersonly") is not None), highlight=(request.POST.get("highlight") is not None), group=request.POST.get("gradefilter"), grade=request.POST.get("sectionfilter"), published_date=datetime.now(), draft=request.POST.get("draft") is not None)
         else: 
-            event = Event.objects.create(author=club, significant_event=(request.POST.get("significant") is not None), title=request.POST.get("title"), text=request.POST.get("content"), summary=request.POST.get("summary"), date=request.POST.get("date"), start_time=request.POST.get("starttime"), end_time=request.POST.get("endtime"), location=request.POST.get("location"), color=club, members_only=(request.POST.get("membersonly") is not None), highlight=(request.POST.get("highlight") is not None), group=request.POST.get("gradefilter"), grade=request.POST.get("sectionfilter"), published_date=datetime.datetime.now(), draft=request.POST.get("draft") is not None)
+            event = Event.objects.create(author=club, significant_event=(request.POST.get("significant") is not None), title=request.POST.get("title"), text=request.POST.get("content"), summary=request.POST.get("summary"), date=request.POST.get("date"), start_time=request.POST.get("starttime"), end_time=request.POST.get("endtime"), location=request.POST.get("location"), color=club, members_only=(request.POST.get("membersonly") is not None), highlight=(request.POST.get("highlight") is not None), group=request.POST.get("gradefilter"), grade=request.POST.get("sectionfilter"), published_date=datetime.now(), draft=request.POST.get("draft") is not None)
         linkstr = request.POST.get("links")
         print("(" + linkstr + ")")
         if linkstr is not None and linkstr != "":
@@ -526,7 +526,7 @@ def ModifyEvent(request: WSGIRequest, event_id):
         event.grade = request.POST.get("sectionfilter")
         event.start_time=request.POST.get("starttime")
         event.end_time=request.POST.get("endtime")  
-        event.published_date = datetime.datetime.now()
+        event.published_date = datetime.now()
         event.members_only = request.POST.get("membersonly") is not None
         event.highlight = request.POST.get("highlight") is not None
         event.draft = request.POST.get("draft") is not None
@@ -642,7 +642,7 @@ def CreateMeeting(request:WSGIRequest, club_id):
         
         return render(request, "create_meeting.html", {'user': request.user, 'members': students, 'club':club, 'allUsers': allusers}) 
     elif request.method == "POST":
-        meeting = Meeting.objects.create(author=club, title=request.POST.get("title"), text=request.POST.get("content"), date=request.POST.get("date"), start_time=request.POST.get("starttime"), end_time=request.POST.get("endtime"), location=request.POST.get("location"), published_date=datetime.datetime.now(), draft=request.POST.get("draft") is not None)
+        meeting = Meeting.objects.create(author=club, title=request.POST.get("title"), text=request.POST.get("content"), date=request.POST.get("date"), start_time=request.POST.get("starttime"), end_time=request.POST.get("endtime"), location=request.POST.get("location"), published_date=datetime.now(), draft=request.POST.get("draft") is not None)
         linkstr = request.POST.get("links")
         print("(" + linkstr + ")")
         if linkstr is not None and linkstr != "":
@@ -716,7 +716,7 @@ def ModifyMeeting(request: WSGIRequest, meeting_id):
         meeting.location = request.POST.get("location")
         meeting.start_time=request.POST.get("starttime")
         meeting.end_time=request.POST.get("endtime")
-        meeting.published_date = datetime.datetime.now()
+        meeting.published_date = datetime.now()
         meeting.draft = request.POST.get("draft") is not None
         linkstr = request.POST.get("links")
         print("(" + linkstr + ")")
@@ -813,9 +813,9 @@ def CreateNews(request: WSGIRequest):
             with open(filename, 'wb+') as f:
                 for chunk in file.chunks():
                     f.write(chunk)
-            event = News.objects.create(author=request.user, cover=filename.replace(str(settings.BASE_DIR), '').replace("/media",""), title=request.POST.get("title"), text=request.POST.get("content"), published_date=datetime.datetime.now(), summary=request.POST.get("summary"), highlight=(request.POST.get("highlight") is not None), group=request.POST.get("gradefilter"), grade=request.POST.get("sectionfilter"), draft=request.POST.get("draft") is not None)  
+            event = News.objects.create(author=request.user, cover=filename.replace(str(settings.BASE_DIR), '').replace("/media",""), title=request.POST.get("title"), text=request.POST.get("content"), published_date=datetime.now(), summary=request.POST.get("summary"), highlight=(request.POST.get("highlight") is not None), group=request.POST.get("gradefilter"), grade=request.POST.get("sectionfilter"), draft=request.POST.get("draft") is not None)  
         else: 
-            event = News.objects.create(author=request.user, title=request.POST.get("title"), text=request.POST.get("content"), published_date=datetime.datetime.now(), summary=request.POST.get("summary"), highlight=(request.POST.get("highlight") is not None), group=request.POST.get("gradefilter"), grade=request.POST.get("sectionfilter"), draft=request.POST.get("draft") is not None)  
+            event = News.objects.create(author=request.user, title=request.POST.get("title"), text=request.POST.get("content"), published_date=datetime.now(), summary=request.POST.get("summary"), highlight=(request.POST.get("highlight") is not None), group=request.POST.get("gradefilter"), grade=request.POST.get("sectionfilter"), draft=request.POST.get("draft") is not None)  
         linkstr = request.POST.get("links")
         print("(" + linkstr + ")")
         if linkstr is not None and linkstr != "": 
@@ -869,7 +869,7 @@ def ModifyNews(request: WSGIRequest, news_id):
         news.summary = request.POST.get("summary")
         news.group = request.POST.get("gradefilter")
         news.grade = request.POST.get("sectionfilter")
-        news.published_date = datetime.datetime.now()
+        news.published_date = datetime.now()
         news.highlight = request.POST.get("highlight") is not None
         news.approved = request.user.is_superuser
         news.awaiting_approval = not request.user.is_superuser
@@ -925,13 +925,21 @@ def DeleteNews(request:WSGIRequest, news_id):
         return redirect("/News")
     else:
         return HttpResponse("YOU DO NOT HAVE ACCESS TO THIS POST", status=400)
-def MeetingAttendeePermissionSlips(request: WSGIRequest, meeting_id: int):
-    meeting = Meeting.objects.get(id=meeting_id)
-    return render(request, "permission_slips.html", {'attendees': meeting.attending_Members.all(), 'meeting': meeting})
+def MeetingAttendeePermissionSlips(request: WSGIRequest, type: str, id: int):
+    if type == "event":
+        meeting = Event.objects.get(id=id)
+        return render(request, "permission_slips.html", {'attendees': meeting.attending_Students.all(), 'meeting': meeting, 'type':type})
+    elif type == "meeting":
+        meeting = Meeting.objects.get(id=id)
+        return render(request, "permission_slips.html", {'attendees': meeting.attending_Members.all(), 'meeting': meeting,'type':type})
 
-def AttendeesListPrintable(request: WSGIRequest, event_id: int):
-    event = Event.objects.get(id=event_id)
-    return render(request, "printable_attendees_list.html", {'attendees': event.attending_Students.all(), 'event': event})
+def AttendeesListPrintable(request: WSGIRequest, type:str, id: int):
+    if type == "event":
+        event = Event.objects.get(id=id)
+        return render(request, "printable_attendees_list.html", {'attendees': event.attending_Students.all(), 'event': event, 'type':type})
+    elif type == "meeting":
+        event = Meeting.objects.get(id=id)
+        return render(request, "printable_attendees_list.html", {'attendees': event.attending_Members.all(), 'event': event, 'type':type})
 
 def removeAttendee(request: WSGIRequest):
     event = Event.objects.get(id=int(request.GET.get("id")))
@@ -1369,19 +1377,47 @@ def ToggleLockEvent(request: WSGIRequest, event_id):
         event.save()
     return redirect("/Event/Detail/" + str(event.pk) + "/") 
 
-def addMemberByLink(request: WSGIRequest, club_id):
+@csrf_exempt 
+def requestAddMemberByLink(request: WSGIRequest, club_id):
     club = Club.objects.get(id=club_id)
-    if request.method == "GET":
+    if request.method == "POST":
         if request.user.is_authenticated:
-            if request.user.associated_student is not None:
-                if request.user not in club.members.all():
-                    return render(request, 'add_by_link.html', {'club': club,'error_text': "false", 'error_redirect': 'false', 'error_button_text': "true"})
-                else:
-                    return render(request, 'add_by_link.html', {'club': club,'error_text': "You are already in the club.", 'error_redirect': '/Club/Detail/' + str(club_id) + "/", 'error_button_text': "Go To Club"})
+            if club in request.user.associated_clubs.all():
+                hash = ""
+                for i in range(7):
+                    hash += str(random.randint(0,9)) 
+                try:
+                    hashobj = AddByLink.objects.get(club=club)
+                    hashobj.hash = hash
+                    hashobj.club = club
+                    hashobj.expiry = (datetime.now() + timedelta(hours=72))
+                    hashobj.save()
+                    return HttpResponse(json.dumps({'error':None, 'url':request.build_absolute_uri("/Club/Join/") + hashobj.hash, 'expiry': str(hashobj.expiry)}))
+                except: 
+                    hashobj = AddByLink.objects.create(expiry=(datetime.now() + timedelta(hours=72)), club=club,hash=hash)
+                    hashobj.save()
+                    return HttpResponse(json.dumps({'error':None, 'url':request.build_absolute_uri("/Club/Join/") + hashobj.hash, 'expiry': str(hashobj.expiry)}))
             else:
-                return render(request, 'add_by_link.html', {'club': club, 'error_text': "Only students can be members of the club.", 'error_redirect': '', 'error_button_text': "Done"})
+                return HttpResponse(json.dumps({'error':'You Don\'t Have Access To This Club!'}))
         else:
-            return render(request, 'add_by_link.html', {'club': club, 'error_text': "You are not logged in.", 'error_redirect': 'javascript:signIn();', 'error_button_text': "Sign In"})
+            return HttpResponse(json.dumps({'error':'You Are Not Logged In!'}))
+def addMemberByLink(request: WSGIRequest, hash):
+    addbylink = AddByLink.objects.get(hash=hash)
+    club = addbylink.club
+    if request.method == "GET":
+        if datetime.now().timestamp() < addbylink.expiry.timestamp():
+            if request.user.is_authenticated:
+                if request.user.associated_student is not None:
+                    if request.user not in club.members.all() and request.user not in club.leadership.all() and request.user not in club.heads.all():
+                        return render(request, 'add_by_link.html', {'club': club,'error_text': "false", 'error_redirect': 'false', 'error_button_text': "true"})
+                    else:
+                        return render(request, 'add_by_link.html', {'club': club,'error_text': "You are already in the club.", 'error_redirect': '/Club/Detail/' + str(club.pk) + "/", 'error_button_text': "Go To Club"})
+                else:
+                    return render(request, 'add_by_link.html', {'club': club, 'error_text': "Only students can be members of the club.", 'error_redirect': '', 'error_button_text': "Done"})
+            else:
+                return render(request, 'add_by_link.html', {'club': club, 'error_text': "You are not logged in.", 'error_redirect': 'javascript:signIn();', 'error_button_text': "Sign In"})
+        else:
+            return render(request, 'add_by_link.html', {'club': club, 'error_text': "This link is expired.", 'error_redirect': '/Club/Detail/' + str(club.pk) + "/", 'error_button_text': "Go To Club"})
     elif request.method == "POST":
         club.members.add(request.user)
-        return redirect("/Club/Detail/" + str(club_id) + "/")
+        return redirect("/Club/Detail/" + str(club.pk) + "/")

@@ -7,6 +7,10 @@ from django.core import exceptions
 from django.core.mail import send_mail
 # Custom user model manager for Students and Faculty
 
+class AddByLink(models.Model):
+    club = models.ForeignKey("Club", on_delete=models.CASCADE, related_name='club_addbylink_hash')
+    hash = models.CharField(max_length=10000)
+    expiry = models.DateTimeField()
 class Links(models.Model):
     name = models.CharField(max_length=10000)
     link = models.URLField()
