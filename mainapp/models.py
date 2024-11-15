@@ -19,7 +19,7 @@ class Links(models.Model):
 class FAQ(models.Model):
     question = models.CharField(max_length=10000)
     answer = models.TextField(blank=True,null=True)
-    type = models.CharField(choices=[('student', "Student FAQ"),('clubhead',"Club Heads FAQ"),('faculty',"Faulty FAQ"),('ssofficer',"SS Officer FAQ")], max_length=10)
+    type = models.CharField(choices=[('student', "Student FAQ"),('clubhead',"Club Heads FAQ"),('faculty',"Faulty FAQ"),('ssofficer',"SS Officer FAQ"),('releasenotes',"Release Notes")], max_length=10)
     def __str__(self) -> str:
         return self.type + ": " + self.question
 class Resource(models.Model):
