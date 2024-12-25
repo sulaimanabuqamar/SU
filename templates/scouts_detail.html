@@ -4,7 +4,11 @@
 {% block style %}
 <title>{{ scouts.name }} - Details</title>
 {% endblock %}
-
+{% block meta %}
+<meta property="og:title" content="{{scouts.name}}" />
+<meta property="og:description" content="{{scouts.about}}" />
+<meta property="og:image" content="{{scouts.logo.url}}" />
+{% endblock meta %}
 {% block content %}
 <div>
     <div class="detailsSide">

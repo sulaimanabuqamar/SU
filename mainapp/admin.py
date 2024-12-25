@@ -142,7 +142,15 @@ class AddByLinkAdmin(admin.ModelAdmin):
     list_display = ('club', 'pk')
     list_filter = ('club',)
     search_fields = ('club',)
-    
+
+class PLCAdmin(admin.ModelAdmin):
+    list_display = ('pk','facilitator', 'recorder', 'timekeeper')
+class PLCTopicAdmin(admin.ModelAdmin):
+    list_display = ('pk','author', 'topic')
+class PLCActionAdmin(admin.ModelAdmin):
+    list_display = ('pk','author', 'action')
+
+
 # Register your models here
 admin.site.register(HomePage, HomepageAdmin)
 admin.site.register(User, UserAdmin)
@@ -159,3 +167,6 @@ admin.site.register(Resource, ResourcesAdmin)
 admin.site.register(Bylaw, BylawsAdmin)
 admin.site.register(FAQ, FAQAdmin)
 admin.site.register(AddByLink, AddByLinkAdmin) 
+admin.site.register(PLC, PLCAdmin) 
+admin.site.register(PLCTopic, PLCTopicAdmin) 
+admin.site.register(PLCAction, PLCActionAdmin) 

@@ -1,6 +1,9 @@
 {% extends 'Base.html' %}
 {% load static %}
-
+{% block meta %}
+<meta property="og:title" content="500 Internal Error" />
+<meta property="og:description" content="Something went wrong loading this page." />
+{% endblock meta %}
 {% block style %}
 <title>SS - Internal Error</title>
 {% endblock %}

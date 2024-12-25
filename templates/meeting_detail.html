@@ -4,10 +4,13 @@
 {% block style %}
 <title>{{ meeting.title }} - Meeting Details</title>
 {% endblock %}
-
+{% block meta %}
+<meta property="og:title" content="{{meeting.title}}" />
+<meta property="og:image" content="{{meeting.author.logo.url}}" />
+{% endblock meta %}
 {% block content %}
 <div class="pagecontrol">
-    <div style="display: flex; justify-content: space-between; flex-direction: column;">
+    <div style="display: flex; justify-content: space-between; flex-direction: column; flex:1;">
         <p class="pageTitle" style="margin: 0px;">{{ meeting.title }}</p>
         <br>
         <div class="articleDescriptionText">
@@ -77,7 +80,8 @@
         <a href="/AttendeesList/Permissions/meeting/{{ meeting.pk }}" target="_blank" class="centercontrol"><button class="btn">Permission Slips</button></a><br>
         {% endif %}
         {% if meeting.author in user.associated_clubs.all %}
-        <a href="/Meetings/Modify/{{ meeting.pk }}"  class="centercontrol"><button class="btn">Edit Meeting</button></a>
+        <a href="/Meetings/Modify/{{ meeting.pk }}"  class="centercontrol"><button class="btn">Edit Meeting</button></a><br>
+        <a href="{% url "meeting_plc" meeting.pk %}" class="centercontrol"><button class="btn">PLC</button></a>
         {% endif %}
         <br>
     </div>
@@ -122,43 +126,72 @@
         .then(json => {console.log(json); location.reload();});
     }
 
-    function searchMemberGrid(searchTerm) {
-        var grid = document.getElementById("memberField");
+    var nosearchresults;
+    function searchMemberGrid(searchTerm, grid) {
         try{
+            var hidden = 0;
         for(var i = 0; i < grid.children.length; i++) {
             var child = grid.children[i];
-            if(child.children[0].children[1].innerText.toLowerCase().includes(searchTerm.toLowerCase())) {
-                child.style.display = "flex";
+            if(grid.children[i].no) {
+                grid.children[i].remove();
             }
             else {
-                child.style.display = "none";
+                if(child.children[0].children[0].innerText.toLowerCase().includes(searchTerm.toLowerCase())) {
+                    child.style.display = "flex";
+                }
+                else {
+                    hidden++;
+                    child.style.display = "none";
+                }
             }
         }
+        if(grid.children.length == hidden) {
+            nosearchresults = document.createElement("p");
+            nosearchresults.className = 'text';
+            nosearchresults.innerHTML = "No Attendees Found.";
+            nosearchresults.no = true;
+            grid.appendChild(nosearchresults);
+        }
     }
-    catch {}
+    catch(e) {
+        console.error(e);
     }
-    function searchAddMemberGrid(searchTerm) {
-        var grid = document.getElementById("addMemberField");
+    }
+    var nosearchresultspopup;
+    function searchAddMemberGrid(searchTerm,  grid) {
         try{
+            var hidden = 0;
         for(var i = 0; i < grid.children.length; i++) {
             var child = grid.children[i];
-            if(child.children[1].innerText.toLowerCase().includes(searchTerm.toLowerCase())) {
-                
-                child.style.display = "flex";
+            if(grid.children[i].no) {
+                grid.children[i].remove();
             }
             else {
-                child.style.display = "none";
+                if(child.children[0].children[1].innerText.toLowerCase().includes(searchTerm.toLowerCase())) {
+                    child.style.display = "flex";
+                }
+                else {
+                    hidden++;
+                    child.style.display = "none";
+                }
             }
+        }
+        if(grid.children.length == hidden) {
+            nosearchresultspopup = document.createElement("p");
+            nosearchresultspopup.className = 'text';
+            nosearchresultspopup.innerHTML = "No Members Found.";
+            nosearchresultspopup.no = true;
+            grid.appendChild(nosearchresultspopup);
         }
     }
     catch{}
     }
     
     setInterval(function() {
-        searchMemberGrid(document.getElementById("memberSearch").value);
+        searchMemberGrid(document.getElementById("memberSearch").value, document.getElementById("memberField"));
     }, 1);
     setInterval(function() {
-        searchAddMemberGrid(document.getElementById("addMemberSearch").value);
+        searchAddMemberGrid(document.getElementById("addMemberSearch").value, document.getElementById("addMemberField"));
     }, 1);
     
 </script>

@@ -4,7 +4,11 @@
 {% block style %}
 <title>{{ news.title }} - News Details</title> 
 {% endblock %}
-
+{% block meta %}
+<meta property="og:title" content="{{news.title}}" />
+<meta property="og:description" content="{{news.summary}}" />
+<meta property="og:image" content="{{news.cover.url}}" />
+{% endblock meta %}
 {% block content %}
 {% if news.draft == False %}
 {% if news.awaiting_approval %}

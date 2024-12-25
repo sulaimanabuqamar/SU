@@ -27,7 +27,7 @@ logo = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAVUAAACgCAYAAAC8JP8wAAAACX
 def getUserAttending(email, event_id):
     # return datetime.now().strftime(format_string)
     event = Event.objects.get(id=event_id)
-    if User.objects.get(email=email) in event.attending_Students.all():
+    if User.objects.get(email=email) in event.attending_Students.all().order_by('name'):
         return "checked"
     else:
         return ""
@@ -35,7 +35,7 @@ def getUserAttending(email, event_id):
 def getUserAttendingMeeting(email, meeting_id):
     # return datetime.now().strftime(format_string)
     meeting = Meeting.objects.get(id=meeting_id)
-    if User.objects.get(email=email) in meeting.attending_Members.all():
+    if User.objects.get(email=email) in meeting.attending_members.all().order_by('name'):
         return "checked"
     else:
         return ""
@@ -51,13 +51,13 @@ def hasClubs(user):
 def getVarsities(user):
     varsities = []
     for varsity in Varsity.objects.all():
-        if user in varsity.members.all():
+        if user in varsity.members.all().order_by('name') or user in varsity.coaches.all().order_by('name') or user in varsity.captains.all().order_by('name'):
             varsities.append(varsity)
     return varsities
 def getClubs(user):
     clubs = []
     for club in Club.objects.all():
-        if user in club.members.all() or user in club.heads.all() or user in club.leadership.all() or user in club.advisors.all(): 
+        if user in club.members.all().order_by('name') or user in club.heads.all().order_by('name') or user in club.leadership.all().order_by('name') or user in club.advisors.all(): 
             clubs.append(club)
     return clubs
 
@@ -68,7 +68,7 @@ def Home(request, invalid_login = False):
     eventprefilter = []
     for event in Event.objects.filter(highlight=True,draft=False):
         if event.members_only:
-            if request.user in event.author.members.all():
+            if request.user in event.author.members.all().order_by('name'):
                 eventprefilter.append(event)
         else:
             eventprefilter.append(event)
@@ -107,6 +107,44 @@ def Scouts_Detail(request, scouts_id):
         return error_404_view(request, None)
     return render(request, "scouts_detail.html", {'scouts': scouts, 'user': request.user, 'events':events, 'links': scouts.links.all()})
 
+def Meeting_PLC_Detail(request, meeting_id):
+    try:
+        meeting = Meeting.objects.get(id=meeting_id)
+        print(meeting)
+        allUsers = []
+        allUsers += meeting.author.heads.all().order_by('name')
+        allUsers += meeting.author.leadership.all().order_by('name')
+        allUsers += meeting.author.advisors.all()
+        print(allUsers)
+    except ObjectDoesNotExist:
+        return error_404_view(request, None)
+    return render(request, "meeting_plc.html", {'meeting': meeting, 'user': request.user, 'plc':meeting.plc, 'allUsers': allUsers})
+
+def Meeting_PLC_Modify(request:WSGIRequest, meeting_id):
+    if request.method == "GET":
+        return render(request, "meeting_plc_modify.html", {'user': request.user, 'meeting': Meeting.objects.get(id=meeting_id)})
+    elif request.method == "POST":
+        bylaw = Bylaw.objects.get(id=bylaw_id)
+        bylaw.title = request.POST.get("title")
+        bylaw.text = request.POST.get("content")
+        bylaw.save()
+        return redirect('/Club/EditBylaws/view/' + str(club_id) + "/") 
+    
+def addAttendeePLC(request: WSGIRequest, meeting_id):
+    plc = PLC.objects.get(id=int(request.GET.get("id")))
+    meeting = Meeting.objects.get(id=meeting_id)
+    if meeting.author not in request.user.associated_clubs.all() and request.GET.get("email") != request.user.email:
+        return HttpResponse("<h1>YOU ARE NOT THE AUTHOR OF THIS MEETING, OPERATION FAILED</h1>")
+    plc.attended_Students.add(User.objects.get(email=request.GET.get("email")))
+    return HttpResponse("{\"message\":\"competed\"}")
+def removeAttendeePLC(request: WSGIRequest, meeting_id):
+    plc = PLC.objects.get(id=int(request.GET.get("id")))
+    meeting = Meeting.objects.get(id=meeting_id)
+    if meeting.author not in request.user.associated_clubs.all() and request.GET.get("email") != request.user.email:
+        return HttpResponse("<h1>YOU ARE NOT THE AUTHOR OF THIS EVENT, OPERATION FAILED</h1>")
+    plc.attended_Students.remove(User.objects.get(email=request.GET.get("email")))
+    return HttpResponse("{\"message\":\"competed\"}")
+
 def Club_Bylaws_Detail(request, club_id):
     try:
         club = Club.objects.get(id=club_id)
@@ -119,8 +157,8 @@ def Meetings(request: WSGIRequest):
     meetings = Meeting.objects.all().order_by('-date')
     meetings_filtered = []
     for meeting in meetings:
-        print(meeting.attending_Members.all())
-        if request.user in meeting.attending_Members.all() or meeting.author in request.user.associated_clubs.all():
+        print(meeting.attending_members.all().order_by('name'))
+        if request.user in meeting.attending_members.all().order_by('name') or meeting.author in request.user.associated_clubs.all():
             print(request.user.name)
             meetings_filtered.append(meeting)
     return render(request, "meetings.html", {'hasClubs':hasClubs(request.user),'meetings': meetings_filtered, 'user': request.user})
@@ -131,7 +169,7 @@ def Meeting_Details(request, meeting_id):
     except ObjectDoesNotExist:
         return error_404_view(request, None) 
     links = meeting.links.all()
-    allUsers = User.objects.all()
+    allUsers = User.objects.all().order_by('name')
     return render(request, "meeting_detail.html", {'meeting': meeting, 'links': links, 'allUsers': allUsers, 'user': request.user})
 
 def Events(request):
@@ -160,12 +198,12 @@ def Event_Detail(request, event_id):
     links = event.links.all()
     allUsers = []
     if event.members_only:
-        for member in event.author.members.all():
-            if member not in event.attending_Students.all():
+        for member in event.author.members.all().order_by('name'):
+            if member not in event.attending_Students.all().order_by('name'):
                 allUsers.append(member)
     else:
-        for member in User.objects.all():
-            if member not in event.attending_Students.all() and member.associated_student is not None:
+        for member in User.objects.all().order_by('name'):
+            if member not in event.attending_Students.all().order_by('name') and member.associated_student is not None:
                 allUsers.append(member) 
     return render(request, "event_detail.html", {'event': event, 'links': links, 'allUsers': allUsers, 'user': request.user})
 
@@ -197,9 +235,9 @@ def Clubs(request):
 def Club_Detail(request, club_id):
     club = get_object_or_404(Club, id=club_id) 
     events = Event.objects.filter(author=club).order_by("date")
-    heads = club.heads.all()  
-    leadership = club.leadership.all()  
-    members = club.members.all()
+    heads = club.heads.all().order_by('name')  
+    leadership = club.leadership.all().order_by('name')  
+    members = club.members.all().order_by('name')
     advisors = club.advisors.all()
     links = club.links.all()
 
@@ -218,15 +256,19 @@ def Faqs_View(request):
     faqs = FAQ.objects.all()  
     return render(request, "faqs.html", {'faqs': faqs})
 
+def Faq_View(request, faqtype):
+    faqs = FAQ.objects.all()  
+    return render(request, "faq.html", {'faqs': faqs, 'faqtype': faqtype})
+
 def Varsity_View(request):
     varsities = Varsity.objects.all().order_by("-name")  
     return render(request, "varsity.html", {'varsities': varsities})
 
 def Varsity_Detail(request, varsity_id):
     varsity = get_object_or_404(Varsity, id=varsity_id) 
-    captains = varsity.captains.all()
-    players = varsity.members.all()  
-    coaches = varsity.coaches.all()
+    captains = varsity.captains.all().order_by('name')
+    players = varsity.members.all().order_by('name')  
+    coaches = varsity.coaches.all().order_by('name')
     links = varsity.links.all()
     return render(request, "varsity_detail.html", {'varsity': varsity, 'players': players, 'captains': captains, 'coaches': coaches, 'links':links}) 
 
@@ -234,23 +276,23 @@ def Student_Detail(request, student_id):
     user = get_object_or_404(User, id=student_id)
     headclubs = []
     for club in Club.objects.all():
-        if user in club.heads.all():
+        if user in club.heads.all().order_by('name'):
             headclubs.append(club)
     headleadership = []
     for club in Club.objects.all():
-        if user in club.leadership.all():
+        if user in club.leadership.all().order_by('name'):
             headleadership.append(club)
     clubs = []
     for club in Club.objects.all():
-        if user in club.members.all():
+        if user in club.members.all().order_by('name'):
             clubs.append(club)
     varsitiescaptain = []
     for varsity in Varsity.objects.all():
-        if user in varsity.captains.all():
+        if user in varsity.captains.all().order_by('name'):
             varsitiescaptain.append(varsity)
     varsities = []
     for varsity in Varsity.objects.all():
-        if user in varsity.members.all():
+        if user in varsity.members.all().order_by('name'):
             varsities.append(varsity)
     
     return render(request, "student_detail.html", {'selecteduser': user, 'user': request.user, 'headclubs': headclubs, 'headleadership': headleadership, 'clubs': clubs, 'varsitiescaptain': varsitiescaptain, 'varsities':varsities}) 
@@ -263,7 +305,7 @@ def Faculty_Detail(request, faculty_id):
             advisorclubs.append(club)
     varsitiescoach = []
     for varsity in Varsity.objects.all():
-        if request.user in varsity.coaches.all():
+        if request.user in varsity.coaches.all().order_by('name'):
             varsitiescoach.append(varsity)
     return render(request, "faculty_detail.html", {'user': request.user, 'selecteduser': user, 'advisorclubs': advisorclubs, 'varsitiescoach': varsitiescoach}) 
 
@@ -370,16 +412,16 @@ def UserProfile(request: WSGIRequest):
                     advisorin.append(club)
             coachin = []
             for varsity in Varsity.objects.all():
-                if request.user in varsity.coaches.all():
+                if request.user in varsity.coaches.all().order_by('name'):
                     coachin.append(varsity)
             
             clubSlashMembers = {"clubs": advisorin, "varsities": coachin}
-        allUsers = User.objects.all()
+        allUsers = User.objects.all().order_by('name').order_by("-name")
         events = []
         for event in Event.objects.all():
-            if request.user in event.attending_Students.all():
+            if request.user in event.attending_Students.all().order_by('name'):
                 events.append(event)
-        return render(request, "profile_student.html", {'url':request.build_absolute_uri(), 'user': request.user, 'userType': userType,"clubSlashMembers": clubSlashMembers, 'allUsers': allUsers, 'attendingEvents':events, 'litAllUsers': User.objects.all()})
+        return render(request, "profile_student.html", {'url':request.build_absolute_uri(), 'user': request.user, 'userType': userType,"clubSlashMembers": clubSlashMembers, 'allUsers': allUsers, 'attendingEvents':events, 'litAllUsers': User.objects.all().order_by('name')})
 
 def ClubProfile(request: WSGIRequest, club_id):
     if request.user is None:
@@ -387,10 +429,10 @@ def ClubProfile(request: WSGIRequest, club_id):
     else:
         memberCount = 0
         clubSlashMembers = None
-        allUsers = User.objects.all()
+        allUsers = User.objects.all().order_by('name')
         events = []
         for event in Event.objects.all():
-            if request.user in event.attending_Students.all():
+            if request.user in event.attending_Students.all().order_by('name'):
                 events.append(event) 
         club = Club.objects.get(id=club_id)
         if club in request.user.associated_clubs.all():
@@ -404,10 +446,10 @@ def VarsityProfile(request: WSGIRequest, varsity_id: int):
         userType = ""
         memberCount = 0
         clubSlashMembers = None
-        allUsers = User.objects.all()
+        allUsers = User.objects.all().order_by('name')
         events = []
         for event in Event.objects.all():
-            if request.user in event.attending_Students.all():
+            if request.user in event.attending_Students.all().order_by('name'):
                 events.append(event)
         varsity: Varsity = Varsity.objects.get(id=varsity_id)
         if varsity not in request.user.associated_varsities.all():
@@ -420,11 +462,11 @@ def CreateEvent(request:WSGIRequest, club_id):
     club = Club.objects.get(id=club_id)
     if request.method == "GET":
         students = []
-        for user in User.objects.all():
+        for user in User.objects.all().order_by('name'):
             if user.associated_student is not None:
                 students.append(user)
         faculty = []
-        for user in User.objects.all():
+        for user in User.objects.all().order_by('name'):
             if user.associated_faculty is not None:
                 faculty.append(user)
         return render(request, "create_event.html", {'user': request.user, 'members': students,  'faculties': faculty, 'club':club}) 
@@ -445,7 +487,7 @@ def CreateEvent(request:WSGIRequest, club_id):
                 linkobj = Links.objects.create(name=link[:link.find("!")], link=link[link.find("!")+1:])
                 event.links.add(linkobj)
         listofemails = []
-        for member in User.objects.all():
+        for member in User.objects.all().order_by('name'):
             if request.POST.get(member.email) is not None:
                 event.attending_Students.add(member) 
                 listofemails.append(member.email) 
@@ -471,7 +513,7 @@ def CreateEvent(request:WSGIRequest, club_id):
         if request.POST.get("emailhos") is not None:
             print("emailing hos")
             hosemails = []
-            for member in User.objects.all():
+            for member in User.objects.all().order_by('name'):
                 if request.POST.get(member.email) is not None:
                     hosemails.append(member.email)
             if len(hosemails) > 0: 
@@ -498,11 +540,11 @@ def ModifyEvent(request: WSGIRequest, event_id):
     if event.author not in request.user.associated_clubs.all():
         return HttpResponse("<h1>YOU ARE NOT THE AUTHOR OF THIS EVENT, OPERATION FAILED</h1>")
     students = []
-    for user in User.objects.all():
+    for user in User.objects.all().order_by('name'):
         if user.associated_student is not None:
             students.append(user)
     faculty = []
-    for user in User.objects.all():
+    for user in User.objects.all().order_by('name'):
         if user.associated_faculty is not None:
             faculty.append(user)
     links = ""
@@ -546,7 +588,7 @@ def ModifyEvent(request: WSGIRequest, event_id):
                 linkobj = Links.objects.create(name=link[:link.find("!")], link=link[link.find("!")+1:])
                 event.links.add(linkobj)
         listofemails = []
-        for member in User.objects.all():
+        for member in User.objects.all().order_by('name'):
             if request.POST.get(member.email) is not None:
                 event.attending_Students.add(member)
                 print("student")
@@ -582,7 +624,7 @@ def ModifyEvent(request: WSGIRequest, event_id):
         if request.POST.get("emailhos") is not None:
             print("emailing hos")
             hosemails = []
-            for member in User.objects.all():
+            for member in User.objects.all().order_by('name'):
                 if request.POST.get(member.email) is not None:
                     hosemails.append(member.email)
             if len(hosemails) > 0: 
@@ -630,14 +672,14 @@ def CreateMeeting(request:WSGIRequest, club_id):
     club = Club.objects.get(id=club_id)
     if request.method == "GET":
         students = []
-        for user in User.objects.all():
+        for user in User.objects.all().order_by('name'):
             students.append(user) 
         allusers = []
-        for member in club.members.all():
+        for member in club.members.all().order_by('name'):
             allusers.append(member)
-        for head in club.heads.all():
+        for head in club.heads.all().order_by('name'):
             allusers.append(head)
-        for leadership in club.leadership.all():
+        for leadership in club.leadership.all().order_by('name'):
             allusers.append(leadership)
         
         return render(request, "create_meeting.html", {'user': request.user, 'members': students, 'club':club, 'allUsers': allusers}) 
@@ -650,7 +692,7 @@ def CreateMeeting(request:WSGIRequest, club_id):
                 linkobj = Links.objects.create(name=link[:link.find("!")], link=link[link.find("!")+1:])
                 meeting.links.add(linkobj)
         listofemails = []
-        for member in User.objects.all():
+        for member in User.objects.all().order_by('name'):
             if request.POST.get(member.email) is not None:
                 meeting.attending_Members.add(member) 
                 listofemails.append(member.email) 
@@ -674,7 +716,7 @@ def CreateMeeting(request:WSGIRequest, club_id):
         if request.POST.get("emailhos") is not None:
             print("emailing hos")
             hosemails = []
-            for member in User.objects.all():
+            for member in User.objects.all().order_by('name'):
                 if request.POST.get(member.email) is not None:
                     hosemails.append(member.email)
             if len(hosemails) > 0: 
@@ -701,7 +743,7 @@ def ModifyMeeting(request: WSGIRequest, meeting_id):
     if meeting.author not in request.user.associated_clubs.all():
         return HttpResponse("<h1>YOU ARE NOT THE AUTHOR OF THIS EVENT, OPERATION FAILED</h1>")
     students = []
-    for user in User.objects.all():
+    for user in User.objects.all().order_by('name'):
         students.append(user)
     links = ""
     for link in meeting.links.all():
@@ -727,7 +769,7 @@ def ModifyMeeting(request: WSGIRequest, meeting_id):
                 linkobj = Links.objects.create(name=link[:link.find("!")], link=link[link.find("!")+1:])
                 meeting.links.add(linkobj)
         listofemails = []
-        for member in User.objects.all():
+        for member in User.objects.all().order_by('name'):
             if request.POST.get(member.email) is not None:
                 meeting.attending_Members.add(member)
                 print("student")
@@ -762,7 +804,7 @@ def ModifyMeeting(request: WSGIRequest, meeting_id):
         if request.POST.get("emailhos") is not None:
             print("emailing hos")
             hosemails = []
-            for member in User.objects.all():
+            for member in User.objects.all().order_by('name'):
                 if request.POST.get(member.email) is not None:
                     hosemails.append(member.email)
             if len(hosemails) > 0: 
@@ -836,7 +878,7 @@ def CreateNews(request: WSGIRequest):
             email = email.replace("{{email}}",request.user.email) 
             email = email.replace("{{text}}",event.text) 
         officers = []
-        for user in User.objects.all():
+        for user in User.objects.all().order_by('name'):
             if user.is_superuser:
                 officers.append(str(user.email))
         if event.draft == False and request.user.is_superuser == False:
@@ -848,11 +890,11 @@ def ModifyNews(request: WSGIRequest, news_id):
     if request.user != news.author:
         return HttpResponse("<h1>YOU ARE NOT THE AUTHOR OF THIS NEWS POST, OPERATION FAILED</h1>")
     students = []
-    for user in User.objects.all():
+    for user in User.objects.all().order_by('name'):
         if user.associated_student is not None:
             students.append(user)
     faculty = []
-    for user in User.objects.all():
+    for user in User.objects.all().order_by('name'):
         if user.associated_faculty is not None:
             faculty.append(user)
     links = ""
@@ -900,7 +942,7 @@ def ModifyNews(request: WSGIRequest, news_id):
             email = email.replace("{{email}}",request.user.email) 
             email = email.replace("{{text}}",news.text) 
         officers = []
-        for user in User.objects.all():
+        for user in User.objects.all().order_by('name'):
             if user.is_superuser:
                 officers.append(str(user.email))
         if news.draft == False and request.user.is_superuser == False:
@@ -928,18 +970,18 @@ def DeleteNews(request:WSGIRequest, news_id):
 def MeetingAttendeePermissionSlips(request: WSGIRequest, type: str, id: int):
     if type == "event":
         meeting = Event.objects.get(id=id)
-        return render(request, "permission_slips.html", {'attendees': meeting.attending_Students.all(), 'meeting': meeting, 'type':type})
+        return render(request, "permission_slips.html", {'attendees': meeting.attending_Students.all().order_by('name'), 'meeting': meeting, 'type':type})
     elif type == "meeting":
         meeting = Meeting.objects.get(id=id)
-        return render(request, "permission_slips.html", {'attendees': meeting.attending_Members.all(), 'meeting': meeting,'type':type})
+        return render(request, "permission_slips.html", {'attendees': meeting.attending_members.all().order_by('name'), 'meeting': meeting,'type':type})
 
 def AttendeesListPrintable(request: WSGIRequest, type:str, id: int):
     if type == "event":
         event = Event.objects.get(id=id)
-        return render(request, "printable_attendees_list.html", {'attendees': event.attending_Students.all(), 'event': event, 'type':type})
+        return render(request, "printable_attendees_list.html", {'attendees': event.attending_Students.all().order_by('name'), 'event': event, 'type':type})
     elif type == "meeting":
         event = Meeting.objects.get(id=id)
-        return render(request, "printable_attendees_list.html", {'attendees': event.attending_Members.all(), 'event': event, 'type':type})
+        return render(request, "printable_attendees_list.html", {'attendees': event.attending_members.all().order_by('name'), 'event': event, 'type':type})
 
 def removeAttendee(request: WSGIRequest):
     event = Event.objects.get(id=int(request.GET.get("id")))
@@ -971,7 +1013,7 @@ def addAttendee(request: WSGIRequest):
     event = Event.objects.get(id=int(request.GET.get("id")))
     if event.author not in request.user.associated_clubs.all() and request.GET.get("email") != request.user.email:
         return HttpResponse("<h1>YOU ARE NOT THE AUTHOR OF THIS EVENT, OPERATION FAILED</h1>")
-    for user in User.objects.all():
+    for user in User.objects.all().order_by('name'):
         if request.GET.get(user.email) is not None:
             event.attending_Students.add(user)
     return HttpResponse("{\"message\":\"competed\"}")
@@ -988,6 +1030,23 @@ def setUnconfirmed(request: WSGIRequest):
     if user != request.user and event.author not in request.user.associated_clubs.all():
         return HttpResponse("<h1>YOU ARE NOT THE LOGGED IN USER, OPERATION FAILED</h1>")
     event.confirmed_Students.remove(user)
+    return HttpResponse("{\"message\":\"competed\"}")
+
+def setApproved(request: WSGIRequest):
+    event = Event.objects.get(id=int(request.GET.get("id")))
+    user = User.objects.get(email=request.GET.get("email"))
+    if user != request.user or user.associated_faculty is None: 
+        return HttpResponse("<h1>YOU ARE NOT THE LOGGED IN USER, OPERATION FAILED</h1>")
+    event.hos_approved = True
+    event.save()
+    return HttpResponse("{\"message\":\"competed\"}")
+def setDenied(request: WSGIRequest):
+    event = Event.objects.get(id=int(request.GET.get("id")))
+    user = User.objects.get(email=request.GET.get("email"))
+    if user != request.user or user.associated_faculty is None:
+        return HttpResponse("<h1>YOU ARE NOT THE LOGGED IN USER, OPERATION FAILED</h1>")
+    event.hos_approved = False
+    event.save()
     return HttpResponse("{\"message\":\"competed\"}")
 
 def removeClubMember(request: WSGIRequest, club_id: int, sector: str):
@@ -1009,7 +1068,7 @@ def addClubMember(request: WSGIRequest, club_id: int, sector: str):
     club: Club = Club.objects.get(id=club_id)
     if club not in request.user.associated_clubs.all():
         return HttpResponse("<h1>YOU ARE NOT A CLUB, OPERATION FAILED</h1>")
-    for user in User.objects.all():
+    for user in User.objects.all().order_by('name'):
         if request.GET.get(user.email) is not None:
             if sector == "Member":
                 club.members.add(user)
@@ -1038,7 +1097,7 @@ def addVarsityPlayer(request: WSGIRequest, varsity_id: int, sector: str):
     varsity: Varsity = Varsity.objects.get(id=varsity_id)
     if varsity not in request.user.associated_varsities.all():
         return HttpResponse("<h1>YOU ARE NOT A VARSITY, OPERATION FAILED</h1>")
-    for user in User.objects.all():
+    for user in User.objects.all().order_by('name'):
         if request.GET.get(user.email) is not None:
             if sector == "Member":
                 varsity.members.add(user)
@@ -1049,10 +1108,6 @@ def addVarsityPlayer(request: WSGIRequest, varsity_id: int, sector: str):
     varsity.save()
     return HttpResponse("{\"message\":\"competed\"}")
 
-def createBylaw(request: WSGIRequest):
-    pass
-def deleteBylaw(request: WSGIRequest):
-    pass
 def createResource(request:WSGIRequest, bylaw_id: int, club_id):
     if request.method == "POST":
         resource = Resource.objects.create()
@@ -1275,16 +1330,16 @@ def clubSendEmails(request: WSGIRequest, club_id):
     listofaccepted = []
     listofrejected = []
     listofemails = []
-    for user in User.objects.all():
+    for user in User.objects.all().order_by('name'):
         if request.POST.get(user.email) is not None:
             listofemails.append(user) 
     for user in listofemails: 
-        if user in club.members.all(): 
+        if user in club.members.all().order_by('name'): 
             listofaccepted.append(str(user.email)) 
         else:
             listofrejected.append(str(user.email))
     listofheads = []
-    for head in club.heads.all():
+    for head in club.heads.all().order_by('name'):
         listofheads.append(str(head.email))
     email = ""
     with open(os.path.join(settings.BASE_DIR, "templates", "acceptance_letter.html"), 'r') as f: 
@@ -1402,13 +1457,16 @@ def requestAddMemberByLink(request: WSGIRequest, club_id):
         else:
             return HttpResponse(json.dumps({'error':'You Are Not Logged In!'}))
 def addMemberByLink(request: WSGIRequest, hash):
-    addbylink = AddByLink.objects.get(hash=hash)
+    try:
+        addbylink = AddByLink.objects.get(hash=hash)
+    except:
+        return render(request, 'add_by_link.html', {'club': "", 'error_text': "This link is expired.", 'error_redirect': '/', 'error_button_text': "Home"})
     club = addbylink.club
     if request.method == "GET":
         if datetime.now().timestamp() < addbylink.expiry.timestamp():
             if request.user.is_authenticated:
                 if request.user.associated_student is not None:
-                    if request.user not in club.members.all() and request.user not in club.leadership.all() and request.user not in club.heads.all():
+                    if request.user not in club.members.all().order_by('name') and request.user not in club.leadership.all().order_by('name') and request.user not in club.heads.all().order_by('name'):
                         return render(request, 'add_by_link.html', {'club': club,'error_text': "false", 'error_redirect': 'false', 'error_button_text': "true"})
                     else:
                         return render(request, 'add_by_link.html', {'club': club,'error_text': "You are already in the club.", 'error_redirect': '/Club/Detail/' + str(club.pk) + "/", 'error_button_text': "Go To Club"})

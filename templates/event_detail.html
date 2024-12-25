@@ -4,11 +4,15 @@
 {% block style %}
 <title>{{ event.title }} - Event Details</title>
 {% endblock %}
-
+{% block meta %}
+<meta property="og:title" content="{{event.title}}" />
+<meta property="og:description" content="{{event.summary}}" />
+<meta property="og:image" content="{{event.cover.url}}" />
+{% endblock meta %}
 {% block content %}
 {% if user.associated_student is not None and event.author.type == user.associated_student.gender or event.author.type == "mixed" or user.associated_faculty is not None or user.is_superuser %}
 <div class="pagecontrol">
-    <div style="display: flex; justify-content: space-between; flex-direction: column;">
+    <div style="display: flex; justify-content: space-between; flex-direction: column; flex:1;">
         <p class="pageTitle" style="margin: 0px;">{{ event.title }}</p>
         <br>
         <div class="articleDescriptionText">
@@ -19,7 +23,7 @@
         {% endif %}
         <div class="profileRow">
             <p class="pageSubtitle" style="margin: 0px;">{{event.attending_Students.count}} Attendee{% if event.attending_Students.count != 1 %}s{% endif %}</p>
-            {% if event.author in user.associated_clubs.all and not event.attendance_locked %}
+            {% if event.author in user.associated_clubs.all and not event.attendance_locked or user.associated_faculty is not None or user.is_superuser %}
             <button class="btn empty" onclick="openPopup('addMemberBG')"><img src="{% static '../media/images/joinButton.svg' %}"></button>
             {% endif %}
             </div>
@@ -33,7 +37,8 @@
                         <p class="text">{{ member.name }}</p>
                         <p class="aboutText">{{ member.associated_student.year_level }}{{ member.associated_student.section }}</p>
                         <p class="aboutText confirmedcontrol" style="color: {% if member in event.confirmed_Students.all %}lime{% else %}red{% endif %};">{% if member in event.confirmed_Students.all %}Confirmed{% else %}Not Confirmed{% endif %}</p>
-                        {% if not event.attendance_locked %}
+                        {% if not event.attendance_locked or user.associated_faculty is not None or user.is_superuser %}
+                        <div class="profileRow" style="gap:20px;">
                         {% if member.email == user.email or event.author in user.associated_clubs.all %}
                         {% if member not in event.confirmed_Students.all %}
                         <button class="btn empty" onclick="event.preventDefault(); setAttendeeConfirmed('{{member.email}}')"><img src="{%static '../media/images/confirmButton.svg' %}"></button>
@@ -44,6 +49,7 @@
                         {% if event.author in user.associated_clubs.all %}
                         <button class="btn empty" onclick="event.preventDefault(); removeAttendeeFromList('{{member.email}}')"><img src="{%static '../media/images/removeButton.svg' %}"></button>
                         {% endif %}
+                        </div>
                         {% endif %}
                     </div>
                 </a>
@@ -64,6 +70,9 @@
         <p class="aboutText">{{ event.date }}</p>
         <p class="aboutText">{{ event.start_time|time:"g:i A" }} - {{ event.end_time|time:"g:i A" }}</p>
         <p class="aboutText">{{ event.location }}</p>
+        {% if event.hos_approved %}
+        <p class="aboutText" style="color: green;">This event has been approved by HOS</p>
+        {% endif %}
         <div style="width: 300px; text-align: center;">
         {% for link in links %}
         <div style=" display: flex; align-items: center;">
@@ -73,11 +82,29 @@
         {% endfor %}
         </div>
         <br>
+        {% if not event.attendance_locked or user.associated_faculty is not None or user.is_superuser %}
+        {% if user not in event.attending_Students.all %}
+        <div class="centercontrol"><button onclick="addAttendeeToList('{{user.email}}')" class="btn primary">Attend Event</button></div><br>
+        {% else %}
+        <div class="centercontrol"><button onclick="removeAttendeeFromList('{{user.email}}')" class="btn">Leave Event</button></div><br>
+        {% endif %}
+        {% endif %}
+        {% if user.associated_faculty is not None %}
+        {% if not event.hos_approved %}
+        <div class="centercontrol"><button onclick="approveEvent('{{user.email}}')" class="btn primary">Approve Event</button></div><br>
+        {% else %}
+        <div class="centercontrol"><button onclick="denyEvent('{{user.email}}')" class="btn">Disapprove Event</button></div><br>
+        {% endif %}
+        {% endif %}
         {% if event.author in user.associated_clubs.all or user.associated_faculty is not None %}
+        
         <a href="/AttendeesList/Printable/event/{{ event.pk }}" target="_blank" class="centercontrol"><button class="btn">Printable List of Attendees</button></a><br>
+        {% endif %}
+        {% if event.author in user.associated_clubs.all or user.associated_faculty is not None or event.hos_approved %}
         <a href="/AttendeesList/Permissions/event/{{ event.pk }}" target="_blank" class="centercontrol"><button class="btn">Permission Slips</button></a><br>
         {% endif %}
         {% if event.author in user.associated_clubs.all %}
+        <a href="https://api.whatsapp.com/send?text=The {{event.title}} event will be held on *{{event.date}} from {{ event.start_time|time:"g:i A" }} - {{ event.end_time|time:"g:i A" }}*%0AView event details at https://ss.amb.sch.ae/Event/Detail/{{event.pk}}%0AClick on the *Attend Event* button to confirm your attendance." class="centercontrol" target="_blank"><button class="btn">Share to Whatsapp</button></a><br>
         <a href="/Event/Lock/{{ event.pk }}" class="centercontrol"><button class="btn {% if not event.attendance_locked %}primary{% endif %}">{% if event.attendance_locked %}Unlock Attendance{% else %}Lock Attendance{% endif %}</button></a><br>
         <a href="/Event/Modify/{{ event.pk }}" class="centercontrol"><button class="btn primary">Edit Event</button></a>
         {% endif %}
@@ -129,6 +156,18 @@
 </div>
 {% endif %}
 <script>
+    {% if user.associated_faculty is not None or user.is_superuser %}
+    function approveEvent(email) {
+        fetch("/Event/Approve?id=" + {{event.id}} + "&email=" + email)
+        .then(data => data.json())
+        .then(json => {console.log(json); location.reload();});
+    }
+    function denyEvent(email) {
+        fetch("/Event/Deny?id=" + {{event.id}} + "&email=" + email)
+        .then(data => data.json())
+        .then(json => {console.log(json); location.reload();});
+    }
+    {% endif %}
     function removeAttendeeFromList(email) {
         fetch("/Event/Remove?id=" + {{event.id}} + "&email=" + email)
         .then(data => data.json())
@@ -150,42 +189,72 @@ function setAttendeeNotConfirmed(email) {
     .then(json => {console.log(json); location.reload();});
 }
 
-    function searchMemberGrid(searchTerm) {
-        var grid = document.getElementById("memberField");
-        try{
-        for(var i = 0; i < grid.children.length; i++) {
-            var child = grid.children[i];
-            if(child.children[0].children[1].innerText.toLowerCase().includes(searchTerm.toLowerCase())) {
+var nosearchresults;
+function searchMemberGrid(searchTerm, grid) {
+    try{
+        var hidden = 0;
+    for(var i = 0; i < grid.children.length; i++) {
+        var child = grid.children[i];
+        if(grid.children[i].no) {
+            grid.children[i].remove();
+        }
+        else {
+            if(child.children[0].children[0].innerText.toLowerCase().includes(searchTerm.toLowerCase())) {
                 child.style.display = "flex";
             }
             else {
+                hidden++;
                 child.style.display = "none";
             }
         }
     }
-    catch {}
+    if(grid.children.length == hidden) {
+        nosearchresults = document.createElement("p");
+        nosearchresults.className = 'text';
+        nosearchresults.innerHTML = "No Attendees Found.";
+        nosearchresults.no = true;
+        grid.appendChild(nosearchresults);
     }
-    function searchAddMemberGrid(searchTerm) {
-        var grid = document.getElementById("addMemberField");
-        try{
-        for(var i = 0; i < grid.children.length; i++) {
-            var child = grid.children[i];
+}
+catch(e) {
+    console.error(e);
+}
+}
+var nosearchresultspopup;
+function searchAddMemberGrid(searchTerm,  grid) {
+    try{
+        var hidden = 0;
+    for(var i = 0; i < grid.children.length; i++) {
+        var child = grid.children[i];
+        if(grid.children[i].no) {
+            grid.children[i].remove();
+        }
+        else {
             if(child.children[0].children[1].innerText.toLowerCase().includes(searchTerm.toLowerCase())) {
                 child.style.display = "flex";
             }
             else {
+                hidden++;
                 child.style.display = "none";
             }
         }
     }
-    catch{}
+    if(grid.children.length == hidden) {
+        nosearchresultspopup = document.createElement("p");
+        nosearchresultspopup.className = 'text';
+        nosearchresultspopup.innerHTML = "No Students Found.";
+        nosearchresultspopup.no = true;
+        grid.appendChild(nosearchresultspopup);
     }
+}
+catch{}
+}
     
     setInterval(function() {
-        searchMemberGrid(document.getElementById("memberSearch").value);
+        searchMemberGrid(document.getElementById("memberSearch").value, document.getElementById("memberField"));
     }, 1);
     setInterval(function() {
-        searchAddMemberGrid(document.getElementById("addMemberSearch").value);
+        searchAddMemberGrid(document.getElementById("addMemberSearch").value, document.getElementById("addMemberField"));
     }, 1);
     
 </script>

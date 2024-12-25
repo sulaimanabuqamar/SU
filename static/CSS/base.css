@@ -486,6 +486,10 @@ font {
 .links {
     font-family: Inter;
     margin-top: 10px;
+    max-width: 250px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
 }
 .warning {
     width: 100%;
@@ -725,6 +729,9 @@ div {
     width: 330px;
 }
 @media only screen and (max-width: 1000px) {
+    * {
+        touch-action: manipulation;
+    }
     .faqanswer {
         width: unset;
     }
@@ -767,6 +774,9 @@ div {
         to {
             transform: translateY(100%);
         }
+    }
+    .memberGrid {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     }
     .navBar {
         position: fixed;
@@ -853,6 +863,10 @@ div {
         justify-content: space-between;
         flex-direction: column-reverse;
         margin: 40px;
+    }
+    .accountPopupWindow {
+        border-bottom-left-radius: 0px;
+        border-bottom-right-radius: 0px;
     }
     .accountPopupWindow.large {
         /* position: fixed;

@@ -1,6 +1,9 @@
 {% extends 'Base.html' %}
 {% load static %}
-
+{% block meta %}
+<meta property="og:title" content="{{club.name}}  Bylaws" />
+<meta property="og:image" content="{{club.logo.url}}" />
+{% endblock meta %}
 {% block style %}
 <title>{{ club.name }} - Club Bylaws</title>
 {% endblock %}

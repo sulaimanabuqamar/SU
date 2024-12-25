@@ -64,32 +64,62 @@
 </div>
 
 <script>
+    var nosearchresults;
     function searchMemberGrid(searchTerm, grid) {
         try{
+            var hidden = 0;
         for(var i = 0; i < grid.children.length; i++) {
             var child = grid.children[i];
-            if(child.children[0].children[1].innerText.toLowerCase().includes(searchTerm.toLowerCase())) {
-                child.style.display = "flex";
+            if(grid.children[i].no) {
+                grid.children[i].remove();
             }
             else {
-                child.style.display = "none";
+                if(child.children[0].children[0].innerText.toLowerCase().includes(searchTerm.toLowerCase())) {
+                    child.style.display = "flex";
+                }
+                else {
+                    hidden++;
+                    child.style.display = "none";
+                }
             }
+        }
+        if(grid.children.length == hidden) {
+            nosearchresults = document.createElement("p");
+            nosearchresults.className = 'text';
+            nosearchresults.innerHTML = "No Clubs Found.";
+            nosearchresults.no = true;
+            grid.appendChild(nosearchresults);
         }
     }
     catch(e) {
-        {% comment %} console.error(e); {% endcomment %}
+        console.error(e);
     }
     }
+    var nosearchresultspopup;
     function searchAddMemberGrid(searchTerm,  grid) {
         try{
+            var hidden = 0;
         for(var i = 0; i < grid.children.length; i++) {
             var child = grid.children[i];
-            if(child.children[0].children[1].innerText.toLowerCase().includes(searchTerm.toLowerCase())) {
-                child.style.display = "flex";
+            if(grid.children[i].no) {
+                grid.children[i].remove();
             }
             else {
-                child.style.display = "none";
+                if(child.children[0].children[1].innerText.toLowerCase().includes(searchTerm.toLowerCase())) {
+                    child.style.display = "flex";
+                }
+                else {
+                    hidden++;
+                    child.style.display = "none";
+                }
             }
+        }
+        if(grid.children.length == hidden) {
+            nosearchresultspopup = document.createElement("p");
+            nosearchresultspopup.className = 'text';
+            nosearchresultspopup.innerHTML = "No Clubs Found.";
+            nosearchresultspopup.no = true;
+            grid.appendChild(nosearchresultspopup);
         }
     }
     catch{}

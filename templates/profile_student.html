@@ -21,6 +21,13 @@
                     <img class="eventCover" style="border: {{ club.color }} 3px solid;" src="{{ club.logo.url }}" alt="Club Cover">
                     <p class="text" style="max-width: 306px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ club.name }}</p>
                     <p class="aboutText">{{ club.date }}</p>
+                    {% if user in club.heads.all %}
+                    <p class="aboutText">Head of Club</p>
+                    {% elif user in club.leadership.all %}
+                    <p class="aboutText">Committee of Club</p>
+                    {% elif user in club.members.all %}
+                    <p class="aboutText">Member of Club</p>
+                    {% endif %}
                 </a>
             </div>
             {% empty %}
@@ -39,6 +46,13 @@
                 <a href="{% url 'varsity_detail' varsity.id %}">
                     <img class="eventCover" style="border: {{ varsity.color }} 3px solid;" src="{{ varsity.logo.url }}" alt="{{ varsity.name }}">
                     <p class="text" style="max-width: 306px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ varsity.name }}</p>
+                    {% if user in varsity.captains.all %}
+                    <p class="aboutText">Captain of Varsity</p>
+                    {% elif user in varsity.coaches.all %}
+                    <p class="aboutText">Coach of Varsity</p>
+                    {% elif user in varsity.members.all %}
+                    <p class="aboutText">Member of Varsity</p>
+                    {% endif %}
                 </a>
             </div>
             {% empty %}

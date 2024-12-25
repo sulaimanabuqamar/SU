@@ -1,6 +1,9 @@
 {% extends 'Base.html' %}
 {% load static %}
-
+{% block meta %}
+<meta property="og:title" content="404 Not Found" />
+<meta property="og:description" content="This page was not found!" />
+{% endblock meta %}
 {% block style %}
 <title>SS - Not Found</title>
 {% endblock %}

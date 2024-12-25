@@ -4,7 +4,11 @@
 {% block style %}
 <title>{{ selecteduser.name }} - Details</title>
 {% endblock %}
-
+{% block meta %}
+<meta property="og:title" content="{{selecteduser.name}}" />
+<meta property="og:description" content="{{selecteduser.associated_student.about}}" />
+<meta property="og:image" content="{{selecteduser.associated_student.profile_picture.url}}" />
+{% endblock meta %}
 {% block content %}
 <div>
     <div class="detailsSide">

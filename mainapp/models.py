@@ -11,6 +11,23 @@ class AddByLink(models.Model):
     club = models.ForeignKey("Club", on_delete=models.CASCADE, related_name='club_addbylink_hash')
     hash = models.CharField(max_length=10000)
     expiry = models.DateTimeField()
+
+class PLCAction(models.Model):
+    author = models.ForeignKey("User", on_delete=models.CASCADE, related_name='plc_action_author')
+    action = models.CharField(max_length=10000)
+
+class PLCTopic(models.Model):
+    author = models.ForeignKey("User", on_delete=models.CASCADE, related_name='plc_topic_author')
+    topic = models.CharField(max_length=10000)
+
+class PLC(models.Model):
+    facilitator = models.ForeignKey("User", on_delete=models.CASCADE, related_name='meeting_plc_facilitator')
+    recorder = models.ForeignKey("User", on_delete=models.CASCADE, related_name='meeting_plc_recorder')
+    timekeeper = models.ForeignKey("User", on_delete=models.CASCADE, related_name='meeting_plc_timekeeper')
+    attended_Students = models.ManyToManyField("User", related_name='plc_attended_students', blank=True)
+    focus_topics = models.ManyToManyField(PLCTopic, related_name='plc_topics', blank=True)
+    actions = models.ManyToManyField(PLCAction, related_name='plc_actions', blank=True)
+    notes = models.CharField(max_length=10000, blank=True,null=True)
 class Links(models.Model):
     name = models.CharField(max_length=10000)
     link = models.URLField()
@@ -19,7 +36,7 @@ class Links(models.Model):
 class FAQ(models.Model):
     question = models.CharField(max_length=10000)
     answer = models.TextField(blank=True,null=True)
-    type = models.CharField(choices=[('student', "Student FAQ"),('clubhead',"Club Heads FAQ"),('faculty',"Faulty FAQ"),('ssofficer',"SS Officer FAQ"),('releasenotes',"Release Notes")], max_length=10)
+    type = models.CharField(choices=[('student', "Student FAQ"),('clubhead',"Club Heads FAQ"),('faculty',"Faulty FAQ"),('ssofficer',"SS Officer FAQ"),('releasenotes',"Release Notes")], max_length=50)
     def __str__(self) -> str:
         return self.type + ": " + self.question
 class Resource(models.Model):
@@ -173,6 +190,7 @@ class Event(models.Model):
     text = models.TextField()
     summary = models.CharField(max_length=150)
     date = models.DateField()
+    end_date = models.DateField(blank=True,null=True)
     start_time = models.TimeField(blank=True, null=True)
     end_time = models.TimeField(blank=True, null=True)
     published_date = models.DateTimeField(null=True, blank=True)
@@ -184,6 +202,7 @@ class Event(models.Model):
     members_only = models.BooleanField(default=False)
     highlight = models.BooleanField(default=False)
     draft = models.BooleanField(default=False)
+    hos_approved = models.BooleanField(default=False)
     significant_event = models.BooleanField(default=False)
     attending_Students = models.ManyToManyField(User, related_name='attending_students', blank=True)
     confirmed_Students = models.ManyToManyField(User, related_name='confirm_students', blank=True)
@@ -209,6 +228,7 @@ class Meeting(models.Model):
     draft = models.BooleanField(default=False)
     attending_Members = models.ManyToManyField(User, related_name='meeting_attending_members', blank=True)
     links = models.ManyToManyField(Links, related_name='emeeting_links', blank=True)
+    plc = models.ForeignKey(PLC, on_delete=models.CASCADE, related_name='meeting_plc',blank=True,null=True)
     def __str__(self) -> str: 
         return self.title
     typeitem = "meeting"

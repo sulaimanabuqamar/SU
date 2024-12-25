@@ -11,33 +11,33 @@
     </div>
     <div class="faqgrid" id="mainfaqlist">
         {% if user.associated_student is not None %}
-        <div class="faqbox" onclick="showFaqs('studentfaqlist')">
+        <a class="faqbox" href=" {% url "faq" 'studentfaqlist' %} ">
             <p class="text" style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;max-width: 100%; color: white;">Student Frequently Asked Questions</p>
             <img src="{% static "../media/images/expandButton.svg" %}" alt="Club Cover">
-        </div>
+        </a>
         {% endif %}
         {% if user.associated_clubs.count > 0 %}
-        <div class="faqbox" onclick="showFaqs('clubheadfaqlist')">
+        <a class="faqbox" href=" {% url "faq" 'clubheadfaqlist' %} ">
             <p class="text" style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;max-width: 100%; color: white;">Club Heads' Frequently Asked Questions</p>
             <img src="{% static "../media/images/expandButton.svg" %}" alt="Club Cover">
-        </div>
+        </a>
         {% endif %}
         {% if user.associated_faculty is not None %}
-        <div class="faqbox" onclick="showFaqs('facultyfaqlist')">
+        <a class="faqbox" href=" {% url "faq" 'facultyfaqlist' %} ">
             <p class="text" style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;max-width: 100%; color: white;">Facultys' Frequently Asked Questions</p>
             <img src="{% static "../media/images/expandButton.svg" %}" alt="Club Cover">
-        </div>
+        </a>
         {% endif %}
         {% if user.is_superuser %}
-        <div class="faqbox" onclick="showFaqs('ssofficerfaqlist')">
+        <a class="faqbox" href=" {% url "faq" 'ssofficerfaqlist' %} ">
             <p class="text" style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;max-width: 100%; color: white;">SS Officers' Frequently Asked Questions</p>
             <img src="{% static "../media/images/expandButton.svg" %}" alt="Club Cover">
-        </div>
+        </a>
         {% endif %}
-        <div class="faqbox" onclick="showFaqs('releasenoteslist')">
+        <a class="faqbox" href=" {% url "faq" 'releasenoteslist' %} ">
             <p class="text" style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;max-width: 100%; color: white;">Student Society Website Release Notes</p>
             <img src="{% static "../media/images/expandButton.svg" %}" alt="Club Cover">
-        </div>
+        </a>
     </div>
     <div class="faqgrid" id="studentfaqlist" style="display: none;">
         <p class="pageSubtitle" style="margin-bottom: 10px; cursor: pointer;" onclick="showFaqs('mainfaqlist')"><- Back</p>

@@ -160,24 +160,40 @@
     </div>
     <div style="display: flex; flex-direction: column;">
         <script>
-    function searchMemberGrid(searchTerm) {
-        var grid = document.getElementById("memberGrid");
-        try{
-        for(var i = 0; i < grid.children.length; i++) {
-            var child = grid.children[i];
-            if(child.children[0].children[1].innerText.toLowerCase().includes(searchTerm.toLowerCase())) {
-                child.style.display = "flex";
+            var nosearchresults;
+            function searchMemberGrid(searchTerm, grid) {
+                try{
+                    var hidden = 0;
+                for(var i = 0; i < grid.children.length; i++) {
+                    var child = grid.children[i];
+                    if(grid.children[i].no) {
+                        grid.children[i].remove();
+                    }
+                    else {
+                        if(child.children[0].children[0].innerText.toLowerCase().includes(searchTerm.toLowerCase())) {
+                            child.style.display = "flex";
+                        }
+                        else {
+                            hidden++;
+                            child.style.display = "none";
+                        }
+                    }
+                }
+                if(grid.children.length == hidden) {
+                    nosearchresults = document.createElement("p");
+                    nosearchresults.className = 'text';
+                    nosearchresults.innerHTML = "No Members Found.";
+                    nosearchresults.no = true;
+                    grid.appendChild(nosearchresults);
+                }
             }
-            else {
-                child.style.display = "none";
+            catch(e) {
+                console.error(e);
             }
-        }
-    }
-    catch {}
-    }
+            }
 
     setInterval(function() {
-        searchMemberGrid(document.getElementById("memberSearch").value);
+        searchMemberGrid(document.getElementById("memberSearch").value, document.getElementById("memberGrid"));
     }, 1);
     {% comment %} setInterval(function() {
         if(document.getElementById("memberSearch") == document.activeElement) {

@@ -4,7 +4,11 @@
 {% block style %}
 <title>{{ club.name }} - Details</title>
 {% endblock %}
-
+{% block meta %}
+<meta property="og:title" content="{{club.name}}" />
+<meta property="og:description" content="{{club.about}}" />
+<meta property="og:image" content="{{club.logo.url}}" />
+{% endblock meta %}
 {% block content %}
 {% if user.associated_student is not None and club.type == user.associated_student.gender or club.type == "mixed" or user.associated_faculty is not None or user.is_superuser %}
 <div>

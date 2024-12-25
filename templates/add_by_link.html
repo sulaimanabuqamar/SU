@@ -1,8 +1,12 @@
 {% extends 'Base.html' %}
 {% load static %}
-
+{% block meta %}
+<meta property="og:title" content="Join {{club.name}}" />
+<meta property="og:description" content="{{club.about}}" />
+<meta property="og:image" content="{{club.logo.url}}" />
+{% endblock meta %}
 {% block style %}
-<title>SS - Internal Error</title>
+<title>SS - Join {{club.name}} Club</title>
 {% endblock %}
 
 {% block content %}

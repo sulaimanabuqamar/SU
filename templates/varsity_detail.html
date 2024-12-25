@@ -4,7 +4,11 @@
 {% block style %}
 <title>{{ varsity.name }} - Details</title>
 {% endblock %}
-
+{% block meta %}
+<meta property="og:title" content="{{varsity.name}}" />
+<meta property="og:description" content="{{varsity.about}}" />
+<meta property="og:image" content="{{varsity.logo.url}}" />
+{% endblock meta %}
 {% block content %}
 <div>
     <div class="detailsSide" style="">
