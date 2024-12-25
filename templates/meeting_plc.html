@@ -1,0 +1,98 @@
+{% extends 'Base.html' %}
+{% load static %}
+
+{% block style %}
+<title>{{ meeting.title }} - Meeting PLC</title>
+{% endblock %}
+
+{% block content %}
+{% comment %} <p class="pageTitle" style="margin: 0px;">{{ club.name }} Bylaws</p> {% endcomment %}
+<div class="pagecontrol">
+    <div style="display: flex; justify-content: space-between; flex-direction: column; width: 100%;">
+        <div class="profileRow">
+        <p class="pageTitle" style="margin: 0px;">{{ meeting.title }}</p>
+        
+        {% if meeting.author in user.associated_clubs.all %}
+            <a href="{% url "meeting_modify_plc" meeting.pk %}"><button class="btn empty"><img src="{% static '../media/images/editButton.svg' %}"></button></a>
+        {% endif %}
+        </div>
+        <p class="aboutText" style="margin: 0px;">{{ meeting.author.name }}</p>
+        <br>
+        <p class="pageSubtitle" style="margin: 0px;">Facilitator</p><br>
+        {% if plc.facilitator is not None and plc.facilitator.associated_student is not None %}
+        <a href="/Student/Detail/{{plc.facilitator.pk}}" class="profileRow">
+            <div class="profileRow Box" style="border: black 3px solid; border-radius: 15px; padding: 10px; gap: 10px;">
+                <img class="eventCover" style=" width: 50px; height: 50px; border-radius: 50%; object-fit: cover; aspect-ratio: 1/1;margin-right: 10px;" src="{{ plc.facilitator.associated_student.profile_picture.url }}" alt="Club Cover">
+                <p class="text">{{ plc.facilitator.name }}</p>
+                <p class="aboutText">{{ plc.facilitator.associated_student.year_level }}{{ plc.facilitator.associated_student.section }}</p>
+            </div>
+        </a>
+        {% else %}
+        <p class="text">No Facilitator</p>
+        {% endif %}
+        <br>
+        <p class="pageSubtitle" style="margin: 0px;">Recorder</p><br>
+        {% if plc.recorder is not None and plc.recorder.associated_student is not None %}
+        <a href="/Student/Detail/{{plc.recorder.pk}}" class="profileRow">
+            <div class="profileRow Box" style="border: black 3px solid; border-radius: 15px; padding: 10px; gap: 10px;">
+                <img class="eventCover" style=" width: 50px; height: 50px; border-radius: 50%; object-fit: cover; aspect-ratio: 1/1;margin-right: 10px;" src="{{ plc.recorder.associated_student.profile_picture.url }}" alt="Club Cover">
+                <p class="text">{{ plc.recorder.name }}</p>
+                <p class="aboutText">{{ plc.recorder.associated_student.year_level }}{{ plc.recorder.associated_student.section }}</p>
+            </div>
+        </a>
+        {% else %}
+        <p class="text">No Recorder</p>
+        {% endif %}
+        <br>
+        <p class="pageSubtitle" style="margin: 0px;">Time Keeper</p><br>
+        {% if plc.timekeeper is not None and plc.timekeeper.associated_student is not None %}
+        <a href="/Student/Detail/{{plc.timekeeper.pk}}" class="profileRow">
+            <div class="profileRow Box" style="border: black 3px solid; border-radius: 15px; padding: 10px; gap: 10px;">
+                <img class="eventCover" style=" width: 50px; height: 50px; border-radius: 50%; object-fit: cover; aspect-ratio: 1/1;margin-right: 10px;" src="{{ plc.timekeeper.associated_student.profile_picture.url }}" alt="Club Cover">
+                <p class="text">{{ plc.timekeeper.name }}</p>
+                <p class="aboutText">{{ plc.timekeeper.associated_student.year_level }}{{ plc.timekeeper.associated_student.section }}</p>
+            </div>
+        </a>
+        {% else %}
+        <p class="text">No Time Keeper</p>
+        {% endif %}
+        
+        <div class="profileRow">
+            <p class="pageSubtitle" style="margin: 0px; margin-bottom: 20px; margin-top: 20px;">{{plc.attended_Students.count}} Attended</p>
+            </div>
+            <input class="textfield" placeholder="Search..." style="margin: 0px; width: unset;" id="memberSearch">
+            <br>
+            <div class="memberGrid scroll" id="memberField">
+                {% for member in allUsers %}
+                <a href="/Student/Detail/{{member.pk}}" class="profileRow">
+                    <div class="profileRow Box" style="border: {% if member in plc.attended_Students.all %}lime{% else %}red{% endif %} 3px solid; border-radius: 15px; padding: 10px; gap: 10px;">
+                        <img class="eventCover" style=" width: 50px; height: 50px; border-radius: 50%; object-fit: cover; aspect-ratio: 1/1;margin-right: 10px;" src="{{ member.associated_student.profile_picture.url }}" alt="Club Cover">
+                        <p class="text">{{ member.name }}</p>
+                        <p class="aboutText">{{ member.associated_student.year_level }}{{ member.associated_student.section }}</p>
+                        <p class="aboutText confirmedcontrol" style="color: {% if member in plc.attended_Students.all %}lime{% else %}red{% endif %};">{% if member in plc.attended_Students.all %}Attended{% else %}Absent{% endif %}</p>
+                        {% if member.email == user.email or meeting.author in user.associated_clubs.all %}
+                        {% if member not in plc.attended_Students.all %}
+                        <button class="btn empty" type="button" onclick="event.preventDefault(); setAttendeeConfirmed('{{member.email}}')"><img src="{%static '../media/images/confirmButton.svg' %}"></button>
+                        {% else %}
+                        <button class="btn empty" type="button" onclick="event.preventDefault(); setAttendeeNotConfirmed('{{member.email}}')"><img src="{%static '../media/images/unconfirmButton.svg' %}"></button>
+                        {% endif %}
+                        {% endif %}
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        <script>
+            function setAttendeeConfirmed(email) {
+                fetch("/Meetings/PLC/Confirm/{{meeting.pk}}?id={{plc.pk}}&email=" + email)
+                .then(data => data.json())
+                .then(json => {console.log(json); location.reload();});
+            }
+            function setAttendeeNotConfirmed(email) {
+                fetch("/Meetings/PLC/Unconfirm/{{meeting.pk}}?id={{plc.pk}}&email=" + email)
+                .then(data => data.json())
+                .then(json => {console.log(json); location.reload();});
+            }            
+        </script>
+    </div>
+</div>
+{% endblock %}

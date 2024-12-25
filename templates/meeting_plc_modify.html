@@ -1,0 +1,300 @@
+{% extends 'Base.html' %}
+{% load static %}
+{% load custom_tags %}
+
+{% block style %}
+<title>SS - Create PLC</title>
+{% endblock %}
+
+{% block content %}
+<div class="pagecontrol" style="margin: 0px;">
+    <div style="display: flex; justify-content: space-between; flex-direction: column; flex: 1;">
+        <form action="/Club/EditBylaws/edit/{{bylaw.pk}}/{{club.pk}}/" method="POST">
+            {% csrf_token %}
+        <div class="memberGrid" id="facilitatorField">
+            {% if true %}
+            <a href="/Faculty/Detail/{{advisor.pk}}" class="profileRow">
+                <div class="profileRow Box" style="border: {{ advisor.color }} 3px solid; border-radius: 15px; padding: 10px; gap: 10px;">
+                    <img class="eventCover" style=" width: 50px; height: 50px; border-radius: 50%; object-fit: cover; aspect-ratio: 1/1;margin-right: 10px;" src="{{ advisor.associated_faculty.profile_picture.url }}" alt="Club Cover">
+                    <p class="text">{{ advisor.name }}</p>
+                    {% comment %} <p class="aboutText">{{ advisor.associated_student.year_level }}{{ advisor.associated_student.section }}</p> {% endcomment %}
+                    <button class="btn empty" onclick="event.preventDefault(); removeMember('{{advisor.email}}', 'Advisor');"><img src="{%static '../media/images/removeButton.svg' %}"></button>
+                </div>
+            </a>
+            {% else %}
+            <p class="text">No Facilitator.</p>
+            {% endif %}
+        </div>
+        <br>
+        <div>
+            <div class="textfieldtoolbar">
+                <button class="toolbarBtn" style="border-top-left-radius: 10px;" type="button" onclick="execCommand('bold'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/bold.svg' %}" alt="B"></button>
+                <button class="toolbarBtn" type="button" onclick="execCommand('italic'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/italic.svg' %}" alt="I"></button>
+                <button class="toolbarBtn" type="button" onclick="execCommand('underline'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/underline.svg' %}" alt="U"></button>
+                <button class="toolbarBtn toolbarBtnControl" type="button" onclick="execCommand('strikethrough'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/strikethrough.svg' %}" alt="S"></button>
+                <button class="toolbarBtn toolbarBtnControl" type="button" onclick="execCommand('fontSize', true, 1); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/decrease_font_size.svg' %}" alt="-"></button>
+                <button class="toolbarBtn toolbarBtnControl" type="button" onclick="execCommand('fontSize', false, 2); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/normal_font_size.svg' %}" alt="="></button>
+                <button class="toolbarBtn toolbarBtnControl" type="button" onclick="execCommand('fontSize', true, 4); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/increase_font_size.svg' %}" alt="+"></button>
+                <button class="toolbarBtn toolbarBtnControl" type="button" onclick="execCommand('justifyLeft'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/justify_left.svg' %}" alt="L"></button>
+                <button class="toolbarBtn toolbarBtnControl" type="button" onclick="execCommand('justifyCenter'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/justify_center.svg' %}" alt="C"></button>
+                <button class="toolbarBtn toolbarBtnControl" type="button" onclick="execCommand('justifyRight'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/justify_right.svg' %}" alt="R"></button>
+                <button class="toolbarBtn" type="button" onclick="document.getElementById('fontcolor').click(); document.getElementById('maineditor').focus(); "><img src="{% static '../media/images/text_color.svg' %}" alt="A"></button>
+                <input type="color" style="width:  0px; border: none; margin:0px; padding: 0px;" id="fontcolor" oninput="execCommand('foreColor', true, this.value)">
+                <button class="toolbarBtn" type="button" onclick="document.getElementById('backcolor').click(); document.getElementById('maineditor').focus(); "><img src="{% static '../media/images/highlight.svg' %}" alt="H"></button>
+                <input type="color" style="width:  0px; border: none; margin:0px; padding: 0px;" id="backcolor" oninput="execCommand('backColor', true, this.value)">
+                <button class="toolbarBtn" type="button" onclick="execCommand('removeFormat'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/clear_format.svg' %}" alt="T"></button>
+                <button class="toolbarBtn" type="button" onclick="this.children[0].click();"><input type="file" oninput="uploadFile(this.files[0])" accept="*/image" hidden><img src="{% static '../media/images/image.svg' %}" alt="T"></button>
+                <button class="toolbarBtn" type="button" onclick="createLink()"><img src="{% static '../media/images/link.svg' %}" alt="R"></button>
+            </div>
+            <div class="textfield bottom large" required placeholder="Content" contentEditable="true" id="maineditor" style=" padding-top: 10px; margin-top: 0px;"></div>
+            <textarea class="textfield" hidden name="content" placeholder="Content" contentEditable="true" style=" padding-top: 10px;"></textarea>
+            <script>
+                setInterval(function() {document.getElementsByName('content')[0].innerHTML = document.getElementById('maineditor').innerHTML;},1);
+            </script>
+            <script>
+                function createLink() {
+                    var container = window.getSelection().getRangeAt(0);
+                    console.log(container);
+                    var url = prompt("Enter Link: ");
+                    console.log(url)
+                    if(url == null) {return};
+                    var link = "<a href='"  + url + "' target='_blank'>" + url + "</a>";
+                    console.log(link)
+                    var str = container.endContainer.parentElement.innerHTML.replace("&nbsp;", " ");
+                    var output = [str.slice(0, container.endOffset), link, str.slice(container.endOffset)].join('')
+                    console.log(output)
+                    container.endContainer.parentElement.innerHTML = output.trim();
+                    document.getElementById('maineditor').focus();
+                }
+                function uploadFile(file) {
+                    if(file == null) {
+                        console.log(file);
+                        console.log('null');
+                        return;
+                    }
+                    if(file.size > 1048576) {alert("File can't be bigger than 1MB"); return;}
+                    document.getElementById("loadingBG").hidden = false;
+                    let formData = new FormData();
+                    formData.append('file', file);
+                    fetch('/Upload/Media/About', {
+                        method: 'POST',
+                        body: formData,
+                        })
+                        .then(response => response.text())
+                        .then(response => {
+                            console.log(response);
+                            if(response ==  "Failed to upload file") {
+                                alert("Failed to upload file");
+                                document.getElementById("loadingBG").hidden = true;
+                            }
+                            else {
+                                document.getElementById("loadingBG").hidden = true;
+                                document.getElementById('maineditor').focus();
+                                document.execCommand('insertImage', false, response);
+                                document.getElementById('maineditor').focus();
+                            }
+                        })
+                        .catch(error => {
+                            console.error(error);
+                            document.getElementById("loadingBG").hidden = true;
+                        });
+                }
+            </script>
+        </div>
+        <div class="linkcontrol" style=" margin-left: -10px; margin-top: 30px;">
+            <button class="btn" onclick="var a = document.createElement('a'); a.href = '/Club/PLCs/{{club.pk}}/'; a.click();" type="reset">Cancel Changes</button>
+            <input type="submit" class="btn primary" value="Save Changes" onclick="var element = this; setTimeout(function() {element.disabled = true; element.style.backgroundColor = '#aaaaaa'; }, 250); setTimeout(function(){element.disabled = false; element.style.backgroundColor = '#1F355E';}, 10000);">
+            </div>
+
+        </form>
+        <br>
+        <div class="profileRow">
+        <p class="pageSubtitle" style="margin: 0px;">{{bylaw.resources.count}} Resources</p>
+        <button class="btn empty" onclick="openPopup('addResource')"><img src="{%static '../media/images/joinButton.svg' %}"></button>
+        </div>
+    </div>
+    <div>
+        {% comment %} <div class="centerer huns" style="margin-bottom: 20px;">
+        <img src="{{ club.logo.url }}" alt="Profile Picture" class="articleCover">
+        </div>
+        <div class="tagBox" style="background: {{club.color}};">
+            <p class="tagText">Club</p>
+        </div>
+        <div class="aboutText sidebar">{{ club.about|default_if_none:""|safe }}</div> {% endcomment %}
+        {% comment %} <a href="/profile/Edit/Club/{{club.pk}}" class="centercontrol"><button class="btn primary">Edit Club</button></a><br>
+        <a class="centercontrol"><button class="btn" onclick="openMemberPopup('selectApplicant')" >Send Admission Emails</button><a/><br>
+        <a class="centercontrol"><button class="btn" onclick="downloadList()">Download List of Members</button></a><br>
+        <a href="{% url "create_event" club.pk %}" class="centercontrol"><button class="btn">Create Event</button></a><br>
+        <a href="{% url "create_meeting" club.pk %}" class="centercontrol"><button class="btn">Create Meeting</button></a><br>
+        <a href="{% url "club_bylaws" club.pk %}" class="centercontrol"><button class="btn">Club Bylaws</button></a> {% endcomment %}
+    </div>
+</div>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.13.1/xlsx.full.min.js"></script> 
+<script>
+function downloadList() {
+    var listofmembers = [{% for member in club.members.all %}{"Name": "{{member.name}}", "Gender": "{{member.associated_student.gender}}", "Grade": {{member.associated_student.year_level}}, "Section": "{{member.associated_student.section}}", "Email": "{{member.email}}", "School ID": "{{member.associated_student.student_db_id}}"},{% endfor %}]
+    console.log(listofmembers);
+    var ws = XLSX.utils.json_to_sheet(listofmembers);
+    var wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "People");
+    XLSX.writeFile(wb,"{{club.name}} Members.xlsx");
+}
+var currentBylawid = "";
+function editBylaw(pk) {
+    document.getElementsByClassName('loadingText')[0].innerText = 'Loading Bylaw...';
+    document.getElementsByClassName('loadingText')[0].hidden = false;
+    document.getElementById('loadingBG').hidden = false;
+    fetch('/Club/EditBylaws/json/' + pk, {
+        method: 'GET',
+        })
+        .then(response => response.json())
+        .then(response => {
+            currentBylawid = pk; 
+            console.log(response);
+            document.getElementById("loadingBG").hidden = true;
+            document.getElementById("editPopupCancelBtn").onclick = function() {closePopup('addBylaws');};
+            document.getElementById("editPopupCancelBtn").onclick = function() {closePopup('addBylaws');};
+            openPopup('addBylaws');
+        })
+        .catch(error => {
+            console.error(error);
+            document.getElementById("loadingBG").hidden = true;
+        });
+    
+}
+function createBylaw() {
+    document.getElementsByClassName('loadingText')[0].innerText = 'Creating Bylaw...';
+    document.getElementsByClassName('loadingText')[0].hidden = false;
+    document.getElementById('loadingBG').hidden = false;
+    fetch('/Club/EditBylaws/create/{{club.pk}}/', {
+        method: 'GET',
+        })
+        .then(response => response.text())
+        .then(response => {
+            currentBylawid = response;
+            document.getElementById("loadingBG").hidden = true;
+            document.getElementById("editPopupCancelBtn").onclick = function() {deleteBylaw();};
+            openPopup('addBylaws');
+        })
+        .catch(error => {
+            console.error(error);
+            document.getElementById("loadingBG").hidden = true;
+        });
+    
+}
+function deleteBylaw() {
+    document.getElementsByClassName('loadingText')[0].innerText = 'Closing...';
+    document.getElementsByClassName('loadingText')[0].hidden = false;
+    document.getElementById('loadingBG').hidden = false;
+    fetch('/Club/EditBylaws/delete/{{club.pk}}/' + currentBylawid, {
+        method: 'GET',
+        })
+        .then(response => response.text())
+        .then(response => {
+            document.getElementById("loadingBG").hidden = true;
+            closePopup('addBylaws');
+        })
+        .catch(error => {
+            console.error(error);
+            document.getElementById("loadingBG").hidden = true;
+        });
+    setTimeout(function() { location.reload()}, 300);
+}
+
+function deleteResource(pk) {
+    document.getElementsByClassName('loadingText')[0].innerText = 'Deleting Resource...';
+    document.getElementsByClassName('loadingText')[0].hidden = false;
+    document.getElementById('loadingBG').hidden = false;
+    fetch('/Bylaw/Resources/delete/' + pk +  '/', {
+        method: 'POST',
+        })
+        .then(response => response.text())
+        .then(response => {
+            document.getElementById("loadingBG").hidden = true;
+        })
+        .catch(error => {
+            console.error(error);
+            document.getElementById("loadingBG").hidden = true;
+        });
+    setTimeout(function() { location.reload()}, 300);
+}
+
+</script>
+<div class="popupBG" hidden id="addResource" onclick="if(event.srcElement == this) {closePopup(this.id);}">
+    <div class="accountPopupWindow">
+        <p class="subtitle" style="text-align: center; margin-bottom: 15px;">Add Resource</p>
+        <form action="/Bylaw/Resources/add/{{bylaw.pk}}/{{club.pk}}/" method="POST" enctype="multipart/form-data">
+            <input class="textfield" name="name" required placeholder="Resource Name" style="margin: 0px; margin-bottom: 20px; width: calc( 100% - 55px ); margin-left: 20px; margin-right: 20px;">
+            {% csrf_token %}
+        {% comment %} <div style="display: flex; justify-content: center;">
+            <p class="subtext">Enter email body, Note: This will only be shown on acceptance letters not rejected</p>
+        </div> {% endcomment %}
+        <div style="display: flex; justify-content: center; margin-bottom: 10px;">
+            <select class="textfield" name="type" required onchange="if(this.value == 'link') {document.getElementById('addlinkbox').style.display = 'flex'; document.getElementById('uploadfilebox').style.display = 'none'; } else if(this.value == 'file') {document.getElementById('addlinkbox').style.display = 'none'; document.getElementById('uploadfilebox').style.display = 'flex';}">
+                <option value="none" disabled selected>Select Resource Type</option>
+                <option value="link">Website Link</option>
+                <option value="file">File Upload</option>
+            </select>
+        </div>
+    <div id="addlinkbox" style="display: none; justify-content: center; flex-direction: column;">
+        {% comment %} <p class="text">Name</p> {% endcomment %}
+        <input class="textfield" name="linkname" placeholder="Link Title" style="margin: 0px; margin-bottom: 20px; width: calc( 100% - 55px ); margin-left: 20px; margin-right: 20px;">
+        {% comment %} <p class="text">Link</p> {% endcomment %}
+        <input class="textfield" name="linkurl" placeholder="Link URL" style="margin: 0px; margin-bottom: 20px; width: calc( 100% - 55px ); margin-left: 20px; margin-right: 20px;">
+    </div>
+    <div id="uploadfilebox" style="display: none; justify-content: center;">
+        <input class="" type="file" onchange="if(this.files[0].size > 1048576) {alert('File can\'t be bigger than 1MB');}" name="file" placeholder="Link URL" style="margin: 0px; margin-bottom: 20px; width: calc( 100% - 55px ); margin-left: 20px; margin-right: 20px;">
+    </div>
+    
+        <div class="buttoncontrol">
+        <button type="reset" class="btn" id="editPopupCancelBtn" onclick="closePopup('addResource')">Cancel</button>
+        <button type="submit" class="btn primary" onclick="closePopup('addBylaws'); document.getElementsByClassName('loadingText')[0].innerText = 'Creating Resource...'; document.getElementsByClassName('loadingText')[0].hidden = false;  document.getElementById('loadingBG').hidden = false;">Add Resource</button>
+        </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function searchMemberGrid(searchTerm, grid) {
+        try{
+        for(var i = 0; i < grid.children.length; i++) {
+            var child = grid.children[i];
+            if(child.children[0].children[1].innerText.toLowerCase().includes(searchTerm.toLowerCase())) {
+                child.style.display = "flex";
+            }
+            else {
+                child.style.display = "none";
+            }
+        }
+    }
+    catch(e) {
+        {% comment %} console.error(e); {% endcomment %}
+    }
+    }
+    function searchAddMemberGrid(searchTerm,  grid) {
+        try{
+        for(var i = 0; i < grid.children.length; i++) {
+            var child = grid.children[i];
+            if(child.children[0].children[1].innerText.toLowerCase().includes(searchTerm.toLowerCase())) {
+                child.style.display = "flex";
+            }
+            else {
+                child.style.display = "none";
+            }
+        }
+    }
+    catch{}
+    }
+    
+    setInterval(function() {
+        searchMemberGrid(document.getElementById("memberSearch").value, document.getElementById("memberField"));
+        
+    }, 1);
+    setInterval(function() {
+        {% comment %} searchAddMemberGrid(document.getElementById("addMemberSearch").value, document.getElementById("addMemberField")); {% endcomment %}
+    }, 1);
+
+    
+    
+</script>
+{% endblock %}
