@@ -141,7 +141,7 @@ div.aboutText.sidebar {
     display: grid;
     grid-gap: 25px;
     justify-items: center;
-    grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
     max-height: 500px;
     overflow-y: scroll;
 }
@@ -890,6 +890,7 @@ div {
         flex-direction: column;
         width: 200px;
         height: 270px;
+        text-align: center;
         gap: 0px;
     }
     .Box {
@@ -930,5 +931,13 @@ div {
     }
     #loadingBG {
         align-items: center;
+    }
+    @media only screen and (max-width: 400px) {
+        .memberGrid {
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        }
+        .profileRow.Box {
+            width: 150px;
+        }
     }
 }

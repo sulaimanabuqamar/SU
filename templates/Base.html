@@ -102,7 +102,7 @@
     <div class="popupBG" id="aboutPopup" hidden onclick="console.log(event.srcElement); if(event.srcElement == this) {closePopup(this.id);}">
         <div id="accountPopupWindow" class="accountPopupWindow">
             <p class="subtitle" style="text-align: center; margin-bottom: 15px;">Student Society Website</p>
-            <p class="subtext">Version 1.2</p>
+            <p class="subtext">Version 1.2.2</p>
             {% comment %} <p class="subtext">Latest Commit: long name issue fixed</p> {% endcomment %}
             <p class="subtext">Developed by Mohamad Moukayed and Sulaiman Abuqamar</p>
             <p class="subtext">Send us an email at studentsociety.amsi@gmail.com</p>
@@ -371,15 +371,13 @@ showLoginPopup('finishsetupstudent', true);
 {% comment %} <script src="{% static "js/authPopup.js" %}"></script> {% endcomment %}
 <script src="{% static "js/authRedirect.js" %}"></script>
 <script src="{% static "js/graph.js" %}"></script>
-{% if "/Event/Detail" in request.path or "/Meetings/Detail" in request.path %}
+{% comment %} {% if "/Event/Detail" in request.path or "/Meetings/Detail" in request.path %}
 <style>
     @media only screen and (max-width: 1000px) {
-    .memberGrid {
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    }
+    
     }
 </style>
-{% endif %}
+{% endif %} {% endcomment %}
 <script type="module">
     // Import the functions you need from the SDKs you need
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
