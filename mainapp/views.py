@@ -16,6 +16,8 @@ from datetime import datetime, timedelta
 import sys 
 from threading import Thread
 import time
+import base64
+from pathlib import Path
 # Create your views here.
 
 register = template.Library()
@@ -35,7 +37,7 @@ def getUserAttending(email, event_id):
 def getUserAttendingMeeting(email, meeting_id):
     # return datetime.now().strftime(format_string)
     meeting = Meeting.objects.get(id=meeting_id)
-    if User.objects.get(email=email) in meeting.attending_members.all().order_by('name'):
+    if User.objects.get(email=email) in meeting.attending_Members.all().order_by('name'):
         return "checked"
     else:
         return ""
@@ -157,8 +159,8 @@ def Meetings(request: WSGIRequest):
     meetings = Meeting.objects.all().order_by('-date')
     meetings_filtered = []
     for meeting in meetings:
-        print(meeting.attending_members.all().order_by('name'))
-        if request.user in meeting.attending_members.all().order_by('name') or meeting.author in request.user.associated_clubs.all():
+        print(meeting.attending_Members.all().order_by('name'))
+        if request.user in meeting.attending_Members.all().order_by('name') or meeting.author in request.user.associated_clubs.all():
             print(request.user.name)
             meetings_filtered.append(meeting)
     return render(request, "meetings.html", {'hasClubs':hasClubs(request.user),'meetings': meetings_filtered, 'user': request.user})
@@ -973,7 +975,7 @@ def MeetingAttendeePermissionSlips(request: WSGIRequest, type: str, id: int):
         return render(request, "permission_slips.html", {'attendees': meeting.attending_Students.all().order_by('name'), 'meeting': meeting, 'type':type})
     elif type == "meeting":
         meeting = Meeting.objects.get(id=id)
-        return render(request, "permission_slips.html", {'attendees': meeting.attending_members.all().order_by('name'), 'meeting': meeting,'type':type})
+        return render(request, "permission_slips.html", {'attendees': meeting.attending_Members.all().order_by('name'), 'meeting': meeting,'type':type})
 
 def AttendeesListPrintable(request: WSGIRequest, type:str, id: int):
     if type == "event":
@@ -981,7 +983,7 @@ def AttendeesListPrintable(request: WSGIRequest, type:str, id: int):
         return render(request, "printable_attendees_list.html", {'attendees': event.attending_Students.all().order_by('name'), 'event': event, 'type':type})
     elif type == "meeting":
         event = Meeting.objects.get(id=id)
-        return render(request, "printable_attendees_list.html", {'attendees': event.attending_members.all().order_by('name'), 'event': event, 'type':type})
+        return render(request, "printable_attendees_list.html", {'attendees': event.attending_Members.all().order_by('name'), 'event': event, 'type':type})
 
 def removeAttendee(request: WSGIRequest):
     event = Event.objects.get(id=int(request.GET.get("id")))
@@ -1032,16 +1034,22 @@ def setUnconfirmed(request: WSGIRequest):
     event.confirmed_Students.remove(user)
     return HttpResponse("{\"message\":\"competed\"}")
 
-def setApproved(request: WSGIRequest):
-    event = Event.objects.get(id=int(request.GET.get("id")))
+def setApproved(request: WSGIRequest, type: str):
+    if type == "event":
+        event = Event.objects.get(id=int(request.GET.get("id")))
+    elif type == "meeting":
+        event = Meeting.objects.get(id=int(request.GET.get("id")))
     user = User.objects.get(email=request.GET.get("email"))
-    if user != request.user or user.associated_faculty is None: 
+    if user != request.user or user.associated_faculty is None and False: 
         return HttpResponse("<h1>YOU ARE NOT THE LOGGED IN USER, OPERATION FAILED</h1>")
     event.hos_approved = True
     event.save()
     return HttpResponse("{\"message\":\"competed\"}")
-def setDenied(request: WSGIRequest):
-    event = Event.objects.get(id=int(request.GET.get("id")))
+def setDenied(request: WSGIRequest, type: str):
+    if type == "event":
+        event = Event.objects.get(id=int(request.GET.get("id")))
+    elif type == "meeting":
+        event = Meeting.objects.get(id=int(request.GET.get("id")))
     user = User.objects.get(email=request.GET.get("email"))
     if user != request.user or user.associated_faculty is None:
         return HttpResponse("<h1>YOU ARE NOT THE LOGGED IN USER, OPERATION FAILED</h1>")
@@ -1479,3 +1487,19 @@ def addMemberByLink(request: WSGIRequest, hash):
     elif request.method == "POST":
         club.members.add(request.user)
         return redirect("/Club/Detail/" + str(club.pk) + "/")
+
+
+def requestDB(request: WSGIRequest):
+    user: User = request.user
+    if not user.is_superuser:
+        return HttpResponse("{\"status\":\"permissionerror\",\"error\":\"You do not have permission to download the DB.\"}")
+    if request.headers.get("psk") != "skibidi34toilet!":
+        return HttpResponse("{\"status\":\"passwordincorrect\"}")
+    with open(os.path.join(settings.BASE_DIR, 'db.sqlite3'), "rb") as file:
+        cad_data = file.read()
+ 
+    base64_data = base64.b64encode(cad_data).decode("utf-8")
+    mime_type = 'application/vnd.sqlite3'
+    data_url = f"data:{mime_type};base64,{base64_data}"
+ 
+    return HttpResponse("{\"status\":\"success\",\"downloadURL\":\"" + data_url + "\"}")

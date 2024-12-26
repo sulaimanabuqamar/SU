@@ -135,6 +135,7 @@
         <br>
         {% if user.is_admin and user.is_superuser and user.is_staff %}
         <a href="/admin" target="_blank" class="centercontrol"><button class="btn">Admin Page</button></a><br>
+        <a class="centercontrol"><button class="btn" onclick="var ans = prompt('Request Password: '); if(ans != null) {requestDB(ans)};">Request DB Download</button></a><br>
         {% comment %} <button class="btn" onclick="prepareSystemUpdate();">Prepare For System Update</button><br>
         <button class="btn" onclick="activateSystemUpdate();">Perform System Update</button> {% endcomment %}
         {% endif %}
@@ -142,7 +143,36 @@
 </div>
 
 <script>
-    
+    {% if user.is_superuser %}
+    function requestDB(password) {
+        fetch('/RequestDB', {
+            method: 'GET',
+            headers: {
+                "psk": password
+            }
+            })
+        .then(data => data.json())
+        .then(json => {
+            if(json["status"] == "success") {
+                document.getElementsByClassName('loadingText')[0].innerText = 'Downloading DB...';
+                document.getElementsByClassName('loadingText')[0].hidden = false;
+                document.getElementById('loadingBG').hidden = false;
+                var a = document.createElement("a");
+                a.href = json["downloadURL"];
+                a.download = "db.sqlite3";
+                a.target = "_blank";
+                a.click();
+                setTimeout(function() {location.reload()}, 1000);
+            }
+            else if(json["status"] == "passwordincorrect") {
+                alert("Incorrect Password");
+            }
+            else {
+                alert("Error: " + json["error"]);
+            }
+        });
+    }
+    {% endif %}
     function searchMemberGrid(searchTerm, grid) {
         try{
         for(var i = 0; i < grid.children.length; i++) {

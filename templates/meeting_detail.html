@@ -66,6 +66,9 @@
         <p class="aboutText">{{ meeting.date }}</p>
         <p class="aboutText">{{ meeting.start_time|time:"g:i A" }} - {{ meeting.end_time|time:"g:i A" }}</p>
         <p class="aboutText">{{ meeting.location }}</p>
+        {% if meeting.hos_approved %}
+        <p class="aboutText" style="color: green;">This meeting has been acknowledged by the HOS</p>
+        {% endif %}
         <div style="width: 300px; text-align: center;">
         {% for link in links %}
         <div style=" display: flex; align-items: center;">
@@ -75,13 +78,20 @@
         {% endfor %}
         </div>
         <br>
+        {% if user.associated_faculty is not None %}
+        {% if not meeting.hos_approved %}
+        <div class="centercontrol"><button onclick="approveEvent('{{user.email}}')" class="btn primary">Acknowledge Event</button></div><br>
+        {% else %}
+        {% comment %} <div class="centercontrol"><button onclick="denyEvent('{{user.email}}')" class="btn">Disapprove Event</button></div><br> {% endcomment %}
+        {% endif %}
+        {% endif %}
         {% if meeting.author in user.associated_clubs.all or user.associated_faculty is not None %}
         <a href="/AttendeesList/Printable/meeting/{{ meeting.pk }}" target="_blank" class="centercontrol"><button class="btn">Printable List of Attendees</button></a><br>
         <a href="/AttendeesList/Permissions/meeting/{{ meeting.pk }}" target="_blank" class="centercontrol"><button class="btn">Permission Slips</button></a><br>
         {% endif %}
         {% if meeting.author in user.associated_clubs.all %}
         <a href="/Meetings/Modify/{{ meeting.pk }}"  class="centercontrol"><button class="btn">Edit Meeting</button></a><br>
-        <a href="{% url "meeting_plc" meeting.pk %}" class="centercontrol"><button class="btn">PLC</button></a>
+        {% comment %} <a href="{% url "meeting_plc" meeting.pk %}" class="centercontrol"><button class="btn">PLC</button></a> {% endcomment %}
         {% endif %}
         <br>
     </div>
@@ -115,6 +125,18 @@
 </div>
 {% endif %}
 <script>
+    {% if user.associated_faculty is not None or user.is_superuser %}
+    function approveEvent(email) {
+        fetch("/Club/Approve/meeting?id=" + {{meeting.id}} + "&email=" + email)
+        .then(data => data.json())
+        .then(json => {console.log(json); location.reload();});
+    }
+    function denyEvent(email) {
+        fetch("/Club/Deny/meeting?id=" + {{meeting.id}} + "&email=" + email)
+        .then(data => data.json())
+        .then(json => {console.log(json); location.reload();});
+    }
+    {% endif %}
     function removeAttendeeFromList(email) {
         fetch("/Meetings/Remove?id=" + {{meeting.id}} + "&email=" + email)
         .then(data => data.json())
@@ -154,7 +176,7 @@
         }
     }
     catch(e) {
-        console.error(e);
+        {% comment %} console.error(e); {% endcomment %}
     }
     }
     var nosearchresultspopup;

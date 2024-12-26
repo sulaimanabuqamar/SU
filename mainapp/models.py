@@ -226,6 +226,7 @@ class Meeting(models.Model):
     published_date = models.DateTimeField(null=True, blank=True)
     location = models.CharField(max_length=150)
     draft = models.BooleanField(default=False)
+    hos_approved = models.BooleanField(default=False)
     attending_Members = models.ManyToManyField(User, related_name='meeting_attending_members', blank=True)
     links = models.ManyToManyField(Links, related_name='emeeting_links', blank=True)
     plc = models.ForeignKey(PLC, on_delete=models.CASCADE, related_name='meeting_plc',blank=True,null=True)

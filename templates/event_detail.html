@@ -71,7 +71,7 @@
         <p class="aboutText">{{ event.start_time|time:"g:i A" }} - {{ event.end_time|time:"g:i A" }}</p>
         <p class="aboutText">{{ event.location }}</p>
         {% if event.hos_approved %}
-        <p class="aboutText" style="color: green;">This event has been approved by HOS</p>
+        <p class="aboutText" style="color: green;">This event has been acknowledged by the HOS</p>
         {% endif %}
         <div style="width: 300px; text-align: center;">
         {% for link in links %}
@@ -91,9 +91,9 @@
         {% endif %}
         {% if user.associated_faculty is not None %}
         {% if not event.hos_approved %}
-        <div class="centercontrol"><button onclick="approveEvent('{{user.email}}')" class="btn primary">Approve Event</button></div><br>
+        <div class="centercontrol"><button onclick="approveEvent('{{user.email}}')" class="btn primary">Acknowledge Event</button></div><br>
         {% else %}
-        <div class="centercontrol"><button onclick="denyEvent('{{user.email}}')" class="btn">Disapprove Event</button></div><br>
+        {% comment %} <div class="centercontrol"><button onclick="denyEvent('{{user.email}}')" class="btn">Disapprove Event</button></div><br> {% endcomment %}
         {% endif %}
         {% endif %}
         {% if event.author in user.associated_clubs.all or user.associated_faculty is not None %}
@@ -158,12 +158,12 @@
 <script>
     {% if user.associated_faculty is not None or user.is_superuser %}
     function approveEvent(email) {
-        fetch("/Event/Approve?id=" + {{event.id}} + "&email=" + email)
+        fetch("/Club/Approve/event?id=" + {{event.id}} + "&email=" + email)
         .then(data => data.json())
         .then(json => {console.log(json); location.reload();});
     }
     function denyEvent(email) {
-        fetch("/Event/Deny?id=" + {{event.id}} + "&email=" + email)
+        fetch("/Club/Deny/event?id=" + {{event.id}} + "&email=" + email)
         .then(data => data.json())
         .then(json => {console.log(json); location.reload();});
     }
@@ -217,7 +217,7 @@ function searchMemberGrid(searchTerm, grid) {
     }
 }
 catch(e) {
-    console.error(e);
+    {% comment %} console.error(e); {% endcomment %}
 }
 }
 var nosearchresultspopup;
