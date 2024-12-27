@@ -14,7 +14,7 @@
     {% csrf_token %}
     <div style="display: flex; flex-direction: column;">
     <p class="subtext" id="wrongcred" hidden style="color: red">Incorrect Username or Password</p>
-    <input class="textfield" required name="title" placeholder="Title" value="{{event.title}}"  maxlength="40">
+    <input class="textfield" name="title" placeholder="Title" value="{{event.title}}"  maxlength="40">
     <div>
         <div class="textfieldtoolbar">
             <button class="toolbarBtn" style="border-top-left-radius: 10px;" type="button" onclick="execCommand('bold'); document.getElementById('maineditor').focus();"><img src="{% static '../media/images/bold.svg' %}" alt="B"></button>
@@ -35,8 +35,8 @@
             <button class="toolbarBtn" type="button" onclick="this.children[0].click();"><input type="file" onchange="uploadFile(this.files[0])" accept="*/image" hidden><img src="{% static '../media/images/image.svg' %}" alt="T"></button>
             <button class="toolbarBtn" type="button" onclick="createLink()"><img src="{% static '../media/images/link.svg' %}" alt="R"></button>
         </div>
-        <div class="textfield bottom large" required placeholder="Content" contentEditable="true" id="maineditor" style=" padding-top: 10px; margin-top: 0px;">{{event.text|safe}}</div>
-        <textarea class="textfield" hidden required name="content" placeholder="Content" contentEditable="true" style=" padding-top: 10px;">{{event.text|safe}}</textarea>
+        <div class="textfield bottom large" placeholder="Content" contentEditable="true" id="maineditor" style=" padding-top: 10px; margin-top: 0px;">{{event.text|safe}}</div>
+        <textarea class="textfield" hidden name="content" placeholder="Content" contentEditable="true" style=" padding-top: 10px;">{{event.text|safe}}</textarea>
         <script>
             setInterval(function() {document.getElementsByName('content')[0].innerHTML = document.getElementById('maineditor').innerHTML;},1);
         </script>
@@ -90,13 +90,13 @@
             }
         </script>
     </div>
-    <input class="textfield large slim" required name="summary" maxlength="100" placeholder="Summary" style="height:36px;" value="{{event.summary}}">
-    <input class="textfield" required name="date" type="date" placeholder="Date Of Event">
+    <input class="textfield large slim" name="summary" maxlength="100" placeholder="Summary" style="height:36px;" value="{{event.summary}}">
+    <input class="textfield" name="date" type="date" placeholder="Date Of Event">
     <div class="linkcontrol" style="align-items: start;">
-        <input class="textfield" required name="starttime" type="time" placeholder="Start Time Of Event"> - 
-        <input class="textfield" required name="endtime" type="time" placeholder="End Time Of Event">
+        <input class="textfield" name="starttime" type="time" placeholder="Start Time Of Event"> - 
+        <input class="textfield" name="endtime" type="time" placeholder="End Time Of Event">
         </div>
-    <input class="textfield" name="location" placeholder="Location Of Event (optional)" value="{{event.location}}">
+    <input class="textfield" name="location" placeholder="Location Of Event" value="{{event.location}}">
     <script>
         function toIsoString(date) {
             var tzo = -date.getTimezoneOffset(),
@@ -183,8 +183,45 @@
 </div>
 <div class="linkcontrol" style="margin-left: -10px; margin-top: 30px;">
     <button class="btn" onclick="navigation.back()" type="reset">Cancel Changes</button>
-    <button type="button" class="btn"  onclick="document.getElementById('mainform').action = '/Event/Draft/{{event.author.pk}}/{{event.pk}}/'; document.getElementById('mainform').submit(); var element = this; setTimeout(function() {element.disabled = true; element.style.backgroundColor = '#aaaaaa'; }, 250); setTimeout(function(){element.disabled = false; element.style.backgroundColor = 'white';}, 10000);">Save to Drafts</button><br>
-    <input type="submit" id="submit" class="btn primary" value="Save Event" onclick="if(document.getElementsByName('emailstudent').checked || document.getElementsByName('emailhos').checked) { document.getElementsByClassName('loadingText')[0].innerText = 'Sending Emails...'; document.getElementsByClassName('loadingText')[0].hidden = false;  document.getElementById('loadingBG').hidden = false;}   var element = this; setTimeout(function() {element.disabled = true; element.style.backgroundColor = '#aaaaaa'; }, 250); setTimeout(function(){element.disabled = false; element.style.backgroundColor = '#1F355E';}, 10000);">
+    <button type="button" class="btn"  onclick="document.getElementById('mainform').action = '/Event/Draft/{{event.author.pk}}/{{event.pk}}/'; try {document.getElementById('mainform').submit()} catch{ document.getElementById('mainform').submit.click();}; var element = this; setTimeout(function() {element.disabled = true; element.style.backgroundColor = '#aaaaaa'; }, 250); setTimeout(function(){element.disabled = false; element.style.backgroundColor = 'white';}, 10000);">Save to Drafts</button><br>
+    <input type="button" class="btn primary" value="Modify Event" onclick="verifyAndSubmitForm(this);">
+    <script>
+        var element;
+        function verifyAndSubmitForm(el) {
+            var hasTitle = document.getElementsByName("title")[0].value != "";
+            var hasContent = document.getElementsByName("content")[0].value != "";
+            var hasSummary = document.getElementsByName("summary")[0].value != "";
+            var hasDate = document.getElementsByName("date")[0].value != "";
+            var hasStartTime = document.getElementsByName("starttime")[0].value != "";
+            var hasEndTime = document.getElementsByName("endtime")[0].value != "";
+            var hasLocation = document.getElementsByName("location")[0].value != "";
+            if(hasTitle && hasContent && hasSummary && hasDate && hasStartTime && hasEndTime && hasLocation) {
+                try {
+                    document.getElementById("mainform").submit();
+                }
+                catch {
+                    document.getElementById("mainform").submit.click();
+                }
+                if(document.getElementsByName('emailstudent').checked || document.getElementsByName('emailhos').checked) { 
+                    document.getElementsByClassName('loadingText')[0].innerText = 'Sending Emails...'; 
+                    document.getElementsByClassName('loadingText')[0].hidden = false;  
+                    document.getElementById('loadingBG').hidden = false;
+                }
+                element = el;
+                setTimeout(function() {
+                    element.disabled = true;
+                    element.style.backgroundColor = '#aaaaaa';
+                }, 250);
+                setTimeout(function(){
+                    element.disabled = false;
+                    element.style.backgroundColor = '#1F355E';
+                }, 10000);
+            }
+            else {
+                alert("Please fill out all fields before publishing or you can save to drafts.");
+            }
+        }
+    </script>
     <input type="button" class="btn dangerous" value="Delete Event" onclick="if(confirm('Are you sure you would like to delete this event?')) {document.getElementsByClassName('loadingText')[0].innerText = 'Deleting Event...'; document.getElementsByClassName('loadingText')[0].hidden = false;  document.getElementById('loadingBG').hidden = false;   var element = this; setTimeout(function() {element.disabled = true; element.style.backgroundColor = '#aaaaaa'; }, 250); setTimeout(function(){element.disabled = false; element.style.backgroundColor = '#840000';}, 10000); var a = document.createElement('a'); a.href = '/Event/Delete/{{event.pk}}'; a.click();}">
 </div>
     </div>

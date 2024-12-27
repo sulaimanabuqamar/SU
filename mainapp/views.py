@@ -6,6 +6,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.views.decorators.csrf import csrf_exempt
 from django.core.mail import send_mail, EmailMessage
 from django.contrib.auth.models import AnonymousUser
+from django.core.files.uploadedfile import UploadedFile
 from django import template
 from django.core.exceptions import *
 import studentsunion.settings as settings
@@ -652,6 +653,24 @@ def DraftEvent(request: WSGIRequest,club_id, event_id):
     print("draft", club_id, event_id)
     value = request.POST.copy()
     value["draft"] = "true"
+    if value.get("title") is None:
+        value["title"] = "nulled"
+    if value.get("content") is None:
+        value["content"] = "nulled"
+    if value.get("summary") is None:
+        value["summary"] = "nulled"
+    if "-" not in value.get("date"):
+        value["date"] = "1970-1-1"
+    if value.get("location") is None:
+        value["location"] = "nulled"
+    if ":" not in value.get("starttime"):
+        value["starttime"] = "00:00"
+    if ":" not in value.get("endtime"):
+        value["endtime"] = "00:00"
+    if value.get("location") is None:
+        value["location"] = "nulled"
+    
+    
     request.POST = value
     for event in Event.objects.all():
         if event_id == event.pk:
@@ -852,14 +871,16 @@ def CreateNews(request: WSGIRequest):
         return render(request, "create_news.html", {'user': request.user})
     elif request.method == "POST":
         file = request.FILES.get("coverPhoto")
-        if file is not None:
+        if file is not None and file.name != "nulled":
             filename = os.path.join(settings.MEDIA_ROOT,"news_covers", str(random.randint(11111111,999999999)) + file.name)
             with open(filename, 'wb+') as f:
                 for chunk in file.chunks():
                     f.write(chunk)
-            event = News.objects.create(author=request.user, cover=filename.replace(str(settings.BASE_DIR), '').replace("/media",""), title=request.POST.get("title"), text=request.POST.get("content"), published_date=datetime.now(), summary=request.POST.get("summary"), highlight=(request.POST.get("highlight") is not None), group=request.POST.get("gradefilter"), grade=request.POST.get("sectionfilter"), draft=request.POST.get("draft") is not None)  
+            event = News.objects.create(author=request.user, cover=filename.replace(str(settings.BASE_DIR), '').replace("/media",""), title=request.POST.get("title"), text=request.POST.get("content"), published_date=datetime.now(), summary=request.POST.get("summary"), highlight=(request.POST.get("highlight") is not None), group=request.POST.get("gradefilter"), grade=request.POST.get("sectionfilter"), draft=(request.POST.get("draft") is not None))  
+        elif file.name == "nulled":
+            event = News.objects.create(author=request.user, cover="/default-pfp.png", title=request.POST.get("title"), text=request.POST.get("content"), published_date=datetime.now(), summary=request.POST.get("summary"), highlight=(request.POST.get("highlight") is not None), group=request.POST.get("gradefilter"), grade=request.POST.get("sectionfilter"), draft=(request.POST.get("draft") is not None))  
         else: 
-            event = News.objects.create(author=request.user, title=request.POST.get("title"), text=request.POST.get("content"), published_date=datetime.now(), summary=request.POST.get("summary"), highlight=(request.POST.get("highlight") is not None), group=request.POST.get("gradefilter"), grade=request.POST.get("sectionfilter"), draft=request.POST.get("draft") is not None)  
+            event = News.objects.create(author=request.user, title=request.POST.get("title"), text=request.POST.get("content"), published_date=datetime.now(), summary=request.POST.get("summary"), highlight=(request.POST.get("highlight") is not None), group=request.POST.get("gradefilter"), grade=request.POST.get("sectionfilter"), draft=(request.POST.get("draft") is not None))  
         linkstr = request.POST.get("links")
         print("(" + linkstr + ")")
         if linkstr is not None and linkstr != "": 
@@ -919,12 +940,14 @@ def ModifyNews(request: WSGIRequest, news_id):
         news.awaiting_approval = not request.user.is_superuser
         news.draft = request.POST.get("draft") is not None
         file = request.FILES.get("coverPhoto")
-        if file is not None:
+        if file is not None and file.name != "nulled":
             filename = os.path.join(settings.MEDIA_ROOT,"event_covers", str(random.randint(11111111,999999999)) + file.name)
             with open(filename, 'wb+') as f:
                 for chunk in file.chunks():
                     f.write(chunk)
             news.cover = filename.replace(str(settings.BASE_DIR), '').replace("/media","")
+        elif file.name == "nulled":
+            news.cover = "/default-pfp.png"
         linkstr = request.POST.get("links")
         print("(" + linkstr + ")")
         for link in news.links.all():
@@ -955,7 +978,17 @@ def DraftNews(request: WSGIRequest, news_id):
     print("draft") 
     value = request.POST.copy()
     value["draft"] = "true"
+    if value.get("title") is None:
+        value["title"] = "nulled"
+    if value.get("content") is None:
+        value["content"] = "nulled"
+    if value.get("summary") is None:
+        value["summary"] = "nulled"
     request.POST = value
+    cover = request.FILES.copy()
+    if cover.get("coverPhoto") is None:
+        nulfile = UploadedFile(name="nulled")
+        request.FILES.appendlist("coverPhoto", nulfile)
     for news in News.objects.all():
         if news_id == news.pk:
             return ModifyNews(request, news_id)

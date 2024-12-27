@@ -194,7 +194,7 @@ class Event(models.Model):
     start_time = models.TimeField(blank=True, null=True)
     end_time = models.TimeField(blank=True, null=True)
     published_date = models.DateTimeField(null=True, blank=True)
-    location = models.CharField(max_length=150, blank=True)
+    location = models.CharField(max_length=150, blank=True,null=False)
     color = models.ForeignKey(Club, on_delete=models.CASCADE, related_name='club_color', blank=True, null=True)
     group = models.CharField(max_length=3, choices=GROUP_CHOICES,default="ngr")
     grade = models.CharField(max_length=5, choices=GRADE_CHOICES,default="nosec")

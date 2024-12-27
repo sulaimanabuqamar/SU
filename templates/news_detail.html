@@ -15,7 +15,7 @@
 <div class="warning"><p style="font-family: Inter; font-size: 20px; color: unset;">⚠️ Post awaiting approval</p></div>
 {% else %}
 {% if not news.approved %}
-<div class="error"><p style="font-family: Inter; font-size: 20px; color: unset;">⚠️ Post Denied</p><p style="font-family: Inter; font-size: 15px; color: unset;">{{ news.denied_reason }}</p></div>
+<div class="error"><p style="font-family: Inter; font-size: 20px; color: unset;">⚠️ Post Denied</p><p style="font-family: Inter; font-size: 15px; color: unset;">{{ news.denied_reason|safe }}</p></div>
 {% endif %}
 {% endif %}
 {% endif %}
