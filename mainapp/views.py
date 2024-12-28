@@ -67,27 +67,17 @@ def getClubs(user):
 def Home(request, invalid_login = False):
     home_page = HomePage.objects.first()  # Assuming you have one HomePage instance
     highlights = []
-    eventcount = 0
     eventprefilter = []
-    for event in Event.objects.filter(highlight=True,draft=False):
+    for event in Event.objects.order_by("-date").filter(highlight=True,draft=False):
         if event.members_only:
             if request.user in event.author.members.all().order_by('name'):
                 eventprefilter.append(event)
         else:
             eventprefilter.append(event)
+    for news in News.objects.order_by("-published_date").filter(approved=True,awaiting_approval=False,draft=False): 
+        highlights.append(news)
     for event in eventprefilter:
-        if eventcount >= 4:
-            break
-        else:
-            highlights.append(event)
-            eventcount += 1
-    newscount = 0
-    for news in News.objects.filter(approved=True,awaiting_approval=False,draft=False): 
-        if newscount >= 6-eventcount:
-            break
-        else:
-            highlights.append(news)
-            newscount += 1
+        highlights.append(event)
     
     if invalid_login:
         return render(request, "home.html", {'home_page': home_page,"login_failed":"true",'highlights':highlights})
