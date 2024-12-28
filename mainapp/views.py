@@ -850,6 +850,23 @@ def DraftMeeting(request: WSGIRequest,club_id, meeting_id):
     print("draft") 
     value = request.POST.copy()
     value["draft"] = "true"
+    if value.get("title") is None:
+        value["title"] = "nulled"
+    if value.get("content") is None:
+        value["content"] = "nulled"
+    if value.get("summary") is None:
+        value["summary"] = "nulled"
+    if "-" not in value.get("date"):
+        value["date"] = "1970-1-1"
+    if value.get("location") is None:
+        value["location"] = "nulled"
+    if ":" not in value.get("starttime"):
+        value["starttime"] = "00:00"
+    if ":" not in value.get("endtime"):
+        value["endtime"] = "00:00"
+    if value.get("location") is None:
+        value["location"] = "nulled"
+    
     request.POST = value
     for meeting in Meeting.objects.all():
         if meeting_id == meeting.pk:
