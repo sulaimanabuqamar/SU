@@ -74,7 +74,7 @@ def Home(request, invalid_login = False):
                 eventprefilter.append(event)
         else:
             eventprefilter.append(event)
-    for news in News.objects.order_by("-published_date").filter(approved=True,awaiting_approval=False,draft=False): 
+    for news in News.objects.order_by("-published_date").filter(highlight=True,approved=True,awaiting_approval=False,draft=False): 
         highlights.append(news)
     for event in eventprefilter:
         highlights.append(event)

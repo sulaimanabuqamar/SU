@@ -47,7 +47,8 @@
             </div>
         <br>
         {% if news.author == user %}
-        <a href="/News/Modify/{{ news.pk }}" class="centercontrol"><button class="btn">Edit News Post</button></a>
+        <a href="/News/Modify/{{ news.pk }}" class="centercontrol"><button class="btn">Edit News Post</button></a><br>
+        {% comment %} <a href="https://api.whatsapp.com/send?text=The {{news.title}} event will be held on *{{event.date}} from {{ event.start_time|time:"g:i A" }} - {{ event.end_time|time:"g:i A" }}*%0AView event details at https://ss.amb.sch.ae/Event/Detail/{{event.pk}}%0AClick on the *Attend Event* button to confirm your attendance." class="centercontrol" target="_blank"><button class="btn">Share to Whatsapp</button></a> {% endcomment %}
         {% endif %}
     </div>
 </div>
