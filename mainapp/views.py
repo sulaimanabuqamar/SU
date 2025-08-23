@@ -19,6 +19,10 @@ from threading import Thread
 import time
 import base64
 from pathlib import Path
+from django.contrib.auth.decorators import user_passes_test, login_required
+from django.shortcuts import redirect
+from django.contrib import messages
+from mainapp.models import Student
 # Create your views here.
 
 register = template.Library()
@@ -1543,3 +1547,25 @@ def requestDB(request: WSGIRequest):
     data_url = f"data:{mime_type};base64,{base64_data}"
  
     return HttpResponse("{\"status\":\"success\",\"downloadURL\":\"" + data_url + "\"}")
+
+def bulk_grade_update_logic():
+    updated = 0
+    deleted = 0
+    for student in Student.objects.all():
+        if student.year_level is not None:
+            student.year_level += 1
+            if student.year_level > 12:
+                student.delete()
+                deleted += 1
+            else:
+                student.save()
+                updated += 1
+    return updated, deleted
+
+@user_passes_test(lambda u: u.is_superuser)
+@login_required
+def bulk_grade_update(request):
+    if request.method == 'POST':
+        updated, deleted = bulk_grade_update_logic()
+        messages.success(request, f"Updated {updated} students, deleted {deleted} graduated students.")
+    return redirect('home')

@@ -2,6 +2,7 @@ from django.urls import path
 from mainapp import views
 from django.conf import settings
 from django.conf.urls.static import static
+from .views import bulk_grade_update
 
 urlpatterns = [
     path("", views.Home, name="home"),
@@ -79,4 +80,8 @@ urlpatterns = [
     path("SystemUpdate/Prepare/", views.PrepareSystemUpdate, name="prepare_system_update"),
     path("Upload/Media/About", views.uploadImage, name="upload_image_about"), 
     path("RequestDB/", views.requestDB, name="requestDB"), 
-]  + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) 
+]  + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+urlpatterns += [
+    path('bulk_grade_update/', bulk_grade_update, name='bulk_grade_update'),
+]

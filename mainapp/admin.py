@@ -1,4 +1,5 @@
 from django.contrib import admin
+from .views import bulk_grade_update_logic
 
 # Register your models here.
 
@@ -25,6 +26,21 @@ class UserAdmin(BaseUserAdmin):
     ordering = ('email',)
     filter_horizontal = ()
 
+def increment_grade_and_delete_graduates(modeladmin, request, queryset):
+    updated = 0
+    deleted = 0
+    for student in queryset:
+        if student.year_level is not None:
+            student.year_level += 1
+            if student.year_level > 12:
+                student.delete()
+                deleted += 1
+            else:
+                student.save()
+                updated += 1
+    modeladmin.message_user(request, f"Updated {updated} students, deleted {deleted} graduated students.")
+increment_grade_and_delete_graduates.short_description = "Increment grade and delete graduates"
+
 class StudentAdmin(admin.ModelAdmin):
     list_display = ('student_db_id', 'year_level_title', 'year_level', 'section', 'gender', 'profile_picture')
     list_filter = ('year_level', 'section', 'gender')
@@ -35,6 +51,8 @@ class StudentAdmin(admin.ModelAdmin):
     )
     search_fields = ('year_level', 'section', 'student_db_id')
     # filter_horizontal = ('clubs', 'varsities')
+    actions = [increment_grade_and_delete_graduates]
+
 class FacultyAdmin(admin.ModelAdmin):
     list_display = ('faculty_db_id', 'profile_picture')
     list_filter = ('faculty_db_id',)
@@ -169,4 +187,4 @@ admin.site.register(FAQ, FAQAdmin)
 admin.site.register(AddByLink, AddByLinkAdmin) 
 admin.site.register(PLC, PLCAdmin) 
 admin.site.register(PLCTopic, PLCTopicAdmin) 
-admin.site.register(PLCAction, PLCActionAdmin) 
+admin.site.register(PLCAction, PLCActionAdmin)
