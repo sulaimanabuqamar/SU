@@ -123,25 +123,23 @@ class Student(models.Model):
     year_level_title = models.CharField(max_length=10, blank=True)
     gender = models.CharField(max_length=10,choices=[('male', 'Male'), ('female','Female')], default='male')
     def save(self, *args, **kwargs):
-        # super().save(*args, **kwargs)
-        print(self.year_level)
-        # print(type(self.year_level))
-        if int(self.year_level) == 9:
-            self.year_level_title = "Freshman"
-        elif int(self.year_level) == 10:
-            self.year_level_title = "Sophomore"
-        elif int(self.year_level) == 11:
-            self.year_level_title = "Junior"
-        elif int(self.year_level) == 12:
-            self.year_level_title = "Senior"
+        if self.year_level is not None:
+            if int(self.year_level) == 9:
+                self.year_level_title = "Freshman"
+            elif int(self.year_level) == 10:
+                self.year_level_title = "Sophomore"
+            elif int(self.year_level) == 11:
+                self.year_level_title = "Junior"
+            elif int(self.year_level) == 12:
+                self.year_level_title = "Senior"
+            else:
+                self.year_level_title = "other"
         else:
-            print("error not hs")
-            self.year_level_title = "Underage"
-        if self.section == 'B' or self.section == 'E' or self.section == 'H' or self.section == 'D' or self.section == 'J':
+            self.year_level_title = "other"
+        if self.section in ['B', 'E', 'H', 'D', 'J']:
             self.gender = 'male'
         else:
             self.gender = 'female'
-        
         return super().save(*args, **kwargs)
 class Faculty(models.Model):
     faculty_db_id = models.CharField(max_length=20, primary_key=True,help_text="Faculty ID")
