@@ -132,6 +132,8 @@ class Student(models.Model):
                 self.year_level_title = "Junior"
             elif int(self.year_level) == 12:
                 self.year_level_title = "Senior"
+            elif int(self.year_level) == 13:
+                self.year_level_title = "Alumni"
             else:
                 self.year_level_title = "other"
         else:

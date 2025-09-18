@@ -141,7 +141,7 @@
         <form action="{% url 'bulk_grade_update' %}" method="post" style="margin-bottom: 20px;">
             {% csrf_token %}
             <button type="submit" class="btn btn-danger">Bulk Grade Update</button>
-            <span style="font-size: 0.9em; color: #888;">Increments all students' grades by 1 and deletes graduates (admins only).</span>
+            {% comment %} <span style="font-size: 0.9em; color: #888;">Increments all students' grades by 1 and deletes graduates (admins only).</span> {% endcomment %}
         </form>
         {% endif %}
     </div>

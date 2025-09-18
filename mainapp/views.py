@@ -1550,22 +1550,18 @@ def requestDB(request: WSGIRequest):
 
 def bulk_grade_update_logic():
     updated = 0
-    deleted = 0
     for student in Student.objects.all():
         if student.year_level is not None:
-            student.year_level += 1
-            if student.year_level > 12:
-                student.delete()
-                deleted += 1
-            else:
-                student.save()
-                updated += 1
-    return updated, deleted
+            if student.year_level < 13:
+                student.year_level += 1
+            student.save()
+            updated += 1
+    return updated
 
 @user_passes_test(lambda u: u.is_superuser)
 @login_required
 def bulk_grade_update(request):
     if request.method == 'POST':
-        updated, deleted = bulk_grade_update_logic()
-        messages.success(request, f"Updated {updated} students, deleted {deleted} graduated students.")
+        updated = bulk_grade_update_logic()
+        messages.success(request, f"Updated {updated} students.")
     return redirect('home')
