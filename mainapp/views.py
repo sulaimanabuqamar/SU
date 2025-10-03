@@ -9,6 +9,7 @@ from django.contrib.auth.models import AnonymousUser
 from django.core.files.uploadedfile import UploadedFile
 from django import template
 from django.core.exceptions import *
+from django.db.models import Q
 import studentsunion.settings as settings
 import json
 import random
@@ -73,13 +74,13 @@ def Home(request, invalid_login = False):
     home_page = HomePage.objects.first()  # Assuming you have one HomePage instance
     highlights = []
     eventprefilter = []
-    for event in Event.objects.order_by("-date").filter(highlight=True,draft=False, archived_year__isnull=True):
+    for event in Event.objects.order_by("-date").filter(highlight=True,draft=False).filter(Q(archived_year__isnull=True) | Q(archived_year='')):
         if event.members_only:
             if request.user in event.author.members.all().order_by('name'):
                 eventprefilter.append(event)
         else:
             eventprefilter.append(event)
-    for news in News.objects.order_by("-published_date").filter(highlight=True,approved=True,awaiting_approval=False,draft=False, archived_year__isnull=True): 
+    for news in News.objects.order_by("-published_date").filter(highlight=True,approved=True,awaiting_approval=False,draft=False).filter(Q(archived_year__isnull=True) | Q(archived_year='')): 
         highlights.append(news)
     for event in eventprefilter:
         highlights.append(event)
@@ -171,7 +172,7 @@ def Meeting_Details(request, meeting_id):
     return render(request, "meeting_detail.html", {'meeting': meeting, 'links': links, 'allUsers': allUsers, 'user': request.user})
 
 def Events(request):
-    events = Event.objects.filter(archived_year__isnull=True).order_by('-date')
+    events = Event.objects.filter().filter(Q(archived_year__isnull=True) | Q(archived_year='')).order_by('-date')
     user: User = request.user
     filtered_events = []
     if not user.is_anonymous:
@@ -206,7 +207,7 @@ def Event_Detail(request, event_id):
     return render(request, "event_detail.html", {'event': event, 'links': links, 'allUsers': allUsers, 'user': request.user})
 
 def News_View(request):
-    news = News.objects.filter(archived_year__isnull=True).order_by('-published_date')
+    news = News.objects.filter().filter(Q(archived_year__isnull=True) | Q(archived_year='')).order_by('-published_date')
     if hasattr(request.user, 'associated_student') and request.user.associated_student is not None:
         grlevel = str(request.user.associated_student.year_level)
         return render(request, "news.html", {'news': news, 'gradelevel': grlevel})
@@ -1673,30 +1674,44 @@ def bulk_grade_update_logic():
                     user_obj = User.objects.filter(associated_student=student).first()
                     if user_obj is not None:
                         # Archive related news authored by this student's user account
-                        n_qs = News.objects.filter(author=user_obj, archived_year__isnull=True)
+                        n_qs = News.objects.filter(author=user_obj).filter(Q(archived_year__isnull=True) | Q(archived_year=''))
                         for n in n_qs:
                             n.archived_year = student.graduation_year
                             n.save()
                             archived_news += 1
                         # Archive events where the user (student) was attending or confirmed
-                        e_qs = Event.objects.filter(attending_Students=user_obj) | Event.objects.filter(confirmed_Students=user_obj)
+                        club_authored = Event.objects.filter(author__in=user_obj.associated_clubs.all()).filter(Q(archived_year__isnull=True) | Q(archived_year=''))
+                        e_qs = Event.objects.filter(attending_Students=user_obj).filter(Q(archived_year__isnull=True) | Q(archived_year='')) | Event.objects.filter(confirmed_Students=user_obj).filter(Q(archived_year__isnull=True) | Q(archived_year='')) | club_authored
                         for e in e_qs.distinct():
-                            if not e.archived_year:
-                                e.archived_year = student.graduation_year
+                            # Only archive the event if its academic year (by month) matches
+                            # the student's graduation year. This prevents archiving
+                            # current-year events into previous academic years.
+                            try:
+                                event_acad = get_academic_year_for_date(e.date)
+                            except Exception:
+                                event_acad = None
+                            assigned_year = student.graduation_year
+                            if event_acad and assigned_year and event_acad == assigned_year and not e.archived_year:
+                                e.archived_year = assigned_year
                                 e.save()
                                 archived_events += 1
                 # if already alumni we still want to ensure any events/news are archived
                 else:
                     user_obj = User.objects.filter(associated_student=student).first()
                     if user_obj is not None:
-                        e_qs = Event.objects.filter(attending_Students=user_obj) | Event.objects.filter(confirmed_Students=user_obj)
+                        club_authored = Event.objects.filter(author__in=user_obj.associated_clubs.all()).filter(Q(archived_year__isnull=True) | Q(archived_year=''))
+                        e_qs = Event.objects.filter(attending_Students=user_obj).filter(Q(archived_year__isnull=True) | Q(archived_year='')) | Event.objects.filter(confirmed_Students=user_obj).filter(Q(archived_year__isnull=True) | Q(archived_year='')) | club_authored
                         for e in e_qs.distinct():
-                            if not e.archived_year:
-                                # Prefer using student's stored graduation_year; fall back to current run academic year
-                                e.archived_year = student.graduation_year or acad_year
+                            try:
+                                event_acad = get_academic_year_for_date(e.date)
+                            except Exception:
+                                event_acad = None
+                            assigned_year = student.graduation_year or acad_year
+                            if event_acad and assigned_year and event_acad == assigned_year and not e.archived_year:
+                                e.archived_year = assigned_year
                                 e.save()
                                 archived_events += 1
-                        n_qs = News.objects.filter(author=user_obj, archived_year__isnull=True)
+                        n_qs = News.objects.filter(author=user_obj).filter(Q(archived_year__isnull=True) | Q(archived_year=''))
                         for n in n_qs:
                             n.archived_year = student.graduation_year or acad_year
                             n.save()
@@ -1739,8 +1754,8 @@ def bulk_grade_confirm(request):
                     # count related news/events for this user's associated account
                     user_obj = User.objects.filter(associated_student=student).first()
                     if user_obj is not None:
-                        archived_news += News.objects.filter(author=user_obj, archived_year__isnull=True).count()
-                        e_qs = Event.objects.filter(attending_Students=user_obj) | Event.objects.filter(confirmed_Students=user_obj)
+                        archived_news += News.objects.filter(author=user_obj).filter(Q(archived_year__isnull=True) | Q(archived_year='')).count()
+                        e_qs = Event.objects.filter(attending_Students=user_obj).filter(Q(archived_year__isnull=True) | Q(archived_year='')) | Event.objects.filter(confirmed_Students=user_obj).filter(Q(archived_year__isnull=True) | Q(archived_year=''))
                         archived_events += e_qs.distinct().count()
             updated += 1
     if request.method == 'POST':

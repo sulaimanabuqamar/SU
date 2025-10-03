@@ -48,7 +48,7 @@ class Resource(models.Model):
         return self.name
 class Bylaw(models.Model):
     title = models.CharField(max_length=10000)
-    çtext  = models.TextField(blank=True,null=True)
+    text  = models.TextField(blank=True,null=True)
     resources = models.ManyToManyField(Resource, blank=True,related_name="bylaw_resources")
     def __str__(self) -> str:
         return self.title

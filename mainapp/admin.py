@@ -52,7 +52,7 @@ def archive_graduates_action(modeladmin, request, queryset):
                             n.archived_year = student.graduation_year
                             n.save()
                     # Archive events where the student attended or was confirmed
-                    e_qs = Event.objects.filter(attending_Students=student) | Event.objects.filter(confirmed_Students=student)
+                    e_qs = Event.objects.filter(attending_Students=student, archived_year__isnull=True) | Event.objects.filter(confirmed_Students=student, archived_year__isnull=True)
                     for e in e_qs.distinct():
                         if not e.archived_year:
                             e.archived_year = student.graduation_year
