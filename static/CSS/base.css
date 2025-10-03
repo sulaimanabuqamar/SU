@@ -181,6 +181,10 @@ div.aboutText.sidebar {
     height: 225px;
 }
 
+/* Archive pages reuse existing site classes (.grid, .memberGrid, .Box, .profileRow). */
+/* Removed archive-specific overrides to ensure archive pages use the same layout
+    as Events/News and avoid duplicate/contradictory styles. */
+
 .readMoreText {
     text-align: center; 
     color: #1F355E; 

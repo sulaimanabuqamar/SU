@@ -51,6 +51,9 @@
         <a href="{% url 'event_detail' event.id %}">
             <img class="eventCover" src="{{ event.cover.url }}" alt="Event Cover" style="border: 3px solid {{event.author.color}};">
             <p class="text">{{ event.title }}</p>
+<div style="margin-top: 20px; text-align: center;">
+    <p class="aboutText">Can't find previous events? Check out the <a href="{% url 'archive_index' %}">archives</a>.</p>
+</div>
             <p class="aboutText">{{ event.date }}</p>
             <p class="aboutText">{{ event.start_time|time:"g:i A" }} - {{ event.end_time|time:"g:i A" }}</p>
             <div class="tagBox" style="background: {{ event.author.color }};">
@@ -149,4 +152,7 @@
     
     
 </script>
+<div style="margin-top: 20px; text-align: center;">
+    <p class="aboutText">Can't find previous events? Check out the <a href="{% url 'archive_index' %}">archives</a>.</p>
+</div>
 {% endblock %}

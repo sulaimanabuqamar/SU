@@ -30,13 +30,13 @@
             <input class="textfield" placeholder="Search..." style="margin: 0px; width: unset;" id="memberSearch">
             <br>
             <div class="memberGrid scroll" id="memberField">
-                {% for member in event.attending_Students.all %}
-                <a href="/Student/Detail/{{member.pk}}" class="profileRow">
-                    <div class="profileRow Box" style="border: {% if member in event.confirmed_Students.all %}lime{% else %}red{% endif %} 3px solid; border-radius: 15px; padding: 10px; gap: 10px;">
-                        <img class="eventCover" style=" width: 50px; height: 50px; border-radius: 50%; object-fit: cover; aspect-ratio: 1/1;margin-right: 10px;" src="{{ member.associated_student.profile_picture.url }}" alt="Club Cover">
-                        <p class="text">{{ member.name }}</p>
-                        <p class="aboutText">{{ member.associated_student.year_level }}{{ member.associated_student.section }}</p>
-                        <p class="aboutText confirmedcontrol" style="color: {% if member in event.confirmed_Students.all %}lime{% else %}red{% endif %};">{% if member in event.confirmed_Students.all %}Confirmed{% else %}Not Confirmed{% endif %}</p>
+                                {% for member in event.attending_Students.all %}
+                                <a href="/Student/Detail/{{member.pk}}" class="profileRow">
+                                    <div class="profileRow" style="border: {% if member in event.confirmed_Students.all %}lime{% else %}red{% endif %} 3px solid; border-radius: 15px; padding: 10px; gap: 10px; background: white;">
+                                        <img class="eventCover" style=" width: 50px; height: 50px; border-radius: 50%; object-fit: cover; aspect-ratio: 1/1;margin-right: 10px;" src="{{ member.associated_student.profile_picture.url }}" alt="Club Cover">
+                                        <p class="text">{{ member.name }}</p>
+                                        <p class="aboutText">{% load custom_tags %}{% student_grade_display member %}</p>
+                                        <p class="aboutText confirmedcontrol" style="color: {% if member in event.confirmed_Students.all %}lime{% else %}red{% endif %};">{% if member in event.confirmed_Students.all %}Confirmed{% else %}Not Confirmed{% endif %}</p>
                         {% if not event.attendance_locked or user.associated_faculty is not None or user.is_superuser %}
                         <div class="profileRow" style="gap:20px;">
                         {% if member.email == user.email or event.author in user.associated_clubs.all %}

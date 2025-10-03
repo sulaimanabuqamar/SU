@@ -1,0 +1,24 @@
+{% extends 'Base.html' %}
+{% load static %}
+
+{% block style %}
+<title>Confirm Archive Run</title>
+{% endblock %}
+
+{% block content %}
+<div class="centerer archive-centerer">
+  <h2>Confirm Bulk Grade Update</h2>
+  <p class="text">This operation will advance all students' year level by one and archive any graduates.</p>
+  <ul>
+    <li class="text">Students to be updated: {{ updated }}</li>
+    <li class="text">New alumni to be created: {{ archived_students }}</li>
+    <li class="text">Events that will be archived: {{ archived_events }}</li>
+    <li class="text">News that will be archived: {{ archived_news }}</li>
+  </ul>
+  <form method="post">
+    {% csrf_token %}
+    <button class="btn dangerous" type="submit">Confirm and Run Archive</button>
+    <a href="/" class="btn empty">Cancel</a>
+  </form>
+</div>
+{% endblock %}

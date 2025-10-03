@@ -48,7 +48,7 @@ class Resource(models.Model):
         return self.name
 class Bylaw(models.Model):
     title = models.CharField(max_length=10000)
-    text  = models.TextField(blank=True,null=True)
+    çtext  = models.TextField(blank=True,null=True)
     resources = models.ManyToManyField(Resource, blank=True,related_name="bylaw_resources")
     def __str__(self) -> str:
         return self.title
@@ -122,6 +122,9 @@ class Student(models.Model):
     about = models.TextField(blank=True,null=True)
     year_level_title = models.CharField(max_length=10, blank=True)
     gender = models.CharField(max_length=10,choices=[('male', 'Male'), ('female','Female')], default='male')
+    # Archive fields
+    is_alumni = models.BooleanField(default=False)
+    graduation_year = models.CharField(max_length=11, blank=True, null=True, help_text='Academic year e.g. 2024-2025')
     def save(self, *args, **kwargs):
         if self.year_level is not None:
             if int(self.year_level) == 9:
@@ -143,6 +146,17 @@ class Student(models.Model):
         else:
             self.gender = 'female'
         return super().save(*args, **kwargs)
+
+    def class_of(self):
+        """Return display string like 'Class of 2025' based on graduation_year if alumni."""
+        if self.is_alumni and self.graduation_year:
+            # graduation_year is 'YYYY-YYYY', return the ending year
+            try:
+                end_year = self.graduation_year.split('-')[1]
+                return f"Class of {end_year}"
+            except Exception:
+                return f"Class of {self.graduation_year}"
+        return None
 class Faculty(models.Model):
     faculty_db_id = models.CharField(max_length=20, primary_key=True,help_text="Faculty ID")
     profile_picture = models.ImageField(upload_to='profiles/', null=True, blank=True, default='default-pfp.png')
@@ -207,6 +221,7 @@ class Event(models.Model):
     attending_Students = models.ManyToManyField(User, related_name='attending_students', blank=True)
     confirmed_Students = models.ManyToManyField(User, related_name='confirm_students', blank=True)
     links = models.ManyToManyField(Links, related_name='events_links', blank=True)
+    archived_year = models.CharField(max_length=11, blank=True, null=True, help_text='Academic year when archived e.g. 2024-2025')
     def __str__(self) -> str:
         return self.title
     typeitem = "event"
@@ -269,9 +284,22 @@ class News(models.Model):
     draft = models.BooleanField(default=False)
     denied_reason = models.CharField(max_length=150, blank=True, null=True)
     links = models.ManyToManyField(Links, related_name='news_links', blank=True)
+    archived_year = models.CharField(max_length=11, blank=True, null=True, help_text='Academic year when archived e.g. 2024-2025')
     typeitem = "news"
     def __str__(self):
         return self.title
+
+
+class ArchiveState(models.Model):
+    """Singleton-like model to store the current academic start year used by the archive process.
+
+    There should normally be only one row. If none exists, views will fall back to
+    `settings.ARCHIVE_BASE_ACADEMIC_START`.
+    """
+    current_academic_start = models.IntegerField(help_text='Calendar year used as the base for the next archive run (e.g. 2024)')
+
+    def __str__(self):
+        return f"ArchiveState: {self.current_academic_start}"
 
 class Varsity(models.Model):
     name = models.CharField(max_length=255)

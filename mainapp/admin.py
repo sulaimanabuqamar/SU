@@ -26,20 +26,42 @@ class UserAdmin(BaseUserAdmin):
     ordering = ('email',)
     filter_horizontal = ()
 
-def increment_grade_and_delete_graduates(modeladmin, request, queryset):
+from .views import get_academic_year_for_date
+
+def archive_graduates_action(modeladmin, request, queryset):
+    """Admin action: increment selected students' year_level; if they graduate, mark alumni and set graduation_year."""
     updated = 0
-    deleted = 0
+    archived = 0
+    acad_year = get_academic_year_for_date()
     for student in queryset:
         if student.year_level is not None:
             student.year_level += 1
             if student.year_level > 12:
-                student.delete()
-                deleted += 1
-            else:
-                student.save()
-                updated += 1
-    modeladmin.message_user(request, f"Updated {updated} students, deleted {deleted} graduated students.")
-increment_grade_and_delete_graduates.short_description = "Increment grade and delete graduates"
+                if not student.is_alumni:
+                    student.is_alumni = True
+                    if not student.graduation_year:
+                        student.graduation_year = acad_year
+                    archived += 1
+                    # Archive news authored by user (if any)
+                    try:
+                        user_obj = User.objects.get(associated_student=student)
+                    except Exception:
+                        user_obj = None
+                    if user_obj:
+                        for n in News.objects.filter(author=user_obj, archived_year__isnull=True):
+                            n.archived_year = student.graduation_year
+                            n.save()
+                    # Archive events where the student attended or was confirmed
+                    e_qs = Event.objects.filter(attending_Students=student) | Event.objects.filter(confirmed_Students=student)
+                    for e in e_qs.distinct():
+                        if not e.archived_year:
+                            e.archived_year = student.graduation_year
+                            e.save()
+            student.save()
+            updated += 1
+    modeladmin.message_user(request, f"Updated {updated} students, archived {archived} graduates.")
+
+archive_graduates_action.short_description = "Increment grade and archive graduates"
 
 class StudentAdmin(admin.ModelAdmin):
     list_display = ('student_db_id', 'year_level_title', 'year_level', 'section', 'gender', 'profile_picture')
@@ -51,7 +73,7 @@ class StudentAdmin(admin.ModelAdmin):
     )
     search_fields = ('year_level', 'section', 'student_db_id')
     # filter_horizontal = ('clubs', 'varsities')
-    actions = [increment_grade_and_delete_graduates]
+    actions = [archive_graduates_action]
 
 class FacultyAdmin(admin.ModelAdmin):
     list_display = ('faculty_db_id', 'profile_picture')

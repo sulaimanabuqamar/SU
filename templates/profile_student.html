@@ -138,10 +138,9 @@
         <a class="centercontrol"><button class="btn" onclick="var ans = prompt('Request Password: '); if(ans != null) {requestDB(ans)};">Request DB Download</button></a><br>
         {% comment %} <button class="btn" onclick="prepareSystemUpdate();">Prepare For System Update</button><br>
         <button class="btn" onclick="activateSystemUpdate();">Perform System Update</button> {% endcomment %}
-        <form action="{% url 'bulk_grade_update' %}" method="post" style="margin-bottom: 20px;">
+        <form action="{% url 'bulk_grade_confirm' %}" method="get" style="margin-bottom: 20px;" id="bulkGradeForm">
             {% csrf_token %}
-            <button type="submit" class="btn btn-danger">Bulk Grade Update</button>
-            {% comment %} <span style="font-size: 0.9em; color: #888;">Increments all students' grades by 1 and deletes graduates (admins only).</span> {% endcomment %}
+            <button type="submit" class="btn btn-danger" id="bulkGradeBtn" title="Advance all students by one year. This will mark graduates as alumni and archive their events/news (admins only).">Bulk Grade Update</button>
         </form>
         {% endif %}
     </div>

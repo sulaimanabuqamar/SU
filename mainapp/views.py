@@ -22,7 +22,8 @@ from pathlib import Path
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.shortcuts import redirect
 from django.contrib import messages
-from mainapp.models import Student
+from mainapp.models import Student, ArchiveState
+from django.urls import reverse
 # Create your views here.
 
 register = template.Library()
@@ -72,13 +73,13 @@ def Home(request, invalid_login = False):
     home_page = HomePage.objects.first()  # Assuming you have one HomePage instance
     highlights = []
     eventprefilter = []
-    for event in Event.objects.order_by("-date").filter(highlight=True,draft=False):
+    for event in Event.objects.order_by("-date").filter(highlight=True,draft=False, archived_year__isnull=True):
         if event.members_only:
             if request.user in event.author.members.all().order_by('name'):
                 eventprefilter.append(event)
         else:
             eventprefilter.append(event)
-    for news in News.objects.order_by("-published_date").filter(highlight=True,approved=True,awaiting_approval=False,draft=False): 
+    for news in News.objects.order_by("-published_date").filter(highlight=True,approved=True,awaiting_approval=False,draft=False, archived_year__isnull=True): 
         highlights.append(news)
     for event in eventprefilter:
         highlights.append(event)
@@ -99,7 +100,7 @@ def Scouts_View(request):
 def Scouts_Detail(request, scouts_id):
     try:
         scouts = Club.objects.get(id=scouts_id)
-        events = Event.objects.filter(author=scouts) 
+        events = Event.objects.filter(author=scouts, archived_year__isnull=True).order_by('-date') 
     except ObjectDoesNotExist:
         return error_404_view(request, None)
     return render(request, "scouts_detail.html", {'scouts': scouts, 'user': request.user, 'events':events, 'links': scouts.links.all()})
@@ -170,7 +171,7 @@ def Meeting_Details(request, meeting_id):
     return render(request, "meeting_detail.html", {'meeting': meeting, 'links': links, 'allUsers': allUsers, 'user': request.user})
 
 def Events(request):
-    events = Event.objects.all().order_by('-date')
+    events = Event.objects.filter(archived_year__isnull=True).order_by('-date')
     user: User = request.user
     filtered_events = []
     if not user.is_anonymous:
@@ -205,7 +206,7 @@ def Event_Detail(request, event_id):
     return render(request, "event_detail.html", {'event': event, 'links': links, 'allUsers': allUsers, 'user': request.user})
 
 def News_View(request):
-    news = News.objects.all().order_by('-published_date')
+    news = News.objects.filter(archived_year__isnull=True).order_by('-published_date')
     if hasattr(request.user, 'associated_student') and request.user.associated_student is not None:
         grlevel = str(request.user.associated_student.year_level)
         return render(request, "news.html", {'news': news, 'gradelevel': grlevel})
@@ -231,7 +232,7 @@ def Clubs(request):
 
 def Club_Detail(request, club_id):
     club = get_object_or_404(Club, id=club_id) 
-    events = Event.objects.filter(author=club).order_by("date")
+    events = Event.objects.filter(author=club, archived_year__isnull=True).order_by("date")
     heads = club.heads.all().order_by('name')  
     leadership = club.leadership.all().order_by('name')  
     members = club.members.all().order_by('name')
@@ -271,6 +272,11 @@ def Varsity_Detail(request, varsity_id):
 
 def Student_Detail(request, student_id):
     user = get_object_or_404(User, id=student_id)
+    # if requested user is an alumni, only allow access via archive pages or by staff
+    if hasattr(user, 'associated_student') and user.associated_student is not None:
+        student = user.associated_student
+        if student.is_alumni and not (request.path.startswith('/archive/') or request.user.is_staff or request.user.is_superuser):
+            return error_404_view(request, None)
     headclubs = []
     for club in Club.objects.all():
         if user in club.heads.all().order_by('name'):
@@ -292,7 +298,103 @@ def Student_Detail(request, student_id):
         if user in varsity.members.all().order_by('name'):
             varsities.append(varsity)
     
-    return render(request, "student_detail.html", {'selecteduser': user, 'user': request.user, 'headclubs': headclubs, 'headleadership': headleadership, 'clubs': clubs, 'varsitiescaptain': varsitiescaptain, 'varsities':varsities}) 
+    return render(request, "student_detail.html", {'selecteduser': user, 'user': request.user, 'headclubs': headclubs, 'headleadership': headleadership, 'clubs': clubs, 'varsitiescaptain': varsitiescaptain, 'varsities':varsities, 'class_of': student.class_of() if hasattr(student, 'class_of') else None}) 
+
+
+def get_academic_year_for_date(dt: datetime = None):
+    """Return academic year string like '2024-2025' for a given date (defaults to today).
+    Academic year assumed to start in August and end in following July."""
+    if dt is None:
+        dt = datetime.now()
+    year = dt.year
+    # If month is August (8) or later, academic year starts this year
+    if dt.month >= 8:
+        start = year
+        end = year + 1
+    else:
+        start = year - 1
+        end = year
+    return f"{start}-{end}"
+
+
+def get_graduation_academic_year_for_student(student: Student, base_acad_start: int = None):
+    """Deterministically compute a student's graduation academic year using a fixed base academic start year.
+
+    - If `base_acad_start` is provided, use it as the academic start year (YYYY) for the base.
+    - Otherwise read `ARCHIVE_BASE_ACADEMIC_START` from settings.
+    - Graduation year = base_acad_start + (12 - year_level) ... base+1 + (12 - year_level)
+    This makes repeated runs idempotent and not depend on the current date.
+    """
+    try:
+        yl = int(student.year_level)
+    except Exception:
+        # fallback to the configured base academic year
+        if base_acad_start is None:
+            base_acad_start = settings.ARCHIVE_BASE_ACADEMIC_START
+        return f"{base_acad_start}-{base_acad_start + 1}"
+
+    if base_acad_start is None:
+        base_acad_start = getattr(settings, 'ARCHIVE_BASE_ACADEMIC_START', datetime.now().year)
+
+    remaining = max(0, 12 - yl)
+    grad_start = base_acad_start + remaining
+    grad_end = grad_start + 1
+    return f"{grad_start}-{grad_end}"
+
+
+def _get_archive_state_obj():
+    """Return the ArchiveState instance; create one initialized from settings if none exists."""
+    # Ensure the model is available
+    try:
+        obj = ArchiveState.objects.first()
+    except Exception:
+        return None
+    if obj is None:
+        # Initialize from settings only — do not consider external JSON files
+        base = getattr(settings, 'ARCHIVE_BASE_ACADEMIC_START', datetime.now().year)
+        obj = ArchiveState.objects.create(current_academic_start=base)
+    return obj
+
+
+def get_current_run_archive_base():
+    obj = _get_archive_state_obj()
+    if obj:
+        return int(obj.current_academic_start)
+    return getattr(settings, 'ARCHIVE_BASE_ACADEMIC_START', datetime.now().year)
+
+
+def advance_archive_base_after_run():
+    obj = _get_archive_state_obj()
+    if obj is None:
+        return
+    obj.current_academic_start = int(obj.current_academic_start) + 1
+    obj.save()
+
+
+def archive_index(request):
+    """Show available archive years and basic counts."""
+    years = Student.objects.filter(is_alumni=True).values_list('graduation_year', flat=True).distinct()
+    years = sorted([y for y in years if y], reverse=True)
+    data = []
+    for y in years:
+        count = Student.objects.filter(is_alumni=True, graduation_year=y).count()
+        events = Event.objects.filter(archived_year=y).count()
+        news = News.objects.filter(archived_year=y).count()
+        data.append({'year': y, 'students': count, 'events': events, 'news': news})
+    return render(request, 'archive_index.html', {'years': data, 'user': request.user})
+
+
+def archive_year_view(request, year):
+    """Show alumni and archived events/news for a given academic year string e.g. '2024-2025'."""
+    student_alumni = Student.objects.filter(is_alumni=True, graduation_year=year).order_by('student_db_id')
+    # Map to associated User where possible so we can link to Student_Detail by user id
+    alumni = []
+    for s in student_alumni:
+        user = User.objects.filter(associated_student=s).first()
+        alumni.append({'user': user, 'student': s})
+    events = Event.objects.filter(archived_year=year).order_by('-date')
+    news = News.objects.filter(archived_year=year).order_by('-published_date')
+    return render(request, 'archive_year.html', {'year': year, 'alumni': alumni, 'events': events, 'news': news, 'user': request.user})
 
 def Faculty_Detail(request, faculty_id):
     user = get_object_or_404(User, id=faculty_id)
@@ -1550,18 +1652,100 @@ def requestDB(request: WSGIRequest):
 
 def bulk_grade_update_logic():
     updated = 0
+    archived_students = 0
+    archived_events = 0
+    archived_news = 0
+    # Use the persisted run base so repeated runs are deterministic but advance per run
+    run_base = get_current_run_archive_base()
+    acad_year = f"{run_base}-{run_base + 1}"
     for student in Student.objects.all():
         if student.year_level is not None:
-            if student.year_level < 13:
-                student.year_level += 1
+            student.year_level += 1
+            # If graduated
+            if student.year_level > 12:
+                if not student.is_alumni:
+                    student.is_alumni = True
+                    # compute graduation year based on student's year_level using run-specific base
+                    # only set graduation_year if not already set (idempotent)
+                    student.graduation_year = student.graduation_year or get_graduation_academic_year_for_student(student, base_acad_start=run_base)
+                    archived_students += 1
+                    # Find the User record tied to this student (if any)
+                    user_obj = User.objects.filter(associated_student=student).first()
+                    if user_obj is not None:
+                        # Archive related news authored by this student's user account
+                        n_qs = News.objects.filter(author=user_obj, archived_year__isnull=True)
+                        for n in n_qs:
+                            n.archived_year = student.graduation_year
+                            n.save()
+                            archived_news += 1
+                        # Archive events where the user (student) was attending or confirmed
+                        e_qs = Event.objects.filter(attending_Students=user_obj) | Event.objects.filter(confirmed_Students=user_obj)
+                        for e in e_qs.distinct():
+                            if not e.archived_year:
+                                e.archived_year = student.graduation_year
+                                e.save()
+                                archived_events += 1
+                # if already alumni we still want to ensure any events/news are archived
+                else:
+                    user_obj = User.objects.filter(associated_student=student).first()
+                    if user_obj is not None:
+                        e_qs = Event.objects.filter(attending_Students=user_obj) | Event.objects.filter(confirmed_Students=user_obj)
+                        for e in e_qs.distinct():
+                            if not e.archived_year:
+                                # Prefer using student's stored graduation_year; fall back to current run academic year
+                                e.archived_year = student.graduation_year or acad_year
+                                e.save()
+                                archived_events += 1
+                        n_qs = News.objects.filter(author=user_obj, archived_year__isnull=True)
+                        for n in n_qs:
+                            n.archived_year = student.graduation_year or acad_year
+                            n.save()
+                            archived_news += 1
             student.save()
             updated += 1
-    return updated
+    # If at least one student was archived this run, advance the persisted run base so next run uses next academic year
+    if archived_students > 0:
+        advance_archive_base_after_run()
+    return updated, archived_students, archived_events, archived_news
 
 @user_passes_test(lambda u: u.is_superuser)
 @login_required
 def bulk_grade_update(request):
+    # legacy direct call removed; keep for safety but require POST
     if request.method == 'POST':
-        updated = bulk_grade_update_logic()
-        messages.success(request, f"Updated {updated} students.")
+        updated, archived_students, archived_events, archived_news = bulk_grade_update_logic()
+        messages.success(request, f"Updated {updated} students, archived {archived_students} graduates, {archived_events} events, {archived_news} news items.")
     return redirect('home')
+
+
+@user_passes_test(lambda u: u.is_superuser)
+@login_required
+def bulk_grade_confirm(request):
+    """Show a confirmation page listing how many students would be updated and archived; POST to perform."""
+    # Produce a dry-run by simulating counts without persisting state changes
+    updated = 0
+    archived_students = 0
+    archived_events = 0
+    archived_news = 0
+    run_base = get_current_run_archive_base()
+    acad_year = f"{run_base}-{run_base + 1}"
+    for student in Student.objects.all():
+        if student.year_level is not None:
+            # will be incremented by one
+            new_year_level = student.year_level + 1
+            if new_year_level > 12:
+                if not student.is_alumni:
+                    archived_students += 1
+                    # count related news/events for this user's associated account
+                    user_obj = User.objects.filter(associated_student=student).first()
+                    if user_obj is not None:
+                        archived_news += News.objects.filter(author=user_obj, archived_year__isnull=True).count()
+                        e_qs = Event.objects.filter(attending_Students=user_obj) | Event.objects.filter(confirmed_Students=user_obj)
+                        archived_events += e_qs.distinct().count()
+            updated += 1
+    if request.method == 'POST':
+        # perform the real run
+        updated, archived_students, archived_events, archived_news = bulk_grade_update_logic()
+        messages.success(request, f"Updated {updated} students, archived {archived_students} graduates, {archived_events} events, {archived_news} news items.")
+        return redirect('home')
+    return render(request, 'archive_confirm.html', {'updated': updated, 'archived_students': archived_students, 'archived_events': archived_events, 'archived_news': archived_news, 'user': request.user})

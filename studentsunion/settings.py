@@ -142,3 +142,8 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# Base academic year start used for deterministic graduation year calculations
+# Set this to the starting calendar year of the academic cycle you consider "current" for graduation
+# For example, 2024 means the academic year 2024-2025 is used as the base for graduation math.
+ARCHIVE_BASE_ACADEMIC_START = 2024
+

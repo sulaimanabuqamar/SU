@@ -1,0 +1,32 @@
+{% extends 'Base.html' %}
+{% load static %}
+
+{% block style %}
+<title>Archive Index</title>
+{% endblock %}
+
+{% block content %}
+<div class="profileRow">
+  <p class="pageTitle">ARCHIVES</p>
+  <p style="flex:1"></p>
+</div>
+<a class="pageSubtitle" style="margin-bottom: 10px; cursor: pointer; display:block;" href="{% url 'home' %}"><- Back</a>
+<p class="aboutText">Select an academic year to view alumni, events and news.</p>
+<div class="grid">
+  {% for item in years %}
+    <div>
+      <a href="{% url 'archive_year' item.year %}" style="text-decoration: none; color: inherit; display:block;">
+        <img class="newsCover" src="{% static '../media/images/joinButton.svg' %}" alt="Year" style="display:none;">
+        <p class="text" style="font-weight:600;">{{ item.year }}</p>
+        <p class="aboutText">{{ item.students }} alumni</p>
+        <p class="aboutText">{{ item.events }} events · {{ item.news }} news</p>
+      </a>
+    </div>
+  {% empty %}
+    <p class="text">No archived years available.</p>
+  {% endfor %}
+</div>
+<div style="margin-top: 20px; text-align: center;">
+    <p class="aboutText">Can't find what you're looking for? Return to the <a href="/">home</a>.</p>
+</div>
+{% endblock %}

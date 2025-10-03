@@ -20,8 +20,12 @@
             </div>
             <div>
                 <img src="{{ selecteduser.associated_student.profile_picture.url }}" style="border: black 3px solid;" alt="{{ selecteduser.name }} Logo" class="articleCover">
+                {% if class_of %}
+                <p class="aboutText sidebar">{{ class_of }}</p>
+                {% else %}
                 <p class="aboutText sidebar">{{ selecteduser.associated_student.year_level_title }}</p>
                 <p class="aboutText sidebar">Grade {{ selecteduser.associated_student.year_level }}{{ selecteduser.associated_student.section }}</p>
+                {% endif %}
                 <p class="aboutText sidebar">{{ selecteduser.email }}</p>
             </div>
         </div>

@@ -1,0 +1,67 @@
+{% extends 'Base.html' %}
+{% load static %}
+
+{% block style %}
+<title>Archive {{ year }}</title>
+{% endblock %}
+
+{% block content %}
+<div class="profileRow">
+  <p class="pageTitle">ARCHIVE — {{ year }}</p>
+  <p style="flex:1"></p>
+</div>
+<a class="pageSubtitle" style="margin-bottom: 10px; cursor: pointer; display:block;" href="{% url 'archive_index' %}"><- Back</a>
+
+<p class="subtitle">Alumni</p>
+<div class="studentGrid">
+  {% for item in alumni %}
+    {% if item.user %}
+      <a href="{% url 'student_detail' item.user.pk %}" class="profileRow" style="padding:8px;">
+        <p class="text" style="text-align:left; max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ item.user.name }}</p>
+                {# removed class_of display to reduce clutter #}
+      </a>
+    {% else %}
+      <div class="profileRow">
+        <p class="text" style="text-align:left">{{ item.student.student_db_id }}</p>
+        {% if item.student.class_of %}<p class="aboutText" style="text-align:left">{{ item.student.class_of }}</p>{% endif %}
+      </div>
+    {% endif %}
+  {% empty %}
+    <p class="text">No alumni for this year.</p>
+  {% endfor %}
+</div>
+
+<p class="subtitle">Events</p>
+<div class="grid">
+  {% for e in events %}
+  <div>
+    <a href="{% url 'event_detail' e.pk %}" style="text-decoration:none; color:inherit; display:block;">
+      <img class="eventCover" src="{{ e.cover.url }}" alt="Event Cover" style="border: 3px solid {{ e.author.color }};">
+      <p class="text" style="max-width: 306px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ e.title }}</p>
+      <p class="aboutText">{{ e.date }}</p>
+      <div class="tagBox" style="background: {{ e.author.color }};">
+        <p class="tagText">{{ e.author.name }}</p>
+      </div>
+    </a>
+  </div>
+  {% empty %}
+  <p class="text">No archived events for this year.</p>
+  {% endfor %}
+</div>
+
+<p class="subtitle">News</p>
+<div class="grid">
+  {% for n in news %}
+  <div>
+    <a href="{% url 'news_detail' n.pk %}" style="text-decoration:none; color:inherit; display:block;">
+      <img class="newsCover" src="{{ n.cover.url }}" alt="News Cover" style="border: 3px solid black;">
+      <p class="text" style="max-width: 306px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ n.title }}</p>
+      <p class="aboutText">{{ n.published_date|date:"N j, Y" }}</p>
+    </a>
+  </div>
+  {% empty %}
+  <p class="text">No archived news for this year.</p>
+  {% endfor %}
+</div>
+
+{% endblock %}

@@ -84,4 +84,7 @@ urlpatterns = [
 
 urlpatterns += [
     path('bulk_grade_update/', bulk_grade_update, name='bulk_grade_update'),
+    path('bulk_grade_confirm/', views.bulk_grade_confirm, name='bulk_grade_confirm'),
+    path('archive/', views.archive_index, name='archive_index'),
+    path('archive/<str:year>/', views.archive_year_view, name='archive_year'),
 ]
