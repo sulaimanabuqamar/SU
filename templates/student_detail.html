@@ -58,6 +58,15 @@
                 </a>
             </div>
             {% endfor %}
+            {% for item in past_clubs %}
+            <div>
+                <a href="{% url 'club_detail' item.club.id %}">
+                    <img class="eventCover" style="border: {{ item.club.color }} 3px solid; opacity: 0.7;" src="{{ item.club.logo.url }}" alt="Club Cover">
+                    <p class="text" style="max-width: 306px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ item.club.name }}</p>
+                    <p class="aboutText">Graduated — {{ item.display_role }}</p>
+                </a>
+            </div>
+            {% endfor %}
             {% for varsity in varsitiescaptain %}
             <div>
                 <a href="{% url 'varsity_detail' varsity.id %}">

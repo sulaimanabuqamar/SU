@@ -290,6 +290,37 @@ def Student_Detail(request, student_id):
     for club in Club.objects.all():
         if user in club.members.all().order_by('name'):
             clubs.append(club)
+    # For archived students, include their previously-saved clubs (archived_club_ids)
+    past_clubs = []
+    try:
+        if hasattr(user, 'associated_student') and user.associated_student is not None:
+            stud = user.associated_student
+            if stud.is_alumni and getattr(stud, 'archived_club_ids', None):
+                for entry in stud.archived_club_ids or []:
+                    try:
+                        # support both old int-list and new dict-list formats
+                        if isinstance(entry, dict):
+                            cid = entry.get('id')
+                            roles = entry.get('roles', [])
+                        else:
+                            cid = entry
+                            roles = ['member']
+                        c = Club.objects.filter(pk=cid).first()
+                        if c is not None:
+                            # choose display role for archived entry
+                            if 'head' in roles:
+                                display_role = 'Head of Club'
+                            elif 'leadership' in roles:
+                                display_role = 'Committee of Club'
+                            elif 'advisor' in roles:
+                                display_role = 'Advisor'
+                            else:
+                                display_role = 'Member of Club'
+                            past_clubs.append({'club': c, 'roles': roles, 'display_role': display_role})
+                    except Exception:
+                        continue
+    except Exception:
+        past_clubs = []
     varsitiescaptain = []
     for varsity in Varsity.objects.all():
         if user in varsity.captains.all().order_by('name'):
@@ -299,7 +330,7 @@ def Student_Detail(request, student_id):
         if user in varsity.members.all().order_by('name'):
             varsities.append(varsity)
     
-    return render(request, "student_detail.html", {'selecteduser': user, 'user': request.user, 'headclubs': headclubs, 'headleadership': headleadership, 'clubs': clubs, 'varsitiescaptain': varsitiescaptain, 'varsities':varsities, 'class_of': student.class_of() if hasattr(student, 'class_of') else None}) 
+    return render(request, "student_detail.html", {'selecteduser': user, 'user': request.user, 'headclubs': headclubs, 'headleadership': headleadership, 'clubs': clubs, 'past_clubs': past_clubs, 'varsitiescaptain': varsitiescaptain, 'varsities':varsities, 'class_of': student.class_of() if hasattr(student, 'class_of') else None}) 
 
 
 def get_academic_year_for_date(dt: datetime = None):

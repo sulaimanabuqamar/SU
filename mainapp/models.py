@@ -125,7 +125,126 @@ class Student(models.Model):
     # Archive fields
     is_alumni = models.BooleanField(default=False)
     graduation_year = models.CharField(max_length=11, blank=True, null=True, help_text='Academic year e.g. 2024-2025')
+    # store club ids (integers) the student belonged to when they were archived
+    # used to restore memberships if the student is unarchived later
+    archived_club_ids = models.JSONField(blank=True, null=True, default=list, help_text='List of club IDs the student was removed from when archived')
     def save(self, *args, **kwargs):
+        # Detect transition of alumni state so we can persist and remove/restore club memberships
+        previous_is_alumni = False
+        try:
+            if self.pk:
+                prev = Student.objects.filter(pk=self.pk).first()
+                if prev is not None:
+                    previous_is_alumni = bool(prev.is_alumni)
+        except Exception:
+            # during migrations/initial save the table may not exist yet
+            previous_is_alumni = False
+
+        # If transitioning from non-alumni -> alumni, save current club ids and roles and remove the user from club relations
+        if not previous_is_alumni and self.is_alumni:
+            try:
+                user_obj = User.objects.filter(associated_student=self).first()
+                if user_obj is not None:
+                    archived = []
+                    for club in Club.objects.all():
+                        roles = []
+                        try:
+                            if user_obj in club.heads.all():
+                                roles.append('head')
+                        except Exception:
+                            pass
+                        try:
+                            if user_obj in club.leadership.all():
+                                roles.append('leadership')
+                        except Exception:
+                            pass
+                        try:
+                            if user_obj in club.advisors.all():
+                                roles.append('advisor')
+                        except Exception:
+                            pass
+                        try:
+                            if user_obj in club.members.all():
+                                roles.append('member')
+                        except Exception:
+                            pass
+
+                        if roles:
+                            # remove them from each specific role relation
+                            try:
+                                if 'member' in roles:
+                                    club.members.remove(user_obj)
+                            except Exception:
+                                pass
+                            try:
+                                if 'head' in roles:
+                                    club.heads.remove(user_obj)
+                            except Exception:
+                                pass
+                            try:
+                                if 'leadership' in roles:
+                                    club.leadership.remove(user_obj)
+                            except Exception:
+                                pass
+                            try:
+                                if 'advisor' in roles:
+                                    club.advisors.remove(user_obj)
+                            except Exception:
+                                pass
+
+                            # also remove from user's associated_clubs to keep consistency
+                            try:
+                                if club in user_obj.associated_clubs.all():
+                                    user_obj.associated_clubs.remove(club)
+                            except Exception:
+                                pass
+
+                            archived.append({'id': club.id, 'roles': roles})
+
+                    # persist the archived club entries on the student record so we can display/restore later
+                    self.archived_club_ids = archived
+                    try:
+                        user_obj.save()
+                    except Exception:
+                        pass
+            except Exception:
+                # any failure here should not prevent save
+                pass
+
+        # If transitioning from alumni -> non-alumni, attempt to restore memberships from archived_club_ids
+        if previous_is_alumni and not self.is_alumni:
+            try:
+                user_obj = User.objects.filter(associated_student=self).first()
+                if user_obj is not None and self.archived_club_ids:
+                    for entry in (self.archived_club_ids or []):
+                        try:
+                            # support both old int-list format and new dict format
+                            if isinstance(entry, dict):
+                                cid = entry.get('id')
+                            else:
+                                cid = entry
+                            club = Club.objects.filter(pk=cid).first()
+                            if club is not None:
+                                # restore as a member (do not automatically restore leadership/head/advisor roles)
+                                if user_obj not in club.members.all():
+                                    club.members.add(user_obj)
+                                # also restore associated_clubs if used
+                                try:
+                                    if club not in user_obj.associated_clubs.all():
+                                        user_obj.associated_clubs.add(club)
+                                except Exception:
+                                    pass
+                        except Exception:
+                            continue
+                    # clear archived list after restore
+                    self.archived_club_ids = []
+                    try:
+                        user_obj.save()
+                    except Exception:
+                        pass
+            except Exception:
+                pass
+
         if self.year_level is not None:
             if int(self.year_level) == 9:
                 self.year_level_title = "Freshman"
