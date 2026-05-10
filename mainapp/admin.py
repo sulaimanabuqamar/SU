@@ -51,12 +51,12 @@ def archive_graduates_action(modeladmin, request, queryset):
                         for n in News.objects.filter(author=user_obj, archived_year__isnull=True):
                             n.archived_year = student.graduation_year
                             n.save()
-                    # Archive events where the student attended or was confirmed
-                    e_qs = Event.objects.filter(attending_Students=student, archived_year__isnull=True) | Event.objects.filter(confirmed_Students=student, archived_year__isnull=True)
-                    for e in e_qs.distinct():
-                        if not e.archived_year:
-                            e.archived_year = student.graduation_year
-                            e.save()
+                        # Archive events where the student attended or was confirmed
+                        e_qs = Event.objects.filter(attending_Students=user_obj, archived_year__isnull=True) | Event.objects.filter(confirmed_Students=user_obj, archived_year__isnull=True)
+                        for e in e_qs.distinct():
+                            if not e.archived_year:
+                                e.archived_year = student.graduation_year
+                                e.save()
             student.save()
             updated += 1
     modeladmin.message_user(request, f"Updated {updated} students, archived {archived} graduates.")
