@@ -8,6 +8,120 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from .models import *
 from django.db.models.query  import QuerySet
 
+def cleanup_corrupted_m2m_data():
+    """
+    Remove non-User objects from ALL User M2M fields across all models.
+    This comprehensively cleans corrupted data where Student objects were
+    accidentally stored in fields that should only contain User objects.
+    """
+    cleaned_count = 0
+    errors = []
+    
+    # List of all (model_class, field_name) tuples that should only contain User instances
+    user_m2m_fields = [
+        (PLC, 'attended_Students'),
+        (Club, 'heads'),
+        (Club, 'leadership'),
+        (Club, 'members'),
+        (Club, 'advisors'),
+        (Event, 'attending_Students'),
+        (Event, 'confirmed_Students'),
+        (Meeting, 'attending_Members'),
+        (Varsity, 'members'),
+        (Varsity, 'captains'),
+        (Varsity, 'coaches'),
+    ]
+    
+    # Also handle reverse relations from User
+    user_reverse_m2m_fields = [
+        (User, 'associated_clubs'),
+        (User, 'associated_varsities'),
+    ]
+    
+    # Process direct M2M fields
+    for model_class, field_name in user_m2m_fields:
+        try:
+            for obj in model_class.objects.all():
+                try:
+                    m2m_manager = getattr(obj, field_name)
+                    if m2m_manager is None:
+                        continue
+                    
+                    # Get all items in the M2M field
+                    try:
+                        items = list(m2m_manager.all())
+                    except Exception as e:
+                        errors.append(f"Error reading {model_class.__name__}.{field_name}: {str(e)}")
+                        continue
+                    
+                    # Remove any non-User items
+                    for item in items:
+                        try:
+                            if not isinstance(item, User):
+                                try:
+                                    m2m_manager.remove(item)
+                                    cleaned_count += 1
+                                except Exception as e:
+                                    errors.append(f"Error removing from {model_class.__name__}.{field_name}: {str(e)}")
+                        except Exception as e:
+                            errors.append(f"Error checking item in {model_class.__name__}.{field_name}: {str(e)}")
+                            
+                except Exception as e:
+                    errors.append(f"Error processing {model_class.__name__}.{field_name}: {str(e)}")
+        except Exception as e:
+            errors.append(f"Error iterating {model_class.__name__}: {str(e)}")
+    
+    # Process reverse M2M fields
+    for model_class, field_name in user_reverse_m2m_fields:
+        try:
+            for obj in model_class.objects.all():
+                try:
+                    m2m_manager = getattr(obj, field_name)
+                    if m2m_manager is None:
+                        continue
+                    
+                    # Get all items in the M2M field
+                    try:
+                        items = list(m2m_manager.all())
+                    except Exception as e:
+                        errors.append(f"Error reading {model_class.__name__}.{field_name}: {str(e)}")
+                        continue
+                    
+                    # Remove any non-User items (for associated_clubs/varsities this should remove non-Club/non-Varsity)
+                    for item in items:
+                        try:
+                            if field_name == 'associated_clubs' and not isinstance(item, Club):
+                                try:
+                                    m2m_manager.remove(item)
+                                    cleaned_count += 1
+                                except Exception as e:
+                                    errors.append(f"Error removing from {model_class.__name__}.{field_name}: {str(e)}")
+                            elif field_name == 'associated_varsities' and not isinstance(item, Varsity):
+                                try:
+                                    m2m_manager.remove(item)
+                                    cleaned_count += 1
+                                except Exception as e:
+                                    errors.append(f"Error removing from {model_class.__name__}.{field_name}: {str(e)}")
+                        except Exception as e:
+                            errors.append(f"Error checking item in {model_class.__name__}.{field_name}: {str(e)}")
+                            
+                except Exception as e:
+                    errors.append(f"Error processing {model_class.__name__}.{field_name}: {str(e)}")
+        except Exception as e:
+            errors.append(f"Error iterating {model_class.__name__}: {str(e)}")
+    
+    return cleaned_count, errors
+
+def cleanup_action(modeladmin, request, queryset):
+    """Admin action to clean up corrupted M2M data"""
+    cleaned, errors = cleanup_corrupted_m2m_data()
+    message = f"Cleaned up {cleaned} corrupted M2M records."
+    if errors:
+        message += f" ({len(errors)} errors occurred, check logs)"
+    modeladmin.message_user(request, message)
+
+cleanup_action.short_description = "Clean up corrupted data (remove Student objects from User fields)"
+
 class UserAdmin(BaseUserAdmin):
     list_display = ('email', 'name', 'is_admin', 'associated_student', 'associated_faculty', 'is_superuser') 
     fieldsets = (
@@ -34,31 +148,43 @@ def archive_graduates_action(modeladmin, request, queryset):
     archived = 0
     acad_year = get_academic_year_for_date()
     for student in queryset:
-        if student.year_level is not None:
-            student.year_level += 1
-            if student.year_level > 12:
-                if not student.is_alumni:
-                    student.is_alumni = True
-                    if not student.graduation_year:
-                        student.graduation_year = acad_year
-                    archived += 1
-                    # Archive news authored by user (if any)
-                    try:
-                        user_obj = User.objects.get(associated_student=student)
-                    except Exception:
-                        user_obj = None
-                    if user_obj:
-                        for n in News.objects.filter(author=user_obj, archived_year__isnull=True):
-                            n.archived_year = student.graduation_year
-                            n.save()
-                        # Archive events where the student attended or was confirmed
-                        e_qs = Event.objects.filter(attending_Students=user_obj, archived_year__isnull=True) | Event.objects.filter(confirmed_Students=user_obj, archived_year__isnull=True)
-                        for e in e_qs.distinct():
-                            if not e.archived_year:
-                                e.archived_year = student.graduation_year
-                                e.save()
-            student.save()
+        try:
+            if student.year_level is not None:
+                student.year_level += 1
+                if student.year_level > 12:
+                    if not student.is_alumni:
+                        student.is_alumni = True
+                        if not student.graduation_year:
+                            student.graduation_year = acad_year
+                        archived += 1
+                        # Archive news authored by user (if any)
+                        try:
+                            user_obj = User.objects.get(associated_student=student)
+                        except Exception:
+                            user_obj = None
+                        if user_obj:
+                            try:
+                                for n in News.objects.filter(author=user_obj, archived_year__isnull=True):
+                                    n.archived_year = student.graduation_year
+                                    n.save()
+                            except Exception:
+                                pass
+                            try:
+                                # Archive events where the student attended or was confirmed
+                                e_qs = Event.objects.filter(attending_Students=user_obj, archived_year__isnull=True) | Event.objects.filter(confirmed_Students=user_obj, archived_year__isnull=True)
+                                for e in e_qs.distinct():
+                                    if not e.archived_year:
+                                        e.archived_year = student.graduation_year
+                                        e.save()
+                            except Exception:
+                                pass
+            try:
+                student.save()
+            except Exception:
+                pass
             updated += 1
+        except Exception:
+            pass
     modeladmin.message_user(request, f"Updated {updated} students, archived {archived} graduates.")
 
 archive_graduates_action.short_description = "Increment grade and archive graduates"
@@ -73,7 +199,7 @@ class StudentAdmin(admin.ModelAdmin):
     )
     search_fields = ('year_level', 'section', 'student_db_id')
     # filter_horizontal = ('clubs', 'varsities')
-    actions = [archive_graduates_action]
+    actions = [archive_graduates_action, cleanup_action]
 
 class FacultyAdmin(admin.ModelAdmin):
     list_display = ('faculty_db_id', 'profile_picture')

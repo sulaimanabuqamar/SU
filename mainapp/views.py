@@ -1691,63 +1691,82 @@ def bulk_grade_update_logic():
     run_base = get_current_run_archive_base()
     acad_year = f"{run_base}-{run_base + 1}"
     for student in Student.objects.all():
-        if student.year_level is not None:
-            student.year_level += 1
-            # If graduated
-            if student.year_level > 12:
-                if not student.is_alumni:
-                    student.is_alumni = True
-                    # compute graduation year based on student's year_level using run-specific base
-                    # only set graduation_year if not already set (idempotent)
-                    student.graduation_year = student.graduation_year or get_graduation_academic_year_for_student(student, base_acad_start=run_base)
-                    archived_students += 1
-                    # Find the User record tied to this student (if any)
-                    user_obj = User.objects.filter(associated_student=student).first()
-                    if user_obj is not None:
-                        # Archive related news authored by this student's user account
-                        n_qs = News.objects.filter(author=user_obj).filter(Q(archived_year__isnull=True) | Q(archived_year=''))
-                        for n in n_qs:
-                            n.archived_year = student.graduation_year
-                            n.save()
-                            archived_news += 1
-                        # Archive events where the user (student) was attending or confirmed
-                        club_authored = Event.objects.filter(author__in=user_obj.associated_clubs.all()).filter(Q(archived_year__isnull=True) | Q(archived_year=''))
-                        e_qs = Event.objects.filter(attending_Students=user_obj).filter(Q(archived_year__isnull=True) | Q(archived_year='')) | Event.objects.filter(confirmed_Students=user_obj).filter(Q(archived_year__isnull=True) | Q(archived_year='')) | club_authored
-                        for e in e_qs.distinct():
-                            # Only archive the event if its academic year (by month) matches
-                            # the student's graduation year. This prevents archiving
-                            # current-year events into previous academic years.
+        try:
+            if student.year_level is not None:
+                student.year_level += 1
+                # If graduated
+                if student.year_level > 12:
+                    if not student.is_alumni:
+                        student.is_alumni = True
+                        # compute graduation year based on student's year_level using run-specific base
+                        # only set graduation_year if not already set (idempotent)
+                        student.graduation_year = student.graduation_year or get_graduation_academic_year_for_student(student, base_acad_start=run_base)
+                        archived_students += 1
+                        # Find the User record tied to this student (if any)
+                        user_obj = User.objects.filter(associated_student=student).first()
+                        if user_obj is not None:
                             try:
-                                event_acad = get_academic_year_for_date(e.date)
+                                # Archive related news authored by this student's user account
+                                n_qs = News.objects.filter(author=user_obj).filter(Q(archived_year__isnull=True) | Q(archived_year=''))
+                                for n in n_qs:
+                                    n.archived_year = student.graduation_year
+                                    n.save()
+                                    archived_news += 1
                             except Exception:
-                                event_acad = None
-                            assigned_year = student.graduation_year
-                            if event_acad and assigned_year and event_acad == assigned_year and not e.archived_year:
-                                e.archived_year = assigned_year
-                                e.save()
-                                archived_events += 1
-                # if already alumni we still want to ensure any events/news are archived
-                else:
-                    user_obj = User.objects.filter(associated_student=student).first()
-                    if user_obj is not None:
-                        club_authored = Event.objects.filter(author__in=user_obj.associated_clubs.all()).filter(Q(archived_year__isnull=True) | Q(archived_year=''))
-                        e_qs = Event.objects.filter(attending_Students=user_obj).filter(Q(archived_year__isnull=True) | Q(archived_year='')) | Event.objects.filter(confirmed_Students=user_obj).filter(Q(archived_year__isnull=True) | Q(archived_year='')) | club_authored
-                        for e in e_qs.distinct():
+                                pass
                             try:
-                                event_acad = get_academic_year_for_date(e.date)
+                                # Archive events where the user (student) was attending or confirmed
+                                club_authored = Event.objects.filter(author__in=user_obj.associated_clubs.all()).filter(Q(archived_year__isnull=True) | Q(archived_year=''))
+                                e_qs = Event.objects.filter(attending_Students=user_obj).filter(Q(archived_year__isnull=True) | Q(archived_year='')) | Event.objects.filter(confirmed_Students=user_obj).filter(Q(archived_year__isnull=True) | Q(archived_year='')) | club_authored
+                                for e in e_qs.distinct():
+                                    # Only archive the event if its academic year (by month) matches
+                                    # the student's graduation year. This prevents archiving
+                                    # current-year events into previous academic years.
+                                    try:
+                                        event_acad = get_academic_year_for_date(e.date)
+                                    except Exception:
+                                        event_acad = None
+                                    assigned_year = student.graduation_year
+                                    if event_acad and assigned_year and event_acad == assigned_year and not e.archived_year:
+                                        e.archived_year = assigned_year
+                                        e.save()
+                                        archived_events += 1
                             except Exception:
-                                event_acad = None
-                            assigned_year = student.graduation_year or acad_year
-                            if event_acad and assigned_year and event_acad == assigned_year and not e.archived_year:
-                                e.archived_year = assigned_year
-                                e.save()
-                                archived_events += 1
-                        n_qs = News.objects.filter(author=user_obj).filter(Q(archived_year__isnull=True) | Q(archived_year=''))
-                        for n in n_qs:
-                            n.archived_year = student.graduation_year or acad_year
-                            n.save()
-                            archived_news += 1
-            student.save()
+                                pass
+                    # if already alumni we still want to ensure any events/news are archived
+                    else:
+                        user_obj = User.objects.filter(associated_student=student).first()
+                        if user_obj is not None:
+                            try:
+                                club_authored = Event.objects.filter(author__in=user_obj.associated_clubs.all()).filter(Q(archived_year__isnull=True) | Q(archived_year=''))
+                                e_qs = Event.objects.filter(attending_Students=user_obj).filter(Q(archived_year__isnull=True) | Q(archived_year='')) | Event.objects.filter(confirmed_Students=user_obj).filter(Q(archived_year__isnull=True) | Q(archived_year='')) | club_authored
+                                for e in e_qs.distinct():
+                                    try:
+                                        event_acad = get_academic_year_for_date(e.date)
+                                    except Exception:
+                                        event_acad = None
+                                    assigned_year = student.graduation_year or acad_year
+                                    if event_acad and assigned_year and event_acad == assigned_year and not e.archived_year:
+                                        e.archived_year = assigned_year
+                                        e.save()
+                                        archived_events += 1
+                            except Exception:
+                                pass
+                            try:
+                                n_qs = News.objects.filter(author=user_obj).filter(Q(archived_year__isnull=True) | Q(archived_year=''))
+                                for n in n_qs:
+                                    n.archived_year = student.graduation_year or acad_year
+                                    n.save()
+                                    archived_news += 1
+                            except Exception:
+                                pass
+            try:
+                student.save()
+            except Exception:
+                pass
+            updated += 1
+        except Exception:
+            pass
             updated += 1
     # If at least one student was archived this run, advance the persisted run base so next run uses next academic year
     if archived_students > 0:

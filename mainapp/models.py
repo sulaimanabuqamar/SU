@@ -146,60 +146,66 @@ class Student(models.Model):
                 user_obj = User.objects.filter(associated_student=self).first()
                 if user_obj is not None:
                     archived = []
-                    for club in Club.objects.all():
-                        roles = []
-                        try:
-                            if user_obj in club.heads.all():
-                                roles.append('head')
-                        except Exception:
-                            pass
-                        try:
-                            if user_obj in club.leadership.all():
-                                roles.append('leadership')
-                        except Exception:
-                            pass
-                        try:
-                            if user_obj in club.advisors.all():
-                                roles.append('advisor')
-                        except Exception:
-                            pass
-                        try:
-                            if user_obj in club.members.all():
-                                roles.append('member')
-                        except Exception:
-                            pass
-
-                        if roles:
-                            # remove them from each specific role relation
+                    try:
+                        for club in Club.objects.all():
+                            roles = []
                             try:
-                                if 'member' in roles:
-                                    club.members.remove(user_obj)
-                            except Exception:
+                                # Wrap every M2M check in try/except to catch type errors
+                                if user_obj in club.heads.all():
+                                    roles.append('head')
+                            except (TypeError, Exception):
+                                # Catch "Must be User instance" errors and any other M2M errors
                                 pass
                             try:
-                                if 'head' in roles:
-                                    club.heads.remove(user_obj)
-                            except Exception:
+                                if user_obj in club.leadership.all():
+                                    roles.append('leadership')
+                            except (TypeError, Exception):
                                 pass
                             try:
-                                if 'leadership' in roles:
-                                    club.leadership.remove(user_obj)
-                            except Exception:
+                                if user_obj in club.advisors.all():
+                                    roles.append('advisor')
+                            except (TypeError, Exception):
                                 pass
                             try:
-                                if 'advisor' in roles:
-                                    club.advisors.remove(user_obj)
-                            except Exception:
+                                if user_obj in club.members.all():
+                                    roles.append('member')
+                            except (TypeError, Exception):
                                 pass
 
-                            # also remove from user's associated_clubs to keep consistency
-                            try:
-                                if club in user_obj.associated_clubs.all():
-                                    user_obj.associated_clubs.remove(club)
-                            except Exception:
-                                pass
+                            if roles:
+                                # remove them from each specific role relation
+                                try:
+                                    if 'member' in roles:
+                                        club.members.remove(user_obj)
+                                except Exception:
+                                    pass
+                                try:
+                                    if 'head' in roles:
+                                        club.heads.remove(user_obj)
+                                except Exception:
+                                    pass
+                                try:
+                                    if 'leadership' in roles:
+                                        club.leadership.remove(user_obj)
+                                except Exception:
+                                    pass
+                                try:
+                                    if 'advisor' in roles:
+                                        club.advisors.remove(user_obj)
+                                except Exception:
+                                    pass
 
-                            archived.append({'id': club.id, 'roles': roles})
+                                # also remove from user's associated_clubs to keep consistency
+                                try:
+                                    if club in user_obj.associated_clubs.all():
+                                        user_obj.associated_clubs.remove(club)
+                                except Exception:
+                                    pass
+
+                                archived.append({'id': club.id, 'roles': roles})
+                    except Exception:
+                        # If iteration through clubs fails, just skip it
+                        pass
 
                     # persist the archived club entries on the student record so we can display/restore later
                     self.archived_club_ids = archived
@@ -226,13 +232,18 @@ class Student(models.Model):
                             club = Club.objects.filter(pk=cid).first()
                             if club is not None:
                                 # restore as a member (do not automatically restore leadership/head/advisor roles)
-                                if user_obj not in club.members.all():
-                                    club.members.add(user_obj)
+                                try:
+                                    # Wrap M2M check in try/except
+                                    if user_obj not in club.members.all():
+                                        club.members.add(user_obj)
+                                except (TypeError, Exception):
+                                    # Skip if corrupted M2M data exists
+                                    pass
                                 # also restore associated_clubs if used
                                 try:
                                     if club not in user_obj.associated_clubs.all():
                                         user_obj.associated_clubs.add(club)
-                                except Exception:
+                                except (TypeError, Exception):
                                     pass
                         except Exception:
                             continue
